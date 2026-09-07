@@ -16,5 +16,6 @@
 
 - M0 收尾复核：干净 Docker 卷重建、`pnpm install --frozen-lockfile`、lint、typecheck、test、build、migration/seed 两次和最终数据库计数均 PASS。
 - CI workflow YAML 解析通过且包含 install、lint、typecheck、unit test、build；已提交并 push 到 `main`，remote 为 `git@github.com:zl2796195822/mirror-world.git`。`gh auth status` 因本机未安装 `gh` CLI 返回 `command not found`，但 SSH push 成功。
-- `drizzle-orm@0.44.5` 的 HIGH advisory 已最小升级至 `0.45.2`；官方 npm registry production audit 复核 PASS，HIGH=0、CRITICAL=0。M0 当前状态为 `IMPLEMENTED_UNVERIFIED`，禁止进入 M1，等待远程 Actions 真实 PASS。
-- `foundation-ci #1`（run `34144242021`，commit `faa2270…`）真实执行但失败：`setup-node@v4` 的 `cache: pnpm` 在 pnpm setup 前找不到 pnpm；已将 pnpm setup 移到 Node cache 前，等待重跑。
+- `drizzle-orm@0.44.5` 的 HIGH advisory 已最小升级至 `0.45.2`；官方 npm registry production audit 复核 PASS，HIGH=0、CRITICAL=0。
+- `foundation-ci #1`（run `34144242021`，commit `faa2270…`）真实执行但失败：`setup-node@v4` 的 `cache: pnpm` 在 pnpm setup 前找不到 pnpm；已将 pnpm setup 移到 Node cache 前。
+- `foundation-ci #2`（run `34144849331`，commit `761090de…`）真实 PASS；`foundation` Job 的 install、lint、typecheck、unit tests、build 全部成功，仅有 Node.js 20 action runtime warning。M0 收尾条件已满足，状态为 `PASS`；M1-T01 尚未开始。

@@ -2,8 +2,8 @@
 
 Current milestone: M0
 Current task: M0 closeout verification
-Status: IMPLEMENTED_UNVERIFIED
-Last verified commit: faa2270421122d08537239027b0f62a765c16198
+Status: PASS
+Last verified commit: 761090de03916356c57ea5f2b0985827cc0144f6
 
 ## Completed
 
@@ -18,7 +18,7 @@ Last verified commit: faa2270421122d08537239027b0f62a765c16198
 
 ## In progress
 
-- 远程 GitHub Actions 已触发 `foundation-ci #1`，但因 `setup-node` 的 pnpm cache 在 pnpm setup 之前执行而失败；正在进行最小顺序修复后重跑。
+- 无。M0 收尾验证已完成。
 
 ## Blocked
 
@@ -51,4 +51,4 @@ Last verified commit: faa2270421122d08537239027b0f62a765c16198
 
 ## Next allowed task
 
-- 当前不允许进入 M1-T01。待修复后的 GitHub Actions 真实运行并记录所有 Job PASS 后，重新评估 M0。
+- M1-T01 尚未开始；本次 M0 收尾明确禁止进入 M1。
