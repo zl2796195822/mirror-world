@@ -1,0 +1,13 @@
+.git/
+.github/
+node_modules/
+.pnpm-store/
+.turbo/
+dist/
+coverage/
+文档/
+UI/
+pnpm-lock.yaml
+*.docx
+*.jpg
+*.png

@@ -1,0 +1,36 @@
+node_modules/
+.pnpm-store/
+.turbo/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+.DS_Store
+
+docker-data/
+postgres-data/
+redis-data/
+minio-data/
+*.sqlite
+*.sqlite3
+
+# Secrets and sensitive local material
+secrets/
+.secrets/
+*.key
+*.pem
+*.token
+*token*.json
+raw-scan/
+scan-raw/
+sensitive-data/
+sensitive-logs/
+tmp/
+temp/
+
+# Local reference material; source documentation belongs under docs/
+UI/
+文档/
