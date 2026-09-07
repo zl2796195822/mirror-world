@@ -9,7 +9,7 @@
 - v1.2 新增 OSS-001/002/003：成熟库可 DEPENDENCY，完整模块按 PORT，冲突或仅有思想价值的项目按 REFERENCE；未核验许可证、Proprietary/NC 项目不得复制进入主仓；所有外部代码需固定 commit、审计、登记、测试和退出条件。
 - 后续执行必须一次只做一个里程碑，严格按 DoD、真实验证、`docs/PROJECT_STATE.md`、verification report、ADR 与文档同步推进。
 - M0 最终验证：lint/typecheck/test/build、Docker Compose 健康检查、`db:setup` 连续两次和最终 users/worlds 查询均 PASS；`pnpm audit --prod` 因 npm 镜像缺少 audit endpoint 为 UNVERIFIED，不代表无漏洞；远程 CI 尚无执行记录。
-- 当前仅允许的下一任务为 M1-T01。
+- 2026-09-07 当时基线记录的下一任务为 M1-T01；后续 2026-09-08 M0 收尾已完成，但本次会话不进入 M1。
 - 文档完整性备注：`manifest_v1.2.json` 声明/列出 32 个文件，但实际目录有 33 个文件；它列出 `manifest.json`，实际存在的是 `manifest_v1.2.json`，另有 `manifest_v1.0_legacy.json`。
 
 ## 2026-09-08
