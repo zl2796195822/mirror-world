@@ -19,3 +19,12 @@
 - `drizzle-orm@0.44.5` 的 HIGH advisory 已最小升级至 `0.45.2`；官方 npm registry production audit 复核 PASS，HIGH=0、CRITICAL=0。
 - `foundation-ci #1`（run `34144242021`，commit `faa2270…`）真实执行但失败：`setup-node@v4` 的 `cache: pnpm` 在 pnpm setup 前找不到 pnpm；已将 pnpm setup 移到 Node cache 前。
 - `foundation-ci #2`（run `34144849331`，commit `761090de…`）真实 PASS；`foundation` Job 的 install、lint、typecheck、unit tests、build 全部成功，仅有 Node.js 20 action runtime warning。M0 收尾条件已满足，状态为 `PASS`；M1-T01 尚未开始。
+
+## 2026-09-08 M1-T01
+
+- 按项目文档原始定义完成 M1-T01 Next.js 产品壳：深色低密度 UI、首页/世界/居民/事件/设置五个导航上下文、非游戏 HUD；没有实现 M1-T02/T03/T04 或任何 M2+ 能力。
+- 产品壳保持 WORLD FIRST 与事实边界：未接入的世界、居民、事件、设置能力显示诚实空状态；不连接数据库、Redis、业务 API 或 World Kernel，不写入世界事实。
+- 新增 `apps/web` Next.js App Router；新增直接依赖 Next.js 16.3.4、React 19.2.8、React DOM 19.2.8、`@types/react` 19.2.2、`@types/react-dom` 19.2.2，均为 MIT，已登记并完成官方 npm registry production audit。
+- M1-T01 实现 commit 为 `8b486e7a3ce8798502fc5907e7babd43b12d20ba`；本地 install/lint/typecheck/test/build、官方 audit（HIGH=0、CRITICAL=0）及生产浏览器验证均 PASS。
+- 生产浏览器在 1440×1000 与 390×844 验证五个路由无横向溢出，导航上下文正确，console Errors/Warnings=0；Docker PostgreSQL/Redis/MinIO healthy，数据库基线仍为 `migrations=1`、`users=1`、`worlds=1`。
+- 当前状态为 `M1-T01 = PASS`；下一允许任务为 M1-T02，本轮停止于 M1-T01。
