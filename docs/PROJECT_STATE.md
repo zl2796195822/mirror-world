@@ -3,7 +3,7 @@
 Current milestone: M0
 Current task: M0 closeout verification
 Status: IMPLEMENTED_UNVERIFIED
-Last verified commit: 未提交
+Last verified commit: faa2270421122d08537239027b0f62a765c16198
 
 ## Completed
 
@@ -18,7 +18,7 @@ Last verified commit: 未提交
 
 ## In progress
 
-- 远程 GitHub Actions 未验证：remote 已配置，但尚未提交/推送触发 workflow；本机未安装 `gh` CLI。
+- 远程 GitHub Actions 已触发 `foundation-ci #1`，但因 `setup-node` 的 pnpm cache 在 pnpm setup 之前执行而失败；正在进行最小顺序修复后重跑。
 
 ## Blocked
 
@@ -51,4 +51,4 @@ Last verified commit: 未提交
 
 ## Next allowed task
 
-- 当前不允许进入 M1-T01。待 GitHub Actions 真实运行并记录所有 Job PASS 后，重新评估 M0。
+- 当前不允许进入 M1-T01。待修复后的 GitHub Actions 真实运行并记录所有 Job PASS 后，重新评估 M0。
