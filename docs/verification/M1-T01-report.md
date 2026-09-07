@@ -84,6 +84,7 @@
 | Docker service health                                     | PASS | PostgreSQL、Redis、MinIO 均为 `Up ... (healthy)`                 |
 | DB baseline read-only check                               | PASS | `migrations=1`、`users=1`、`worlds=1`                            |
 | 数据库 migration                                          | N/A  | 本任务未修改 schema 或 migration                                 |
+| GitHub Actions `foundation-ci`                            | PASS | run `34152773928`；`foundation` Job success                      |
 
 ### 浏览器与人工验证
 
@@ -95,6 +96,17 @@
 - 首页有 5 个导航链接；所有页面保持真实空状态；未出现“居民正在”“事件已经”“正在模拟”“AI 已经分析”或“运行中”等假能力文案。
 - 浏览器最终 console：Errors=0，Warnings=0。
 
+### GitHub Actions
+
+- run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34152773928>
+- commit SHA：`5d2b6481c906846e35372755c747a09c70b10fac`
+- Job `foundation`：PASS（completed / success）。
+- `Install dependencies`：PASS。
+- `Lint and format`：PASS。
+- `Typecheck`：PASS。
+- `Unit tests`：PASS。
+- `Build`：PASS。
+
 ## 未完成项
 
 - M1-T02 开发身份/登录未实现。
@@ -105,7 +117,7 @@
 ## 已知问题
 
 - M0 已知的文档库 `manifest_v1.2.json` 与实际文件数量/文件名不一致问题仍存在，不影响本任务产品壳。
-- 本机没有 `gh` CLI；本任务不要求新的远程 CI run，GitHub Actions 的 M0 PASS 基线沿用 `docs/verification/M0-report.md`。
+- 本机没有 `gh` CLI；本次 run 使用 GitHub Actions REST API 读取了真实完成状态和步骤结果。
 
 ## DoD checklist
 
@@ -118,10 +130,12 @@
 - [x] 后端尚未提供的数据以诚实空状态呈现。
 - [x] lint、typecheck、test、build 全部真实通过。
 - [x] 新增依赖已完成官方 npm registry production audit，HIGH=0、CRITICAL=0。
+- [x] GitHub Actions 对本次提交真实执行，install、lint、typecheck、test、build 全部 PASS。
 - [x] 相关文档与项目记忆已更新。
 - [x] 未新增数据库变更，未绕过 World Kernel，未实现 M1-T02 或后续任务。
 
 ## Commit
 
 - M1-T01 实现 commit SHA：`8b486e7a3ce8798502fc5907e7babd43b12d20ba`
-- 最终文档同步 commit：待本报告同步提交后记录于最终交付信息。
+- 文档首次同步 commit SHA：`5d2b6481c906846e35372755c747a09c70b10fac`
+- GitHub Actions 验证提交 SHA：`5d2b6481c906846e35372755c747a09c70b10fac`
