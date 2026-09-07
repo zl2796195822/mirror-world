@@ -28,4 +28,4 @@
 - M1-T01 实现 commit 为 `8b486e7a3ce8798502fc5907e7babd43b12d20ba`；本地 install/lint/typecheck/test/build、官方 audit（HIGH=0、CRITICAL=0）及生产浏览器验证均 PASS。
 - 生产浏览器在 1440×1000 与 390×844 验证五个路由无横向溢出，导航上下文正确，console Errors/Warnings=0；Docker PostgreSQL/Redis/MinIO healthy，数据库基线仍为 `migrations=1`、`users=1`、`worlds=1`。
 - 当前状态为 `M1-T01 = PASS`；下一允许任务为 M1-T02，本轮停止于 M1-T01。
-- GitHub Actions `foundation-ci` 已对提交 `5d2b6481c906846e35372755c747a09c70b10fac` 真实执行并 PASS：run `34152773928`，install/lint/typecheck/unit tests/build 全部成功。
+- GitHub Actions `foundation-ci` 已对最终文档同步提交 `e6a6af00397de633ea9fd20cc4426583ec0f5ffe` 真实执行并 PASS：run `34152941758`，install/lint/typecheck/unit tests/build 全部成功。

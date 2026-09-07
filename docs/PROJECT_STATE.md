@@ -12,7 +12,7 @@ Last verified implementation commit: 8b486e7a3ce8798502fc5907e7babd43b12d20ba
 - 已通过 1440px 桌面宽度与 390px 移动宽度的真实生产构建浏览器验证，所有路由无横向溢出。
 - 所有未接入后端能力均显示诚实空状态；产品壳不连接数据库、Redis、API 或 World Kernel，也不写入世界事实。
 - 已登记 M1-T01 新增的 Next.js、React、React DOM 与 React 类型依赖；许可证均为 MIT。
-- GitHub Actions `foundation-ci` 已对 M1-T01 提交真实执行并 PASS：run `34152773928`。
+- GitHub Actions `foundation-ci` 已对最终文档同步提交真实执行并 PASS：run `34152941758`。
 
 ## In progress
 
