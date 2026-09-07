@@ -1,6 +1,6 @@
 # THIRD PARTY REGISTER
 
-M0 只登记实际引入的运行时/构建依赖；没有复制外部源码。所有版本以 `pnpm-lock.yaml` 为最终解析依据。
+只登记实际引入的运行时/构建依赖；没有复制外部源码。所有版本以 `pnpm-lock.yaml` 为最终解析依据。
 
 | ID        | Project / package | Version | Reuse mode | License status   | Purpose                       | Related milestone |
 | --------- | ----------------- | ------- | ---------- | ---------------- | ----------------------------- | ----------------- |
@@ -16,6 +16,11 @@ M0 只登记实际引入的运行时/构建依赖；没有复制外部源码。�
 | TP-M0-010 | tsx               | 4.20.3  | DEPENDENCY | PASS: MIT        | TypeScript script runner      | M0                |
 | TP-M0-011 | TypeScript        | 5.9.2   | DEPENDENCY | PASS: Apache-2.0 | type checking/build           | M0                |
 | TP-M0-012 | typescript-eslint | 8.42.0  | DEPENDENCY | PASS: MIT        | TypeScript ESLint integration | M0                |
+| TP-M1-001 | Next.js           | 16.3.4  | DEPENDENCY | PASS: MIT        | App Router 产品壳与生产构建   | M1-T01            |
+| TP-M1-002 | React             | 19.2.8  | DEPENDENCY | PASS: MIT        | 产品壳组件运行时              | M1-T01            |
+| TP-M1-003 | React DOM         | 19.2.8  | DEPENDENCY | PASS: MIT        | 浏览器渲染                    | M1-T01            |
+| TP-M1-004 | @types/react      | 19.2.2  | DEPENDENCY | PASS: MIT        | React 类型定义                | M1-T01            |
+| TP-M1-005 | @types/react-dom  | 19.2.2  | DEPENDENCY | PASS: MIT        | React DOM 类型定义            | M1-T01            |
 
 核验依据：安装后的包元数据与 `pnpm licenses list --json`。本轮没有复制外部源码、资产或模型进入主仓；所有条目均为依赖模式。
 

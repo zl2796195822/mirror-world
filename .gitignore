@@ -2,6 +2,7 @@ node_modules/
 .pnpm-store/
 .turbo/
 dist/
+.next/
 coverage/
 .env
 .env.*
@@ -9,6 +10,7 @@ coverage/
 *.log
 *.tmp
 .DS_Store
+.playwright-cli/
 
 docker-data/
 postgres-data/
@@ -16,6 +18,7 @@ redis-data/
 minio-data/
 *.sqlite
 *.sqlite3
+*.tsbuildinfo
 
 # Secrets and sensitive local material
 secrets/

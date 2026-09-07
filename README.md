@@ -1,6 +1,6 @@
 # 镜界
 
-Persistent Digital Society 的工程仓库。当前只完成 M0 工程地基，不包含 M1 及后续世界、居民、3D、AI 或数字人功能。
+Persistent Digital Society 的工程仓库。当前执行 M1-T01：Next.js 产品壳；世界事实、居民、事件、身份、API、3D、AI 与模拟能力按后续任务逐步接入。
 
 ## 当前范围
 
@@ -9,6 +9,7 @@ Persistent Digital Society 的工程仓库。当前只完成 M0 工程地基，�
 - PostgreSQL、Redis、MinIO 本地依赖
 - Drizzle migration 与 `users` / `worlds` 最小种子
 - CI 基线：lint、typecheck、unit test、build
+- `apps/web`：M1-T01 深色、低密度、非游戏 HUD 产品壳
 
 ## 开发前提
 
@@ -24,6 +25,9 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+
+# 启动 M1-T01 产品壳
+pnpm --filter @mirror/web dev
 ```
 
 停止本地依赖：
@@ -32,4 +36,4 @@ pnpm build
 docker compose down
 ```
 
-M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)。后续里程碑必须在 M0 DoD 全部通过后单独执行。
+M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)，M1-T01 验证记录见 [`docs/verification/M1-T01-report.md`](docs/verification/M1-T01-report.md)。本轮不执行 M1-T02 或任何后续任务。

@@ -4,6 +4,7 @@ node_modules/
 .pnpm-store/
 .turbo/
 dist/
+.next/
 coverage/
 文档/
 UI/

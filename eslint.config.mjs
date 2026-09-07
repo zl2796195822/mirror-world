@@ -8,6 +8,8 @@ export default tseslint.config(
       "**/node_modules/**",
       "**/coverage/**",
       "**/.turbo/**",
+      "**/.next/**",
+      "**/.vercel/**",
     ],
   },
   eslint.configs.recommended,
