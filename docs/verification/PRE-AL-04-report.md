@@ -250,11 +250,17 @@ behavior and absence of runtime N+1.
 
 - First run: [foundation-ci run 34248913024](https://github.com/zl2796195822/mirror-world/actions/runs/34248913024)
   failed at `Prepare integration database`; later checks were skipped.
+- Diagnostic run: [foundation-ci run 34249840037](https://github.com/zl2796195822/mirror-world/actions/runs/34249840037)
+  failed specifically at `Seed integration database`, while migrations passed.
+- Root cause: the clean runner had not built `@mirror/contracts` before the
+  new DB seed path imported its runtime policy constant. Local prebuilt `dist`
+  had masked this. `@mirror/db db:seed` now explicitly builds that workspace
+  contract before running the seed.
 - The failure logs are not accessible anonymously from the public Actions
   page. Local Node 24/pnpm 9.15.4/PostgreSQL 18.6 equivalent setup passes.
-- The CI workflow now supplies the Compose database URL explicitly. A fresh
-  complete run on the pushed main commit is required before changing this
-  report to `PASS`.
+- The CI workflow supplies the Compose database URL explicitly and separates
+  migration/seed steps. A fresh complete run on the pushed fix is required
+  before changing this report to `PASS`.
 
 ## Risk and Remaining Blocker Audit
 

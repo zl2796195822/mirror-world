@@ -73,7 +73,7 @@ Last verified main/doc baseline: 05354a578cad3563f87d860d96119a866cc72bbe; PRE-A
 - PRE-AL-04 已建立 world-scoped、resident-scoped 的 `resident_runtime_states` durable authority；初始 location 显式来自 home fixture，初始 activity 显式为 `IDLE`，bootstrap 幂等且不覆盖已有 runtime state。
 - PRE-AL-04 已将 `location`、`activity`、`workObligation` 接入 `m3-observation-v1` 的 `AVAILABLE` union；work obligation 按 employment、固定 UTC 工作日 09:00–17:00 与 World Time 确定性推导，无业居民返回 `NO_CURRENT_OBLIGATION`。
 - PRE-AL-04 Life Engine 仍只读 Observation；没有 MOVE/SLEEP executor、ActionRequest submission、World Event、scheduler、replan 或事实写入路径。新增 migration 为 `packages/db/drizzle/0007_flawless_mach_iv.sql`。
-- PRE-AL-04 本地 frozen install、lint、typecheck、test、build、官方 audit、双次 db:setup 与 clean PostgreSQL 7/7 integration 均通过；GitHub Actions 首次 run `34248913024` 在 `Prepare integration database` 失败，当前状态保持 `IMPLEMENTED_UNVERIFIED`，待新 run 完整通过后再升格 PASS。
+- PRE-AL-04 本地 frozen install、lint、typecheck、test、build、官方 audit、双次 db:setup 与 clean PostgreSQL 7/7 integration 均通过；GitHub Actions run `34248913024`/`34249840037` 暴露 clean runner 未先构建 contracts 的 seed 边界，已由 `@mirror/db db:seed` 显式构建 contracts 修复，当前仍待新 run 完整通过后再升格 PASS。
 
 ## In progress
 
