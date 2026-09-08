@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-00 Restore Green Main Baseline (completed)
-Status: PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: ee0617dfd24e617979680184a7fb88c67d64af66
-Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
+Current task: PRE-AL-01 Kernel Action Outcome / Execution Feedback (completed)
+Status: PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: 58b81b30b9f05404084421708381c1ff1409e747
+Last verified main/doc baseline: 58b81b30b9f05404084421708381c1ff1409e747
 
 ## Completed
 
@@ -60,6 +60,9 @@ Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
 - PRE-AL-00 已定位 main CI 红灯根因：已提交的 `docs/verification/M3-T04-blocked-report.md` 未通过仓库 Prettier 检查；GitHub 两次失败 Run 实际停在 `Lint and format`，Typecheck 被跳过。
 - PRE-AL-00 仅格式化该报告并新增证据记录 `docs/verification/PRE-AL-00-diagnostic.md`；没有修改 workflow、TypeScript、依赖、lockfile、runtime、schema 或 migration。
 - PRE-AL-00 本地 frozen install、lint、typecheck、test、build、clean PostgreSQL M2 integration 4/4、M3-T01/T02/T03 回归与官方 npm audit 均通过；根因修复 run `34227318851` 与最终状态同步 run `34227826950` 均完整 `Success`，main CI baseline 已恢复 GREEN。
+- PRE-AL-01 已完成正式 `ActionRequest → World Kernel → KernelActionOutcome` 反馈闭环：durable status 只有 `COMMITTED`、`REJECTED`、`CONFLICT`；`DUPLICATE`/`IDEMPOTENCY_CONFLICT` 为调用处置；`TIMED_OUT` 不落 Kernel outcome。
+- PRE-AL-01 新增 outcome contract、0/1/N event association、同事务多事件提交、幂等结果复用、版本冲突/拒绝 reason code、executor rollback 与 world-scoped 复合约束；没有实现 Observation、ActorRef、Resource Bridge、MOVE/SLEEP、replan、scheduler 或 Action Loop。
+- PRE-AL-01 本地 frozen install、lint、typecheck、test、build、clean PostgreSQL 双次 setup、M2 integration 4/4、ActionOutcome integration 1/1、M3-T01/T02/T03 regression 与官方 npm audit 均通过；实现提交 `58b81b30b9f05404084421708381c1ff1409e747` 的 GitHub Actions run `34232707578` 完整 `Success`。
 
 ## In progress
 
@@ -68,12 +71,12 @@ Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
 
 ## Blocked
 
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：ActionOutcome/ActionResult、Observation/query、ActorRef、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：Observation/query、ActorRef、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭；PRE-AL-01 已关闭 ActionOutcome feedback blocker。
 
 ## P0/P1
 
 - P0：0。
-- `MIRROR-FIND-001` 为 P1，标记 `PRE-M3 REQUIRED FOLLOW-UP`：Action execution result / committed event feedback；不阻塞 M2 基础 Gate，但当前阻塞 M3-T04 Action Loop。
+- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay 仍为后续 P1 前置项。
 
 ## Known P2/P3
 
@@ -92,7 +95,8 @@ Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
 - 新增 migration `packages/db/drizzle/0002_wandering_moonstone.sql`：M2-T03 `action_requests` durable request metadata 与幂等唯一约束。
 - 新增 migration `packages/db/drizzle/0003_cold_viper.sql`：M2-T04 `world_events`、`world_seq`、append-only 与 sequence consistency triggers。
 - 新增 migration `packages/db/drizzle/0004_old_ares.sql`：M2-T05 `simulation_checkpoints`、版本/序列约束与 checkpoint position trigger。
-- 当前本地数据库为 `migrations=5`、`users=1`、`worlds=1`、`action_requests=0`；`world_events` 保留真实 integration 追加的 20 条账本事件，world 已恢复 `PAUSED/1x`，checkpoint 表为空，world fact 与 event ledger 均由 PostgreSQL 保存。
+- 新增 migrations `packages/db/drizzle/0005_previous_fabian_cortez.sql` 与 `0006_absurd_stephen_strange.sql`：Kernel Action Outcome、0/1/N event association 与 world-scoped 复合约束。
+- 当前本地数据库为 `migrations=7`、`users=1`、`worlds=1`、`action_requests=0`、`kernel_action_outcomes=0`、`kernel_action_outcome_events=0`；`world_events` 保留真实 integration 追加的 20 条账本事件，world 已恢复 `PAUSED/1x`，checkpoint 表为空，world fact 与 event ledger 均由 PostgreSQL 保存。
 
 ## API/Event changes
 
@@ -108,6 +112,7 @@ Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
 - M3-T03 新增 `packages/life-engine/src/goals.ts` 与 `goals.test.ts`，并从 `src/index.ts` 导出；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - M3-T04 只新增 `docs/verification/M3-T04-blocked-report.md`；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - PRE-AL-00 只新增 `docs/verification/PRE-AL-00-diagnostic.md`、`docs/verification/PRE-AL-00-report.md` 并格式化既有 M3-T04 blocked report；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
+- PRE-AL-01 新增 `kernel_action_outcomes`、`kernel_action_outcome_events`、Kernel Action Outcome contract/store、多事件事务提交与 PostgreSQL integration；没有新增 production dependency、Action API、Observation、Action Loop、replan 或 scheduler。
 
 ## Relevant ADRs
 
@@ -122,6 +127,7 @@ Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
 - `docs/adr/ADR-0005-m2-t04-event-ledger.md`：M2-T04 append-only Event Ledger、world-local seq 与 state+event 原子提交边界。
 - `docs/adr/ADR-0006-m2-t05-checkpoint-replay.md`：M2-T05 replay authority、checkpoint rebuildability、canonical hash 与版本边界。
 - `docs/adr/ADR-0007-m3-life-engine-needs-model-v1.md`：M3 Needs 的 CORE/DERIVED/DEFER、authority、lazy evaluation、pause、determinism、persistence/replay 与 T02 contract。
+- `docs/adr/ADR-0008-pre-al-01-kernel-action-outcome.md`：Kernel execution outcome status、调用处置/transport 分离、0/1/N event association、事务、幂等与 world isolation。
 - `docs/architecture/m3-needs-source-audit.md`：4/6/7 Needs 定义来源逐项审计。
 
 ## Verification report
@@ -144,9 +150,10 @@ Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
 - `docs/verification/M3-T04-blocked-report.md`（M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE；M3 仍 IN_PROGRESS）
 - `docs/verification/PRE-AL-00-diagnostic.md`（CI failure evidence）
 - `docs/verification/PRE-AL-00-report.md`（PRE-AL-00 = PASS；Main CI Baseline = GREEN）
+- `docs/verification/PRE-AL-01-report.md`（PRE-AL-01 = PASS；Kernel Action Outcome feedback loop）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `PRE-AL-01` only; record it, do not execute it in this task.
+- `PRE-AL-02 · Observation / Query Boundary` only; record it, do not execute it in this task.
 - `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains; no M3-T05, Pre-Action-Loop runtime fix, or later task was started.

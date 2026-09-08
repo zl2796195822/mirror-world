@@ -114,15 +114,15 @@ same-key isolation, world sequence isolation, and executor exception rollback.
 
 ## GitHub Actions and final state
 
-- Implementation commit: pending commit/push.
-- Final GitHub Actions run: pending; completion is not claimed until the full workflow
-  is green.
-- Final main HEAD: pending final CI-verified status synchronization.
-- Worktree status: pending final commit.
+- Implementation commit: `58b81b30b9f05404084421708381c1ff1409e747`
+- GitHub Actions: [foundation-ci run 34232707578](https://github.com/zl2796195822/mirror-world/actions/runs/34232707578), `Success`
+- CI-verified implementation HEAD: `58b81b30b9f05404084421708381c1ff1409e747`
+- Status synchronization: `PROJECT_STATE.md` and `MEMORY.md` now record `PRE-AL-01 = PASS` and the next allowed task only.
+- Worktree status before this documentation commit: clean.
 
 ## Project state and next task
 
-After the final GitHub Actions workflow is green, state synchronization will record:
+The green implementation workflow has been verified; state synchronization records:
 
 - `PRE-AL-01 = PASS`
 - `M3 = IN_PROGRESS`
