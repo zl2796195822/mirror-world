@@ -197,7 +197,7 @@ bounded replan, scheduler/driver, M3-T04, or M3-T05. The next formal task is
 ## Git and CI
 
 - Implementation commit: `3907e56414957f4fbc377868b18bf6b84fd5fbc9`
-- Final main HEAD: `3907e56414957f4fbc377868b18bf6b84fd5fbc9`
+- Final main HEAD: `7af03b64229f39a3658715ae1554e43305a0ecda`
 - GitHub Actions URL: https://github.com/zl2796195822/mirror-world/actions/runs/34237453432
 - Workflow result: `foundation-ci` Success; full workflow passed.
 - Worktree status: clean; `HEAD == origin/main`.

@@ -4,7 +4,7 @@ Current milestone: M3 Life Engine v1
 Current task: PRE-AL-02 Observation / Query Boundary (completed)
 Status: PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
 Last verified implementation commit: 3907e56414957f4fbc377868b18bf6b84fd5fbc9
-Last verified main/doc baseline: 3907e56414957f4fbc377868b18bf6b84fd5fbc9
+Last verified main/doc baseline: 7af03b64229f39a3658715ae1554e43305a0ecda
 
 ## Completed
 
