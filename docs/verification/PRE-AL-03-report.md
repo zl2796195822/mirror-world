@@ -145,8 +145,9 @@ in PRE-AL-03.
 
 ## Git and CI
 
-- Implementation commit: pending final documentation/CI synchronization
-- Final main HEAD: pending final documentation/CI synchronization
-- GitHub Actions URL: pending push
+- Implementation commit: `071862681346cf75d1a8e1715842f468cd04c7ea`
+- CI-verified implementation HEAD: `071862681346cf75d1a8e1715842f468cd04c7ea`
+- GitHub Actions: [foundation-ci run 34241852554](https://github.com/zl2796195822/mirror-world/actions/runs/34241852554), `Success`
+- Final main/doc sync HEAD: the subsequent documentation-only synchronization commit; the final local `git log -1` is the authoritative value.
 - Required final state: `PRE-AL-03 = PASS`, `M3 = IN_PROGRESS`,
   `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`

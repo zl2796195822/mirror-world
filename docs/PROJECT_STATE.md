@@ -3,8 +3,8 @@
 Current milestone: M3 Life Engine v1
 Current task: PRE-AL-03 Resident ActorRef + Resource Read Bridge (completed)
 Status: PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: pending final documentation/CI synchronization
-Last verified main/doc baseline: d1d66b092b60ece537209ba29f2321cfc968bdb8
+Last verified implementation commit: 071862681346cf75d1a8e1715842f468cd04c7ea
+Last verified main/doc baseline: 071862681346cf75d1a8e1715842f468cd04c7ea; final docs-only sync follows
 
 ## Completed
 
@@ -69,6 +69,7 @@ Last verified main/doc baseline: d1d66b092b60ece537209ba29f2321cfc968bdb8
 - PRE-AL-03 已新增共享 `ActorRef`、`ResidentResourceSnapshot`、`ResidentActorResolver` 与只读 `ResourceReadPort`；复用 T01 的 deterministic seed fixture，0 migration、0 外部 production dependency、无 Auth/Digital Identity 合并。
 - PRE-AL-03 已将 default Observation 的 `actorRef` 与 `resources` 从 `UNAVAILABLE` 接为 bounded batch `AVAILABLE`；`location`、`activity`、`workObligation` 与 `localContext` 仍为真实 `UNAVAILABLE`。
 - PRE-AL-03 已验证 30 resident stable ordering、world isolation、unknown resident errors、deep immutability、fixture drift protection、read-only Observation 与 clean PostgreSQL M2/ActionOutcome/Observation integration；报告为 `docs/verification/PRE-AL-03-report.md`。
+- PRE-AL-03 implementation commit `071862681346cf75d1a8e1715842f468cd04c7ea` 的 GitHub Actions `foundation-ci` run `34241852554` 真实 PASS；最终 docs-only sync 不改变 runtime。
 
 ## In progress
 

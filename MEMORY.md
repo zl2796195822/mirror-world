@@ -183,4 +183,5 @@
 - 新增 `@mirror/world-kernel` 的 M3 seed resolver/resource provider 与 batch bridge；30 residents 稳定 lexicographic ordering、world isolation、unknown resident errors、无随机/墙钟/LLM、无 permission 自动授权、无 persistence/migration。
 - `m3-observation-v1` 兼容扩展：actorRef/resources 变为 available；location/activity/workObligation/localContext 继续真实 unavailable；没有 ActionRequest、KernelActionOutcome、World Event、world_seq 或资源写入。
 - 本地 `pnpm install --frozen-lockfile`、lint、typecheck、test、build、双次 `db:setup`、官方 audit 均通过；clean disposable PostgreSQL 上 M2 integration 4/4、PRE-AL-01、PRE-AL-02 Observation 与 PRE-AL-03 30-resident read-only integration 均通过。
+- 实现提交 `071862681346cf75d1a8e1715842f468cd04c7ea` 的 GitHub Actions `foundation-ci` run `34241852554` 真实 PASS；docs-only sync 不改变 runtime。
 - 下一允许工作不能直接进入 M3-T04；必须先处理 authoritative location/activity/obligation source、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay，并重新做 30×30 Gate 审查。
