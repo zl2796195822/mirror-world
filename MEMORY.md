@@ -58,3 +58,13 @@
 - GitHub Actions 首次 run #16 因 clean runner 缺少上游 DB build 失败，run #17 因 API test 缺少自身 build 失败；通过 Turbo typecheck 依赖和 API test 自构建修复，最终 run #18 `34183633011` 对 `5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f` PASS。
 - M1-T04 实现 commit 为 `536cbb176e5fbce2e6ef5bdf6adcdfd26f9adb7d`，CI 修复 commits 为 `f68f091873a4e89b8ffd1ebd9b97335671678d94` 与 `5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f`。
 - 当前状态为 `M1-T04 = PASS`；下一阶段只记录为 `M1 Milestone Gate`，不执行 M2。
+
+## 2026-09-08 M1 Milestone Gate
+
+- 基于 main HEAD `15c02dfd43067bdfadb242e27ba777c4a78c7a19` 重新完成 M1-T01～T04 的架构、产品、认证、API、OpenAPI、安全、依赖、基础设施与 CI Gate，最终 `M1 = PASS`。
+- 真实浏览器复核了开发登录、刷新保持、logout、invalid cookie、五路由 direct URL、`/world` 诚实空状态、1440×1000 与 390×844 无横向溢出、键盘导航、生产 fail-closed；Console errors/warnings 均为 0。截图保存在 `docs/verification/screenshots/M1-milestone/`。
+- 真实 API 复核了 `/health`、`/ready`、`/worlds` 与隐藏短路径；停止 PostgreSQL 时 health=200、ready/worlds=503，统一 envelope/requestId 且无 stack；OpenAPI live response 逐字段校验通过。
+- `pnpm install --frozen-lockfile`、`pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build` 和官方 npm registry audit 均 PASS；HIGH=0、CRITICAL=0。基础设施 healthy，数据库仍为 `migrations=1`、`users=1`、`worlds=1`，`NO DATABASE CHANGE`。
+- Gate 发现并修正两处文档一致性问题：ADR-0001 的 SameSite 文案改为实际 `Strict`；第三方登记补充直接 production 依赖的官方 npm source links。没有修改 M1 业务代码、schema 或 migration。
+- 新增总体验收报告 `docs/verification/M1-milestone-report.md`；GitHub Actions 当前 HEAD run `34184147783` PASS。M2、World Kernel、Event Ledger、ActionRequest 与所有后续能力均未执行。
+- 未决 P2：文档库 manifest 文件数量/文件名不一致；GitHub Actions 外部 action 的 Node.js 20 runtime deprecation warning。下一允许任务只记录为 `M2-T01`，不得自动执行。

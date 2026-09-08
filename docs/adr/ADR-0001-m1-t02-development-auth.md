@@ -12,7 +12,7 @@ M1 需要一个可验证的开发身份入口，但真实身份、真人扫描�
 
 1. 通过 `AuthAdapter` 预留真实认证适配边界。
 2. 当前唯一实现只在 `NODE_ENV=development` 且 `MIRROR_DEV_AUTH=true` 时返回 M0 seed 用户 `dev@mirror.local`。
-3. 会话只使用 HttpOnly、SameSite=Lax 的开发 cookie；cookie 值仅为 seed 用户 ID，适配器会再次校验环境与 ID。
+3. 会话只使用 HttpOnly、SameSite=Strict 的开发 cookie；cookie 值仅为 seed 用户 ID，适配器会再次校验环境与 ID。
 4. Next.js production build 在 `MIRROR_DEV_AUTH=true` 时 fail-closed；生产环境不提供开发登录入口。
 5. 本任务不新增数据库 schema，不写入世界事实，PostgreSQL/Redis/World Kernel 均不改变。
 

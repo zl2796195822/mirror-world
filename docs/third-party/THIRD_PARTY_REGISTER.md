@@ -24,6 +24,20 @@
 | TP-M1-006 | Fastify           | 5.12.3  | DEPENDENCY | PASS: MIT        | API skeleton HTTP server      | M1-T04            |
 | TP-M1-007 | @fastify/swagger  | 9.8.1   | DEPENDENCY | PASS: MIT        | Fastify OpenAPI generation    | M1-T04            |
 
+## Source links
+
+以下为当前直接 production 依赖的官方 npm source；版本、许可证与用途仍以主表及 lockfile 为准。
+
+| Package          | Source                                             |
+| ---------------- | -------------------------------------------------- |
+| next             | <https://www.npmjs.com/package/next>               |
+| react            | <https://www.npmjs.com/package/react>              |
+| react-dom        | <https://www.npmjs.com/package/react-dom>          |
+| fastify          | <https://www.npmjs.com/package/fastify>            |
+| @fastify/swagger | <https://www.npmjs.com/package/@fastify%2Fswagger> |
+| drizzle-orm      | <https://www.npmjs.com/package/drizzle-orm>        |
+| postgres         | <https://www.npmjs.com/package/postgres>           |
+
 核验依据：安装后的包元数据与 `pnpm licenses list --json`。本轮没有复制外部源码、资产或模型进入主仓；所有条目均为依赖模式。
 
 `pnpm audit --prod`：UNVERIFIED。当前 npm 镜像 `https://registry.npmmirror.com` 未提供 audit endpoint，命令返回 `ERR_PNPM_AUDIT_ENDPOINT_NOT_EXISTS`；这不等同于“无漏洞”。

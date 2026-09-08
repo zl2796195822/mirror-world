@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M1
-Current task: M1-T04 API skeleton
+Current task: M1 Milestone Gate
 Status: PASS
-Last verified implementation commit: 5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f
+Last verified implementation commit: 15c02dfd43067bdfadb242e27ba777c4a78c7a19
 
 ## Completed
 
@@ -22,10 +22,14 @@ Last verified implementation commit: 5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f
 - M1-T04 `/worlds` 只读 PostgreSQL 世界元信息；`/health` 不访问依赖；`/ready` 与世界读取在依赖不可用时 fail-closed。
 - M1-T04 本地 install、lint、typecheck、test、build、真实 API runtime、浏览器回归与官方 production audit 均 PASS。
 - GitHub Actions `foundation-ci` 对 M1-T04 最终代码验证提交真实执行并 PASS：run `34183633011`。
+- M1 Milestone Gate 基于当前 main HEAD 重新完成架构、产品、认证、API、OpenAPI、安全、依赖、基础设施与 CI 复核，结果为 `M1 = PASS`。
+- 本轮真实失库验证确认 `/health` 保持 200，`/ready` 与 `/worlds` 均 503 且使用统一 error envelope/requestId。
+- 本轮重新执行 frozen install、lint、typecheck、test、build 与官方 npm audit，均 PASS；P0=0、P1=0、HIGH=0、CRITICAL=0。
+- 本轮补齐第三方登记的官方 source links，并修正 ADR-0001 的 SameSite 文案与实际 Strict cookie 实现一致。
 
 ## In progress
 
-- M1-T04 已完成并通过本地验证、真实 API 验收、浏览器回归、官方 production audit 与 GitHub Actions；本轮停止在 M1 Milestone Gate，不进入 M2。
+- 无；M1 已完成 Milestone Gate 并通过，本轮停止于 M1，不进入 M2。
 
 ## Blocked
 
@@ -38,7 +42,8 @@ Last verified implementation commit: 5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f
 ## Known P2/P3
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
-- M2 及后续任务均未实现；需先完成独立的 M1 Milestone Gate。
+- GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
+- M2 及后续任务均未实现；下一允许任务只记录为 M2-T01。
 
 ## Migrations since last state
 
@@ -62,8 +67,9 @@ Last verified implementation commit: 5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f
 - `docs/verification/M1-T03-report.md`
 - `docs/verification/M1-T04-report.md`
 - `docs/verification/M1-T01-report.md`
+- `docs/verification/M1-milestone-report.md`
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M1 Milestone Gate；只进行 M1 一致性门禁确认，不执行 M2。
+- M2-T01；只记录，不执行。
