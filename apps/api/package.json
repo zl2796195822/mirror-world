@@ -9,7 +9,7 @@
     "generate:openapi": "node scripts/generate-openapi.mjs && pnpm exec prettier --write openapi.json",
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --test scripts/*.test.mjs"
+    "test": "pnpm run build && node --test scripts/*.test.mjs"
   },
   "dependencies": {
     "@fastify/swagger": "9.8.1",
