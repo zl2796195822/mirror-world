@@ -46,3 +46,24 @@ export {
   type WorldKernelTransaction,
   type WorldStatePatch,
 } from "./world-events-store.js";
+export {
+  findWorldCheckpoint,
+  persistWorldCheckpoint,
+  WorldCheckpointStoreError,
+  type WorldCheckpointDatabase,
+  type WorldCheckpointPersistenceResult,
+  type WorldCheckpointRecord,
+} from "./world-checkpoint-store.js";
+export {
+  replayFromCheckpoint,
+  replaySummaryHash,
+  replayWorldEvents,
+  WorldReplayError,
+  REPLAY_SCHEMA_VERSION,
+  type ReplayCheckpointInput,
+  type ReplayEvent,
+  type ReplayResult,
+  type ReplaySeed,
+  type ReplaySnapshot,
+  type ReplayState,
+} from "./world-replay.js";

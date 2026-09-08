@@ -121,3 +121,32 @@ export const worldEvents = pgTable(
     unique("world_events_world_id_seq_unique").on(table.worldId, table.seq),
   ],
 );
+
+export const simulationCheckpoints = pgTable(
+  "simulation_checkpoints",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    worldSeq: bigint("world_seq", { mode: "bigint" }).notNull(),
+    schemaVersion: integer("schema_version").notNull().default(1),
+    snapshot: jsonb("snapshot").notNull(),
+    snapshotUri: text("snapshot_uri"),
+    checksum: text("checksum").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("simulation_checkpoints_world_id_seq_unique").on(
+      table.worldId,
+      table.worldSeq,
+    ),
+    check("simulation_checkpoints_seq_check", sql`${table.worldSeq} >= 0`),
+    check(
+      "simulation_checkpoints_schema_version_check",
+      sql`${table.schemaVersion} >= 1`,
+    ),
+  ],
+);
