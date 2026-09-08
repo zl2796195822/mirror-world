@@ -15,3 +15,22 @@ export {
   type ResidentNeedEvaluationInput,
   type ResidentNeedProfile,
 } from "./needs.js";
+export {
+  GOAL_POLICY_V1,
+  GOAL_POLICY_VERSION,
+  evaluateGoals,
+  evaluateResidentsGoals,
+  type ActiveGoal,
+  type BatchGoalEvaluationInput,
+  type GoalCandidate,
+  type GoalContext,
+  type GoalEvaluation,
+  type GoalEvaluationInput,
+  type GoalPolicy,
+  type GoalReasonCode,
+  type GoalResident,
+  type GoalSource,
+  type GoalType,
+  type GoalWorkObligation,
+  type ResidentGoalEvaluationInput,
+} from "./goals.js";
