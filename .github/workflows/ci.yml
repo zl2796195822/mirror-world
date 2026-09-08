@@ -33,8 +33,11 @@ jobs:
       - name: Start PostgreSQL for integration tests
         run: docker compose up -d --wait postgres
 
-      - name: Prepare integration database
-        run: DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm db:setup
+      - name: Apply integration database migrations
+        run: DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm db:migrate
+
+      - name: Seed integration database
+        run: DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm db:seed
 
       - name: Lint and format
         run: pnpm lint
