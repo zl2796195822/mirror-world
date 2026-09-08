@@ -9,6 +9,11 @@ import {
   type WorldObservationSnapshot,
 } from "@mirror/contracts";
 import { createDb, generateResidentSeed, worlds } from "@mirror/db";
+import {
+  createM3SeedResidentBridge,
+  ResidentBridgeError,
+  type ResidentBridgeFactory,
+} from "./resident-bridges.js";
 
 export const OBSERVATION_QUERY_POLICY = {
   version: "m3-observation-v1",
@@ -28,7 +33,9 @@ export type ObservationQueryDatabase = ReturnType<typeof createDb>["db"];
 export type ObservationResidentSource = (input: {
   worldId: string;
   worldSeed: string;
-}) => readonly ObservationResidentRecord[];
+}) =>
+  | readonly ObservationResidentRecord[]
+  | Promise<readonly ObservationResidentRecord[]>;
 
 export type ObservationQueryErrorCode =
   | "WORLD_NOT_FOUND"
@@ -36,7 +43,10 @@ export type ObservationQueryErrorCode =
   | "WORLD_MISMATCH"
   | "OBSERVATION_SOURCE_UNAVAILABLE"
   | "STALE_READ"
-  | "INVALID_QUERY";
+  | "INVALID_QUERY"
+  | "ACTOR_REF_UNAVAILABLE"
+  | "RESOURCE_SOURCE_UNAVAILABLE"
+  | "RESOURCE_VERSION_INVALID";
 
 export class ObservationQueryError extends Error {
   constructor(
@@ -105,6 +115,16 @@ function unavailableSourceError(error: unknown): ObservationQueryError {
     "OBSERVATION_SOURCE_UNAVAILABLE",
     `Observation source is unavailable: ${message}`,
   );
+}
+
+function bridgeSourceError(error: unknown): ObservationQueryError {
+  if (error instanceof ObservationQueryError) {
+    return error;
+  }
+  if (error instanceof ResidentBridgeError) {
+    return new ObservationQueryError(error.code, error.message);
+  }
+  return unavailableSourceError(error);
 }
 
 async function readWorld(
@@ -179,7 +199,7 @@ export function createObservationQuery(
           residentIds,
         });
       } catch (error) {
-        throw unavailableSourceError(error);
+        throw bridgeSourceError(error);
       }
 
       const residentsById = new Map<string, ObservationResidentRecord>();
@@ -215,15 +235,38 @@ export function createObservationQuery(
 
 export function createPostgresObservationQuery(
   database: ObservationQueryDatabase,
-  options: Readonly<{ residentSource?: ObservationResidentSource }> = {},
+  options: Readonly<{
+    residentSource?: ObservationResidentSource;
+    residentBridgeFactory?: ResidentBridgeFactory;
+  }> = {},
 ): ObservationQueryPort {
+  const usingDefaultResidentSource = options.residentSource === undefined;
   const residentSource =
     options.residentSource ??
     ((input) =>
       generateResidentSeed({
         worldId: input.worldId,
         seed: input.worldSeed,
-      }).residents);
+      }).residents.map(
+        ({
+          residentId,
+          worldId,
+          identityKind,
+          homeLocationId,
+          profile,
+          employment,
+        }) => ({
+          residentId,
+          worldId,
+          identityKind,
+          homeLocationId,
+          profile,
+          employment,
+        }),
+      ));
+  const residentBridgeFactory =
+    options.residentBridgeFactory ??
+    (usingDefaultResidentSource ? createM3SeedResidentBridge : undefined);
 
   const source: ObservationSource = {
     async readWorld(worldId) {
@@ -256,13 +299,58 @@ export function createPostgresObservationQuery(
       };
     },
     async readResidents(input) {
-      const residents = residentSource({
+      const residents = await residentSource({
         worldId: input.worldId,
         worldSeed: input.worldSeed,
       });
-      return residents.filter(({ residentId }) =>
+      const selectedResidents = residents.filter(({ residentId }) =>
         input.residentIds.includes(residentId),
       );
+      if (selectedResidents.length === 0) {
+        return selectedResidents;
+      }
+      if (!residentBridgeFactory) {
+        return selectedResidents;
+      }
+
+      const bridge = residentBridgeFactory({
+        worldId: input.worldId,
+        worldSeed: input.worldSeed,
+      });
+      const [actorRefs, resources] = await Promise.all([
+        bridge.actorResolver.resolveResidentActorRefs({
+          worldId: input.worldId,
+          residentIds: selectedResidents.map(({ residentId }) => residentId),
+        }),
+        bridge.resourceReader.getResidentResourceSnapshots({
+          worldId: input.worldId,
+          residentIds: selectedResidents.map(({ residentId }) => residentId),
+        }),
+      ]);
+      const actorRefsByResidentId = new Map(
+        actorRefs.map((actorRef) => [actorRef.residentId, actorRef]),
+      );
+      const resourcesByResidentId = new Map(
+        resources.map((resource) => [resource.residentId, resource]),
+      );
+
+      return selectedResidents.map((resident) => {
+        const actorRef = actorRefsByResidentId.get(resident.residentId);
+        const resource = resourcesByResidentId.get(resident.residentId);
+        if (!actorRef) {
+          throw new ResidentBridgeError(
+            "ACTOR_REF_UNAVAILABLE",
+            `ActorRef for resident ${resident.residentId} was not returned`,
+          );
+        }
+        if (!resource) {
+          throw new ResidentBridgeError(
+            "RESOURCE_SOURCE_UNAVAILABLE",
+            `Resources for resident ${resident.residentId} were not returned`,
+          );
+        }
+        return { ...resident, actorRef, resources: resource };
+      });
     },
   };
 

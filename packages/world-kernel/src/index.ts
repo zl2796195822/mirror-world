@@ -69,6 +69,19 @@ export {
   type ObservationSource,
 } from "./observation-query-store.js";
 export {
+  createM3ResidentActorResolver,
+  createM3ResidentResourceReadPort,
+  createM3SeedResourceReadPort,
+  createM3SeedResidentActorResolver,
+  createM3SeedResidentBridge,
+  ResidentBridgeError,
+  RESIDENT_BRIDGE_MAX_BATCH_SIZE,
+  type M3SeedBridgeInput,
+  type ResidentBridge,
+  type ResidentBridgeErrorCode,
+  type ResidentBridgeFactory,
+} from "./resident-bridges.js";
+export {
   findWorldCheckpoint,
   persistWorldCheckpoint,
   WorldCheckpointStoreError,

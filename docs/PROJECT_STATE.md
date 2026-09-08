@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-02 Observation / Query Boundary (completed)
-Status: PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: 3907e56414957f4fbc377868b18bf6b84fd5fbc9
-Last verified main/doc baseline: 7af03b64229f39a3658715ae1554e43305a0ecda
+Current task: PRE-AL-03 Resident ActorRef + Resource Read Bridge (completed)
+Status: PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: pending final documentation/CI synchronization
+Last verified main/doc baseline: d1d66b092b60ece537209ba29f2321cfc968bdb8
 
 ## Completed
 
@@ -66,6 +66,9 @@ Last verified main/doc baseline: 7af03b64229f39a3658715ae1554e43305a0ecda
 - PRE-AL-02 已建立确定性、bounded、world-scoped、resident-scoped、read-only 的 Decision Observation / Query Boundary；Life Engine 只依赖 Observation contract/port，不直接依赖 DB、SQL、Drizzle 或 Event Ledger。
 - PRE-AL-02 明确以现有 `worlds` authority 与 T01 30-resident fixture 构建 `m3-observation-v1` snapshot，携带 `sourceWorldSeq`；ActorRef、location/activity runtime、obligation source、Resource Bridge 与 local context 未伪造，按 contract 返回 unavailable capability。
 - PRE-AL-02 本地完整回归、clean PostgreSQL M2 integration 4/4、PRE-AL-01、M3-T01/T02/T03、官方 audit 与 GitHub Actions run `34237453432` 均通过；实现提交为 `3907e56414957f4fbc377868b18bf6b84fd5fbc9`。
+- PRE-AL-03 已新增共享 `ActorRef`、`ResidentResourceSnapshot`、`ResidentActorResolver` 与只读 `ResourceReadPort`；复用 T01 的 deterministic seed fixture，0 migration、0 外部 production dependency、无 Auth/Digital Identity 合并。
+- PRE-AL-03 已将 default Observation 的 `actorRef` 与 `resources` 从 `UNAVAILABLE` 接为 bounded batch `AVAILABLE`；`location`、`activity`、`workObligation` 与 `localContext` 仍为真实 `UNAVAILABLE`。
+- PRE-AL-03 已验证 30 resident stable ordering、world isolation、unknown resident errors、deep immutability、fixture drift protection、read-only Observation 与 clean PostgreSQL M2/ActionOutcome/Observation integration；报告为 `docs/verification/PRE-AL-03-report.md`。
 
 ## In progress
 
@@ -74,8 +77,9 @@ Last verified main/doc baseline: 7af03b64229f39a3658715ae1554e43305a0ecda
 
 ## Blocked
 
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：Observation/query、ActorRef、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭；PRE-AL-01 已关闭 ActionOutcome feedback blocker。
-- PRE-AL-02 已关闭 Observation / Query Boundary blocker；下一正式任务为 `PRE-AL-03 · ActorRef + Resource Bridge`。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：MOVE/SLEEP semantics、authoritative location/activity/obligation、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭；PRE-AL-01 已关闭 ActionOutcome feedback blocker。
+- PRE-AL-02 已关闭 Observation / Query Boundary blocker；PRE-AL-03 已关闭 ActorRef 与 read-only Resource Bridge blocker。
+- PRE-AL-03 后，下一允许工作必须先明确纳入 location/activity/obligation authority re-evaluation，不得直接执行 M3-T04、M3-T05 或后续任务。
 
 ## P0/P1
 
@@ -91,7 +95,7 @@ Last verified main/doc baseline: 7af03b64229f39a3658715ae1554e43305a0ecda
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，列为 P3，沿用 M0 文档基线记录。
 - M3、Life、Memory、Relationship、Economy、AI、3D、Digital Identity、Offline Simulation 及其他后续任务均未执行。
-- M3-T02 只完成纯 evaluator；ActionResult/Observation/ActorRef、MOVE/SLEEP completion、bounded replan、scheduler/driver 与完整 domain replay 仍是后续 M3 前置边界。
+- M3-T02 只完成纯 evaluator；ActionResult/Observation/ActorRef/Resource Bridge 已关闭；MOVE/SLEEP completion、authoritative location/activity/obligation、bounded replan、scheduler/driver 与完整 domain replay 仍是后续 M3 前置边界。
 
 ## Migrations since last state
 
@@ -117,6 +121,7 @@ Last verified main/doc baseline: 7af03b64229f39a3658715ae1554e43305a0ecda
 - M3-T04 只新增 `docs/verification/M3-T04-blocked-report.md`；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - PRE-AL-00 只新增 `docs/verification/PRE-AL-00-diagnostic.md`、`docs/verification/PRE-AL-00-report.md` 并格式化既有 M3-T04 blocked report；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - PRE-AL-01 新增 `kernel_action_outcomes`、`kernel_action_outcome_events`、Kernel Action Outcome contract/store、多事件事务提交与 PostgreSQL integration；没有新增 production dependency、Action API、Observation、Action Loop、replan 或 scheduler。
+- PRE-AL-03 新增 shared ActorRef/resource contracts、M3 seed resolver/resource bridge 与 Observation capability wiring；没有新增 migration、table、Action API、World Event、ActionRequest、KernelActionOutcome 或 Action Loop。
 
 ## Relevant ADRs
 
@@ -155,9 +160,10 @@ Last verified main/doc baseline: 7af03b64229f39a3658715ae1554e43305a0ecda
 - `docs/verification/PRE-AL-00-diagnostic.md`（CI failure evidence）
 - `docs/verification/PRE-AL-00-report.md`（PRE-AL-00 = PASS；Main CI Baseline = GREEN）
 - `docs/verification/PRE-AL-01-report.md`（PRE-AL-01 = PASS；Kernel Action Outcome feedback loop）
+- `docs/verification/PRE-AL-03-report.md`（PRE-AL-03 = PASS；Resident ActorRef + Resource Read Bridge）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `PRE-AL-03 · ActorRef + Resource Bridge` only; record it, do not execute it in this task.
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains; no PRE-AL-03 implementation, M3-T05, or later task was started.
+- No M3-T04 or later task is authorized yet. The next task must explicitly close or re-scope authoritative location/activity/obligation source together with MOVE/SLEEP semantics, then re-run the Pre-Action-Loop blocker audit.
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains; PRE-AL-04/M3-T05 and later tasks were not started.

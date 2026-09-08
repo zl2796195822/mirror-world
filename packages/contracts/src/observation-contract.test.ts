@@ -73,4 +73,49 @@ describe("WorldObservationSnapshot contract", () => {
     expect(snapshot).not.toHaveProperty("snapshotCreatedAt");
     expect(snapshot).not.toHaveProperty("createdAt");
   });
+
+  it("accepts formal ActorRef and resource capabilities without changing the policy version", () => {
+    const snapshot = buildWorldObservationSnapshot({
+      world,
+      resident: {
+        ...resident,
+        actorRef: {
+          worldId: world.id,
+          residentId: resident.residentId,
+          actorId: "00000000-0000-4000-8000-000000000011",
+          kind: "NATIVE_RESIDENT",
+        },
+        resources: {
+          worldId: world.id,
+          residentId: resident.residentId,
+          cashCents: 200_000,
+          foodUnits: 2,
+          version: 0,
+        },
+      },
+    });
+
+    expect(snapshot.policyVersion).toBe("m3-observation-v1");
+    expect(snapshot.actorRef).toMatchObject({
+      status: "AVAILABLE",
+      actorRef: {
+        worldId: world.id,
+        residentId: resident.residentId,
+        kind: "NATIVE_RESIDENT",
+      },
+    });
+    expect(snapshot.resources).toEqual({
+      status: "AVAILABLE",
+      snapshot: {
+        worldId: world.id,
+        residentId: resident.residentId,
+        cashCents: 200_000,
+        foodUnits: 2,
+        version: 0,
+      },
+    });
+    expect(snapshot.location.status).toBe("UNAVAILABLE");
+    expect(snapshot.activity.status).toBe("UNAVAILABLE");
+    expect(snapshot.workObligation.status).toBe("UNAVAILABLE");
+  });
 });

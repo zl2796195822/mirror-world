@@ -6,6 +6,20 @@ export {
   type ActionType,
 } from "./action-contract.js";
 export {
+  actorRefSchema,
+  parseActorRef,
+  parseResidentResourceSnapshot,
+  residentResourceSnapshotSchema,
+  type ActorRef,
+  type ResidentActorBatchQueryInput,
+  type ResidentActorQueryInput,
+  type ResidentActorResolver,
+  type ResidentResourceBatchQueryInput,
+  type ResidentResourceQueryInput,
+  type ResidentResourceSnapshot,
+  type ResourceReadPort,
+} from "./resident-bridge-contract.js";
+export {
   kernelActionConflictReasonCodeSchema,
   kernelActionOutcomeEventSchema,
   kernelActionOutcomeSchema,

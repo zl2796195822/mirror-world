@@ -175,3 +175,12 @@
 - ActorRef、Resource Bridge、location/activity runtime、formal obligation source、MOVE/SLEEP、bounded replan、scheduler/driver 与 full replay 仍未实现；未伪造对应 truth。
 - 本地完整回归、clean PostgreSQL M2 integration 4/4、PRE-AL-01、M3-T01/T02/T03、官方 audit 与 GitHub Actions run `34237453432` 均 PASS；实现提交 `3907e56414957f4fbc377868b18bf6b84fd5fbc9`。
 - 下一允许任务：`PRE-AL-03 · ActorRef + Resource Bridge`；本轮不执行。
+
+## 2026-09-08 PRE-AL-03
+
+- 按用户正式授权完成 `Resident ActorRef + Resource Read Bridge`，报告为 `docs/verification/PRE-AL-03-report.md`；M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`。
+- 新增 `@mirror/contracts` 的 deep-immutable `ActorRef` 与 `ResidentResourceSnapshot`、`ResidentActorResolver`、只读 `ResourceReadPort`；复用 T01 deterministic fixture，Resident/Auth/Digital/Actor 概念保持分离。
+- 新增 `@mirror/world-kernel` 的 M3 seed resolver/resource provider 与 batch bridge；30 residents 稳定 lexicographic ordering、world isolation、unknown resident errors、无随机/墙钟/LLM、无 permission 自动授权、无 persistence/migration。
+- `m3-observation-v1` 兼容扩展：actorRef/resources 变为 available；location/activity/workObligation/localContext 继续真实 unavailable；没有 ActionRequest、KernelActionOutcome、World Event、world_seq 或资源写入。
+- 本地 `pnpm install --frozen-lockfile`、lint、typecheck、test、build、双次 `db:setup`、官方 audit 均通过；clean disposable PostgreSQL 上 M2 integration 4/4、PRE-AL-01、PRE-AL-02 Observation 与 PRE-AL-03 30-resident read-only integration 均通过。
+- 下一允许工作不能直接进入 M3-T04；必须先处理 authoritative location/activity/obligation source、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay，并重新做 30×30 Gate 审查。

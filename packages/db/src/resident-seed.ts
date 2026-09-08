@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import type { ResidentResourceSnapshot as ContractResidentResourceSnapshot } from "@mirror/contracts";
 
 export const RESIDENT_SEED_GENERATOR_VERSION = "m3-t01-v1" as const;
 export const RESIDENT_SEED_CONFIG_VERSION = "first-street-v1" as const;
@@ -40,13 +41,7 @@ export type ResidentEmploymentSeed =
       role: null;
     }>;
 
-export type ResidentResourceSnapshot = Readonly<{
-  residentId: string;
-  worldId: string;
-  cashCents: number;
-  foodUnits: number;
-  version: number;
-}>;
+export type ResidentResourceSnapshot = ContractResidentResourceSnapshot;
 
 export type ResidentLocationKind =
   | "HOME"

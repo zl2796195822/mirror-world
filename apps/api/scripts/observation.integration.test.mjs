@@ -62,10 +62,13 @@ test("Observation query is read-only, deterministic, bounded, and world-versione
     assert.ok(
       first.every(
         ({ actorRef, location, activity, resources }) =>
-          actorRef.status === "UNAVAILABLE" &&
+          actorRef.status === "AVAILABLE" &&
           location.status === "UNAVAILABLE" &&
           activity.status === "UNAVAILABLE" &&
-          resources.status === "UNAVAILABLE",
+          resources.status === "AVAILABLE" &&
+          resources.snapshot.cashCents >= 0 &&
+          resources.snapshot.foodUnits >= 0 &&
+          resources.snapshot.version === 0,
       ),
     );
     assert.equal(Object.isFrozen(first[0]), true);

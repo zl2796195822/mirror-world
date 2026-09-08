@@ -1,4 +1,12 @@
 import { z } from "zod";
+import {
+  actorRefSchema,
+  parseActorRef,
+  parseResidentResourceSnapshot,
+  residentResourceSnapshotSchema,
+  type ActorRef,
+  type ResidentResourceSnapshot,
+} from "./resident-bridge-contract.js";
 
 export const OBSERVATION_POLICY_VERSION = "m3-observation-v1" as const;
 
@@ -33,6 +41,20 @@ const unavailableCapabilitySchema = z
   .object({
     status: z.literal("UNAVAILABLE"),
     reasonCode: observationUnavailableReasonCodeSchema,
+  })
+  .strict();
+
+const availableActorRefCapabilitySchema = z
+  .object({
+    status: z.literal("AVAILABLE"),
+    actorRef: actorRefSchema,
+  })
+  .strict();
+
+const availableResourceCapabilitySchema = z
+  .object({
+    status: z.literal("AVAILABLE"),
+    snapshot: residentResourceSnapshotSchema,
   })
   .strict();
 
@@ -92,9 +114,12 @@ export const worldObservationSnapshotSchema = z
     worldStatus: observationWorldStatusSchema,
     sourceWorldSeq: z.string().regex(/^\d+$/),
     self: residentSelfSchema,
-    actorRef: unavailableCapabilitySchema.extend({
-      reasonCode: z.literal("ACTOR_REF_PENDING"),
-    }),
+    actorRef: z.union([
+      availableActorRefCapabilitySchema,
+      unavailableCapabilitySchema.extend({
+        reasonCode: z.literal("ACTOR_REF_PENDING"),
+      }),
+    ]),
     location: unavailableCapabilitySchema.extend({
       reasonCode: z.literal("CURRENT_LOCATION_UNAVAILABLE"),
     }),
@@ -104,9 +129,12 @@ export const worldObservationSnapshotSchema = z
     workObligation: unavailableCapabilitySchema.extend({
       reasonCode: z.literal("OBLIGATION_SOURCE_UNAVAILABLE"),
     }),
-    resources: unavailableCapabilitySchema.extend({
-      reasonCode: z.literal("RESOURCE_BRIDGE_PENDING"),
-    }),
+    resources: z.union([
+      availableResourceCapabilitySchema,
+      unavailableCapabilitySchema.extend({
+        reasonCode: z.literal("RESOURCE_BRIDGE_PENDING"),
+      }),
+    ]),
     localContext: localContextSchema,
   })
   .strict();
@@ -147,6 +175,8 @@ export type ObservationResidentRecord = Readonly<{
     workplaceId: string | null;
     role: "OFFICE_ASSISTANT" | "CAFE_BARISTA" | "STORE_CLERK" | null;
   }>;
+  actorRef?: ActorRef;
+  resources?: ResidentResourceSnapshot;
 }>;
 export type WorldObservationSnapshot = Readonly<
   z.infer<typeof worldObservationSnapshotSchema>
@@ -200,6 +230,32 @@ export function buildWorldObservationSnapshot(input: {
     throw new Error("Observation worldSeq must be non-negative");
   }
 
+  const actorRef = input.resident.actorRef
+    ? parseActorRef(input.resident.actorRef)
+    : null;
+  if (
+    actorRef &&
+    (actorRef.worldId !== input.world.id ||
+      actorRef.residentId !== input.resident.residentId)
+  ) {
+    throw new Error(
+      "Observation ActorRef belongs to a different resident or world",
+    );
+  }
+
+  const resources = input.resident.resources
+    ? parseResidentResourceSnapshot(input.resident.resources)
+    : null;
+  if (
+    resources &&
+    (resources.worldId !== input.world.id ||
+      resources.residentId !== input.resident.residentId)
+  ) {
+    throw new Error(
+      "Observation resources belong to a different resident or world",
+    );
+  }
+
   return parseWorldObservationSnapshot({
     policyVersion: OBSERVATION_POLICY_VERSION,
     worldId: input.world.id,
@@ -228,7 +284,9 @@ export function buildWorldObservationSnapshot(input: {
       },
       employment: { ...input.resident.employment },
     },
-    actorRef: { status: "UNAVAILABLE", reasonCode: "ACTOR_REF_PENDING" },
+    actorRef: actorRef
+      ? { status: "AVAILABLE", actorRef }
+      : { status: "UNAVAILABLE", reasonCode: "ACTOR_REF_PENDING" },
     location: {
       status: "UNAVAILABLE",
       reasonCode: "CURRENT_LOCATION_UNAVAILABLE",
@@ -241,7 +299,9 @@ export function buildWorldObservationSnapshot(input: {
       status: "UNAVAILABLE",
       reasonCode: "OBLIGATION_SOURCE_UNAVAILABLE",
     },
-    resources: { status: "UNAVAILABLE", reasonCode: "RESOURCE_BRIDGE_PENDING" },
+    resources: resources
+      ? { status: "AVAILABLE", snapshot: resources }
+      : { status: "UNAVAILABLE", reasonCode: "RESOURCE_BRIDGE_PENDING" },
     localContext: {
       status: "UNAVAILABLE",
       reasonCode: "LOCAL_CONTEXT_UNAVAILABLE",
