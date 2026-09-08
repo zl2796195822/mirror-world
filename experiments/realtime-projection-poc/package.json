@@ -1,0 +1,50 @@
+{
+  "name": "@mirror/realtime-projection-poc",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "server": "tsx server/index.ts",
+    "build": "tsc --noEmit && vite build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test server/tests/*.test.ts",
+    "benchmark:stress": "tsx scripts/stress-benchmark.ts",
+    "benchmark:aoi": "tsx scripts/aoi-benchmark.ts"
+  },
+  "dependencies": {
+    "@colyseus/core": "^0.16.26",
+    "@colyseus/schema": "^3.0.76",
+    "@colyseus/ws-transport": "^0.16.5",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@types/ws": "^8.18.1",
+    "colyseus.js": "^0.16.22",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "three": "^0.185.1",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.5.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@types/three": "^0.185.4",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "nanoid": "3.3.18"
+    },
+    "patchedDependencies": {
+      "nanoid@3.3.18": "patches/nanoid@3.3.18.patch"
+    }
+  }
+}

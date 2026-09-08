@@ -1,0 +1,9 @@
+diff --git a/index.js b/index.js
+index 565ab45f0f9e997381a4134787ce3fe77b997cce..ff046d7fcf290ad13a46119a85b2e87bd091cd8e 100644
+--- a/index.js
++++ b/index.js
+@@ -61,3 +61,4 @@ let nanoid = (size = 21) => {
+ }
+ 
+ export { nanoid, customAlphabet, customRandom, urlAlphabet, random }
++export default nanoid;
