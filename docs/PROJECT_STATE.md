@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M1
-Current task: M1-T02 开发身份
-Status: PASS
-Last verified implementation commit: 465d7b7e5f5e8027c40e57f037295625e06f3344
+Current task: M1-T03 World Overview
+Status: IN_PROGRESS
+Last verified implementation commit: pending
 
 ## Completed
 
@@ -16,10 +16,12 @@ Last verified implementation commit: 465d7b7e5f5e8027c40e57f037295625e06f3344
 - 已实现 M1-T02 开发身份：开发环境 seed 用户、Auth Adapter 边界、HttpOnly 会话、受保护路由与生产 fail-closed 守门。
 - 本地 lint、typecheck、test、build、开发/生产浏览器验收均通过。
 - GitHub Actions `foundation-ci` 已对 M1-T02 最终验证提交真实执行并 PASS：run `34176497873`，install、lint、typecheck、unit tests、build 全部成功。
+- M1-T03 World Overview 已在现有认证产品壳中实现诚实的世界时间、运行状态、30 居民占位与最近事件空状态。
+- M1-T03 未连接 API、数据库、Redis 或 World Kernel；没有世界事实写入，也没有新增依赖。
 
 ## In progress
 
-- M1-T02 已完成并通过本地、浏览器与 GitHub Actions 验证。
+- M1-T03 实现与本地/浏览器验证已完成，等待独立提交后的 GitHub Actions 结果。
 
 ## Blocked
 
@@ -32,16 +34,16 @@ Last verified implementation commit: 465d7b7e5f5e8027c40e57f037295625e06f3344
 ## Known P2/P3
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
-- M1-T03 World Overview 数据、M1-T04 API skeleton 及后续任务均未实现，属于当前范围外。
+- M1-T04 API skeleton 及后续任务均未实现，属于当前范围外。
 
 ## Migrations since last state
 
-- 无。M1-T02 只实现开发身份边界，没有数据库 schema 或 migration 变更。
+- NO DATABASE CHANGE。M1-T03 未修改数据库 schema/migration，也未新增数据库访问路径。
 - M0 基线数据库只读核对仍为 `migrations=1`、`users=1`、`worlds=1`。
 
 ## API/Event changes
 
-- 无。产品壳不调用业务 API、不产生 world event，也不建立绕过 World Kernel 的事实写入路径。
+- 无。M1-T03 不调用业务 API、不产生 world event，也不建立绕过 World Kernel 的事实写入路径。
 
 ## Relevant ADRs
 
@@ -52,9 +54,10 @@ Last verified implementation commit: 465d7b7e5f5e8027c40e57f037295625e06f3344
 ## Verification report
 
 - `docs/verification/M1-T02-report.md`
+- `docs/verification/M1-T03-report.md`
 - `docs/verification/M1-T01-report.md`
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M1-T03；本轮不执行。当前仍禁止提前进入 M1-T04、M2 或其他后续任务。
+- M1-T04；M1-T03 通过 Gate 后才允许进入。本轮不执行 M1-T04、M2 或其他后续任务。

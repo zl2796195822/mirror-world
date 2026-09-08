@@ -39,7 +39,7 @@ export default async function HomePage() {
           <br />
           这是一个尚待接入事实的观察入口。
         </p>
-        <span className="rail-hint">M1-T01 · SHELL READY</span>
+        <span className="rail-hint">M1-T03 · OVERVIEW READY</span>
       </aside>
     </section>
   );

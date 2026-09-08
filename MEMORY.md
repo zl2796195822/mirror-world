@@ -39,3 +39,11 @@
 - 首次 M1-T02 CI run `34174320461` 在 `Lint and format` 失败，已由本地 `pnpm lint` 复现并修复验证报告的 Prettier 格式问题；最终 run `34176497873` 对提交 `465d7b7e5f5e8027c40e57f037295625e06f3344` 真实 PASS，foundation 的 install/lint/typecheck/unit tests/build 全部成功。
 - 官方 npm registry production audit 复核返回 `No known vulnerabilities found`，HIGH=0、CRITICAL=0；本任务没有新增依赖。
 - 当前 M1-T02 状态为 `PASS`；实现提交为 `c6f8d63ec0445c8dc83c32869830cf5f07742af0`，最终验证提交为 `465d7b7e5f5e8027c40e57f037295625e06f3344`，最终 run 为 `34176497873`。下一允许任务为 M1-T03，本轮已停止，不进入 M1-T03。
+
+## 2026-09-08 M1-T03
+
+- 按项目文档原始定义实现 World Overview：世界时间、运行状态、30 居民占位、最近事件占位；所有未接入能力以 unavailable/empty 呈现，不伪造世界正在运行。
+- 只修改 `apps/web` World Overview 页面与共享观察样式，保留 M1-T02 `requireUser()`、开发身份、刷新/退出/生产 fail-closed 边界；无 API、World Kernel、数据库、Redis、world event 或后续能力。
+- 新增最小 Web 页面契约测试；未新增 production dependency；截图保存在 `docs/verification/screenshots/M1-T03/`。
+- 本地 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build`、官方 audit（HIGH=0、CRITICAL=0）与 1440/390 浏览器验证已通过；GitHub Actions 待提交后补记。
+- 当前状态为 `M1-T03 = IN_PROGRESS`，下一步只完成最终 audit、push/CI 与证据文档，不进入 M1-T04。

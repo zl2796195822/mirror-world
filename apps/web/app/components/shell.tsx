@@ -52,7 +52,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
       <main className="main-content">{children}</main>
 
       <footer className="site-footer">
-        <span>M1-T02 · 开发身份</span>
+        <span>M1-T03 · WORLD OVERVIEW</span>
         <span>WORLD · CONTEXT · INSPECT · TEMPORAL · INTELLIGENCE</span>
       </footer>
     </div>
