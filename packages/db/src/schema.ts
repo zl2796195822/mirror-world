@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   check,
   integer,
   jsonb,
@@ -28,6 +29,9 @@ export const worlds = pgTable(
     timeScale: integer("time_scale").notNull().default(1),
     status: text("status").notNull().default("PAUSED"),
     seed: text("seed").notNull(),
+    worldSeq: bigint("world_seq", { mode: "bigint" })
+      .notNull()
+      .default(sql`0`),
     worldTime: timestamp("world_time", { withTimezone: true }).notNull(),
     clockAnchorAt: timestamp("clock_anchor_at", { withTimezone: true })
       .notNull()
@@ -45,6 +49,7 @@ export const worlds = pgTable(
       sql`${table.status} in ('RUNNING', 'PAUSED', 'MAINTENANCE')`,
     ),
     check("worlds_time_scale_check", sql`${table.timeScale} in (1, 10, 100)`),
+    check("worlds_world_seq_check", sql`${table.worldSeq} >= 0`),
   ],
 );
 
@@ -91,5 +96,28 @@ export const actionRequests = pgTable(
       "action_requests_expected_actor_version_check",
       sql`${table.expectedActorVersion} is null or ${table.expectedActorVersion} >= 0`,
     ),
+  ],
+);
+
+export const worldEvents = pgTable(
+  "world_events",
+  {
+    id: uuid("id").primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    seq: bigint("seq", { mode: "bigint" }).notNull(),
+    type: text("type").notNull(),
+    actorId: uuid("actor_id"),
+    targetId: uuid("target_id"),
+    payload: jsonb("payload").notNull(),
+    occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
+    correlationId: uuid("correlation_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("world_events_world_id_seq_unique").on(table.worldId, table.seq),
   ],
 );

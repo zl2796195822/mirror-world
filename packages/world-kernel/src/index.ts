@@ -32,3 +32,17 @@ export {
   type ActionRequestDatabase,
   type ActionRequestPersistenceResult,
 } from "./action-request-store.js";
+export {
+  appendWorldEvent,
+  commitWorldStateWithEvent,
+  commitWorldStateWithEventInTransaction,
+  WorldEventStoreError,
+  WORLD_EVENT_TYPES,
+  type WorldEventCommitResult,
+  type WorldEventInput,
+  type WorldEventPayload,
+  type WorldEventsDatabase,
+  type WorldEventType,
+  type WorldKernelTransaction,
+  type WorldStatePatch,
+} from "./world-events-store.js";

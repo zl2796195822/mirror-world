@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { createDb, worlds } from "@mirror/db";
 import {
@@ -8,6 +9,7 @@ import {
   type WorldClockScale,
   type WorldClockStatus,
 } from "./world-clock.js";
+import { commitWorldStateWithEventInTransaction } from "./world-events-store.js";
 
 export type WorldClockDatabase = ReturnType<typeof createDb>["db"];
 
@@ -53,15 +55,38 @@ async function updateLockedWorld(
     }
 
     const next = update(world);
+    const state = {
+      status: next.status,
+      timeScale: next.timeScale,
+      worldTime: next.worldTime,
+      clockAnchorAt: next.clockAnchorAt,
+      updatedAt: now,
+    };
+
+    if (next.worldTime.getTime() > world.worldTime.getTime()) {
+      const committed = await commitWorldStateWithEventInTransaction(tx, {
+        worldId,
+        state,
+        event: {
+          id: randomUUID(),
+          worldId,
+          type: "WORLD_TIME_ADVANCED",
+          payload: {
+            schemaVersion: 1,
+            worldId,
+            from: world.worldTime.toISOString(),
+            to: next.worldTime.toISOString(),
+          },
+          occurredAt: next.worldTime,
+          correlationId: randomUUID(),
+        },
+      });
+      return committed.world;
+    }
+
     const [persisted] = await tx
       .update(worlds)
-      .set({
-        status: next.status,
-        timeScale: next.timeScale,
-        worldTime: next.worldTime,
-        clockAnchorAt: next.clockAnchorAt,
-        updatedAt: now,
-      })
+      .set(state)
       .where(eq(worlds.id, worldId))
       .returning();
 

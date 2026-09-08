@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M2 World Kernel
-Current task: M2-T03 Kernel Validator
-Status: PASS
-Last verified implementation commit: cb6205b21613f684944d1daaf94141fb442f56dd
+Current task: M2-T04 Event Ledger
+Status: LOCAL PASS; remote CI pending
+Last verified implementation commit: pending
 
 ## Completed
 
@@ -36,10 +36,13 @@ Last verified implementation commit: cb6205b21613f684944d1daaf94141fb442f56dd
 - M2-T03 已新增 Kernel action validator：复用 Action Contract，并使用显式 World Clock 与只读领域 snapshot 校验 actor、权限、world 状态、时间、版本、位置、资源和六类动作前置条件。
 - M2-T03 已新增最小 `action_requests` durable request metadata 表与 migration；PostgreSQL 唯一约束、transaction、fingerprint 支持 duplicate/conflict 幂等语义，但没有写入世界事实。
 - M2-T03 本地 lint、typecheck、unit tests、build、真实 PostgreSQL integration、双次 db:setup、官方 production audit 与 GitHub Actions run `34199405422` 均 PASS。
+- M2-T04 已新增 PostgreSQL Event Ledger：`world_events` append-only、world-local `world_seq`、数据库一致性 triggers，以及 World Kernel 的 state+event 同 transaction 提交入口。
+- M2-T04 已将 World Clock 的实际 world-time 推进记录为 `WORLD_TIME_ADVANCED`，事件时间使用 world time；没有新增 ActionResult、Projection、Checkpoint、Replay、Simulator 或后续领域能力。
+- M2-T04 本地 install、双次 db:setup、lint、typecheck、unit tests、build、真实 PostgreSQL integration 与官方 production audit 均 PASS；远程 GitHub Actions 待本次提交后执行。
 
 ## In progress
 
-- M2-T03 已完成并通过本地与远程 Gate；本轮停止，不进入 M2-T04。
+- M2-T04 本地实现与验证已完成，等待远程 GitHub Actions Gate；通过后只同步最终 CI 证据并停止，不进入 M2-T05。
 
 ## Blocked
 
@@ -53,17 +56,20 @@ Last verified implementation commit: cb6205b21613f684944d1daaf94141fb442f56dd
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
-- M2-T04 及后续任务均未执行；M2-T03 不包含 Event Ledger、ActionResult、event seq、Checkpoint、Replay、Simulator 或事实 mutation。
+- M2-T05、M3、Life、Memory、Relationship、Economy、AI、3D、Digital Identity、Offline Simulation 及其他后续任务均未执行。
 
 ## Migrations since last state
 
 - 新增 migration `packages/db/drizzle/0001_late_karma.sql`：`worlds.clock_anchor_at`、status/time_scale check constraints；clean migration/seed 已通过。
-- 当前本地数据库基线为 `migrations=2`、`users=1`、`worlds=1`；world fact 仍由 PostgreSQL 保存，Redis 未存时钟事实。
+- 新增 migration `packages/db/drizzle/0002_wandering_moonstone.sql`：M2-T03 `action_requests` durable request metadata 与幂等唯一约束。
+- 新增 migration `packages/db/drizzle/0003_cold_viper.sql`：M2-T04 `world_events`、`world_seq`、append-only 与 sequence consistency triggers。
+- 当前本地数据库为 `migrations=4`、`users=1`、`worlds=1`、`action_requests=0`；`world_events` 保留真实 integration 追加的 15 条账本事件，world 已恢复 `PAUSED/1x`，world fact 与 event ledger 均由 PostgreSQL 保存。
 
 ## API/Event changes
 
 - M1 API skeleton 保持；新增 `GET /api/v1/worlds/:worldId` 与 development-only `POST /api/v1/worlds/:worldId/admin/time`，OpenAPI 已同步。
 - 新增内部 `@mirror/contracts` ActionRequest schema；本轮没有新增 Action API、Event Ledger、WebSocket 或事件写入。
+- 新增 `world_events` Event Ledger、world-local `world_seq` 与 `WORLD_TIME_ADVANCED` 事件写入；没有新增 Action API、ActionResult、Projection、Checkpoint、Replay 或 WebSocket。
 
 ## Relevant ADRs
 
@@ -75,6 +81,7 @@ Last verified implementation commit: cb6205b21613f684944d1daaf94141fb442f56dd
 - `docs/adr/ADR-0003-m2-t02-action-contract.md`
 - M2-T02 的结构化 Action Contract 字段、参数边界与后续 Kernel 分层记录于 ADR-0003。
 - `docs/adr/ADR-0004-m2-t03-kernel-validation-idempotency.md`：M2-T03 validator snapshot、World Clock 输入与 PostgreSQL 幂等边界。
+- `docs/adr/ADR-0005-m2-t04-event-ledger.md`：M2-T04 append-only Event Ledger、world-local seq 与 state+event 原子提交边界。
 
 ## Verification report
 
@@ -86,8 +93,9 @@ Last verified implementation commit: cb6205b21613f684944d1daaf94141fb442f56dd
 - `docs/verification/M2-T01-report.md`（M2-T01 = PASS）
 - `docs/verification/M2-T02-report.md`（M2-T02 = PASS）
 - `docs/verification/M2-T03-report.md`（M2-T03 = PASS）
+- `docs/verification/M2-T04-report.md`（本地 PASS，远程 CI pending）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2-T04；M2-T03 Gate 完成后只记录，不自动执行。
+- M2-T04 远程 Gate 通过后只记录 M2-T05；本轮不执行 M2-T05 或任何后续任务。
