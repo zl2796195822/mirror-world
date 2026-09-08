@@ -74,5 +74,5 @@
 - 按文档原始定义仅实现世界时钟：real time/world time/time_scale；development 支持 pause/1x/10x/100x；production 强制有效倍率 1x；未实现 M2-T02 及后续任务。
 - 新增 `packages/world-kernel`，显式注入 wall clock；`PAUSED/MAINTENANCE` 不推进 world time；wall clock 回拨不让 world time 倒退；API 不直接更新 worlds，时钟写入集中在 Kernel store 的 PostgreSQL transaction/row lock。
 - 新增 `worlds.clock_anchor_at` 与 status/time_scale check constraints migration；重复 db:setup、真实 PostgreSQL integration、M1 API/Web 回归、lint/typecheck/test/build 和官方 npm audit 均通过。
-- 新增 ADR-0002、`docs/verification/M2-T01-report.md`；GitHub Actions 需在推送后等待真实 PASS。既有 P2 继续保留：manifest 不一致、外部 action Node.js 20 deprecation warning。
+- 新增 ADR-0002、`docs/verification/M2-T01-report.md`；实现 commit `ed65036966d4349f4a4b9f4970cc4e54727c36de`，GitHub Actions run `34187838878` 真实 PASS。既有 P2 继续保留：manifest 不一致、外部 action Node.js 20 deprecation warning。
 - 下一允许任务为 `M2-T02`，只记录，不执行。

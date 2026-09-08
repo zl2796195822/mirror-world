@@ -2,8 +2,8 @@
 
 Current milestone: M2 World Kernel
 Current task: M2-T01 世界时钟
-Status: IN_PROGRESS
-Last verified implementation commit: pending
+Status: PASS
+Last verified implementation commit: ed65036966d4349f4a4b9f4970cc4e54727c36de
 
 ## Completed
 
@@ -29,11 +29,11 @@ Last verified implementation commit: pending
 - M2-T01 已实现最小 World Clock：显式 wall-clock 输入、world-time 推进、开发态 pause/1x/10x/100x、生产态 1x 守门，以及 PostgreSQL durable anchor。
 - 新增 `@mirror/world-kernel`，API 时钟读写只能通过 Kernel store 进入 PostgreSQL transaction；没有新增 Action、Event Ledger、Checkpoint、Replay 或后续领域能力。
 - 新增 M2-T01 migration，补充 `clock_anchor_at` 与 `worlds` 的 status/time-scale 数据库约束；clean DB migration/seed 与真实时钟 integration test 已通过。
-- M1 API/Web 回归、lint、typecheck、test、build 与官方 npm audit 已通过；GitHub Actions 最终结果待本轮提交后补录。
+- M1 API/Web 回归、lint、typecheck、test、build 与官方 npm audit 已通过；GitHub Actions run `34187838878` 对实现 commit 真实 PASS。
 
 ## In progress
 
-- M2-T01 已完成本地实现与验证，等待最终 GitHub Actions 结果后关闭本任务。
+- 无；M2-T01 已完成并通过，当前停止在 M2-T01，不进入 M2-T02。
 
 ## Blocked
 
@@ -74,9 +74,9 @@ Last verified implementation commit: pending
 - `docs/verification/M1-T04-report.md`
 - `docs/verification/M1-T01-report.md`
 - `docs/verification/M1-milestone-report.md`
-- `docs/verification/M2-T01-report.md`
+- `docs/verification/M2-T01-report.md`（M2-T01 = PASS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2-T02；只记录，不执行，直到 M2-T01 最终 Gate 完成。
+- M2-T02；只记录，不执行。

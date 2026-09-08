@@ -2,7 +2,9 @@
 
 ## 结论
 
-当前本地实现与验证结果为 PASS；GitHub Actions 需要在本报告提交后完成最终确认。报告最终状态只在对应 main HEAD 的 CI 真实通过后更新为 `M2-T01 = PASS`。
+`M2-T01 = PASS`
+
+本地与 GitHub Actions 均已真实通过；本报告随后只做文档状态同步，不扩大实现范围。
 
 ## Task ID
 
@@ -104,7 +106,12 @@ pnpm build                           PASS
 
 ## GitHub Actions
 
-本地已更新 CI：启动 PostgreSQL、运行 migration/seed，并执行 world clock integration test。最终 run、URL 和状态在推送后补录。
+本地已更新 CI：启动 PostgreSQL、运行 migration/seed，并执行 world clock integration test。
+
+- Workflow：`foundation-ci`
+- Run：[#34187838878](https://github.com/zl2796195822/mirror-world/actions/runs/34187838878)
+- Head：`ed65036966d4349f4a4b9f4970cc4e54727c36de`
+- Conclusion：`success`
 
 ## P0 / P1 / P2
 
@@ -115,21 +122,21 @@ pnpm build                           PASS
 
 ## Definition of Done
 
-| DoD                        | 证据                                                   | 状态    |
-| -------------------------- | ------------------------------------------------------ | ------- |
-| real/world time 与 scale   | pure clock tests + real DB integration                 | PASS    |
-| development pause/10x/100x | development API integration                            | PASS    |
-| production default 1x      | production integration                                 | PASS    |
-| restart/world time 不倒退  | production wall-clock rollback integration             | PASS    |
-| paused 不 tick             | paused integration assertion                           | PASS    |
-| PostgreSQL durable truth   | migration/schema/DB query                              | PASS    |
-| Kernel 唯一时钟写边界      | API 无直接 world update，写入集中在 world-kernel store | PASS    |
-| CI 真实通过                | push 后等待 GitHub Actions                             | PENDING |
+| DoD                        | 证据                                                   | 状态 |
+| -------------------------- | ------------------------------------------------------ | ---- |
+| real/world time 与 scale   | pure clock tests + real DB integration                 | PASS |
+| development pause/10x/100x | development API integration                            | PASS |
+| production default 1x      | production integration                                 | PASS |
+| restart/world time 不倒退  | production wall-clock rollback integration             | PASS |
+| paused 不 tick             | paused integration assertion                           | PASS |
+| PostgreSQL durable truth   | migration/schema/DB query                              | PASS |
+| Kernel 唯一时钟写边界      | API 无直接 world update，写入集中在 world-kernel store | PASS |
+| CI 真实通过                | run 34187838878 success                                | PASS |
 
 ## Commit / State
 
-- 实现 commit SHA：待代码提交后补录。
-- 最终 main HEAD：待最终文档同步提交后补录。
+- 实现 commit SHA：`ed65036966d4349f4a4b9f4970cc4e54727c36de`。
+- 最终 main HEAD：本报告文档同步提交的 commit，最终值以交付回报中的 `git rev-parse HEAD` 为准。
 - Verification report：`docs/verification/M2-T01-report.md`。
-- PROJECT_STATE：已切换到 M2-T01，待 CI 通过后最终标记 PASS。
+- PROJECT_STATE：M2-T01 已最终标记 PASS。
 - 下一允许任务：`M2-T02`，仅记录，不执行。
