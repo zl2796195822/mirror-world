@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3-T02 Needs Engine
-Status: PASS (M3-T02 PASS; M3 remains IN_PROGRESS)
-Last verified implementation commit: b4518859482301a95732734f599441d8bc9d74a3
-Last verified main/doc baseline: b4518859482301a95732734f599441d8bc9d74a3
+Current task: M3-T03 Routine/Goal
+Status: PASS (M3-T03 PASS; M3 remains IN_PROGRESS)
+Last verified implementation commit: ee0617dfd24e617979680184a7fb88c67d64af66
+Last verified main/doc baseline: pending M3-T03 documentation sync commit
 
 ## Completed
 
@@ -52,11 +52,14 @@ Last verified main/doc baseline: b4518859482301a95732734f599441d8bc9d74a3
 - M3-T02 已新增纯 `@mirror/life-engine` Needs evaluator：`HungerPressure`、`RestPressure`、`SocialPressure`，统一 `0=satisfied`、`100=critical`，并输出同源 `EnergyLevel` 与带 hysteresis 的 `conditionBand` 派生值。
 - M3-T02 使用 `NeedPolicyVersion=m3-needs-v1`、resident seed/profile 稳定 variation、World-Time lazy evaluation 与 anchor；`PAUSED/MAINTENANCE` 不推进，没有 timer、scheduler、Needs migration、Event Registry 或事实写入。
 - M3-T02 的 30 resident fixture、全仓回归、clean PostgreSQL M2 integration、性能基线、官方 audit 均通过；GitHub Actions `foundation-ci` run `34220974174` 对 `b4518859482301a95732734f599441d8bc9d74a3` 真实 PASS。
+- M3-T03 已按正式 `Routine/Goal` 任务实现纯 deterministic Goal evaluator：Needs、routine、work obligation、context 四类 Goal source，`m3-goals-v1` policy、stable ordering、tie-break 与 active Goal stability。
+- M3-T03 只输出 Goal candidates/selected Goal；没有 Candidate Action、ActionRequest、ActionResult、Kernel execution、scheduler、replan、migration、API、Event Ledger 或事实写入。
+- M3-T03 复用 M3-T01 30 resident fixture 与 M3-T02 `NeedState`；本地 life-engine 19 tests、全仓 lint/typecheck/test/build、clean PostgreSQL M2 integration 4/4 与官方 audit 均 PASS。
 
 ## In progress
 
 - M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
-- M3-T02 Needs Engine 已 PASS；Goal、Candidate Action、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
+- M3-T02 Needs Engine 已 PASS；M3-T03 Goal Engine 已 PASS；Candidate Action、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
 
 ## Blocked
 
@@ -97,6 +100,7 @@ Last verified main/doc baseline: b4518859482301a95732734f599441d8bc9d74a3
 - M3-T01 的 GitHub Actions `foundation-ci` run `34215453306` 对 main commit `84a64d6` 真实 PASS；实现 commit 为 `9077be3b660f2e7ea41a5729e07d001bb68e6f07`。
 - ADR-M3-001 只新增 Needs 来源审计和架构决策文档；没有新增 migration、表、API、Event Registry、seed fixture 或 runtime。
 - M3-T02 新增 `packages/life-engine` 纯 evaluator 与测试；没有新增 migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
+- M3-T03 新增 `packages/life-engine/src/goals.ts` 与 `goals.test.ts`，并从 `src/index.ts` 导出；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 
 ## Relevant ADRs
 
@@ -129,8 +133,9 @@ Last verified main/doc baseline: b4518859482301a95732734f599441d8bc9d74a3
 - `docs/verification/M3-T01-report.md`（M3-T01 = PASS；M3 仍 IN_PROGRESS）
 - `docs/architecture/m3-needs-source-audit.md`（ADR-M3-001 source audit）
 - `docs/verification/M3-T02-report.md`（M3-T02 = PASS；M3 仍 IN_PROGRESS）
+- `docs/verification/M3-T03-report.md`（M3-T03 = PASS；M3 仍 IN_PROGRESS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- 仅记录下一任务 `M3-T03`；不得自动执行 M3-T03 或任何后续任务。
+- 仅记录下一任务 `M3-T04`；不得自动执行 M3-T04 或任何后续任务。

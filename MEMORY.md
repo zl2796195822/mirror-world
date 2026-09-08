@@ -131,3 +131,14 @@
 - M3-T02 tests 10/10；全仓 lint/typecheck/test/build、clean PostgreSQL M2 integration 4/4、官方 npm audit、30/1000 resident evaluator benchmark 均通过。
 - GitHub Actions `foundation-ci` run `34220974174` 对实现 commit 真实 PASS；验证报告为 `docs/verification/M3-T02-report.md`。
 - 当前状态 `M3-T02 = PASS`、`M3 = IN_PROGRESS`；ActionResult/Observation/ActorRef、MOVE/SLEEP、bounded replan、scheduler/driver 和完整 domain replay 等既有 blocker 继续保留；下一允许任务仅为 `M3-T03`，不自动执行。
+
+## 2026-09-08 M3-T03
+
+- 按正式 M3-T03 `Routine/Goal` 完成纯 deterministic Goal evaluator；实现提交 `ee0617dfd24e617979680184a7fb88c67d64af66`。
+- `packages/life-engine/src/goals.ts` 使用集中式 `m3-goals-v1` policy，从 Needs、routine、只读 work obligation、context event 生成有限 Goal candidates，并按 score、priority、stable key 选择 selected Goal。
+- Goal types 为 `SATISFY_HUNGER`、`REST`、`FULFILL_WORK_OBLIGATION`、`MAKE_SOCIAL_CONTACT`、`RETURN_HOME`；Goal 不等于 Action，没有 Candidate Action、ActionRequest、ActionResult 或 Kernel execution。
+- 复用 M3-T01 30 resident fixture 与 M3-T02 `m3-needs-v1` NeedState；未新增 Need、stress/safety/money_pressure/purpose、资源写入、关系/记忆/经济/AI 能力。
+- `PAUSED/MAINTENANCE` 返回空 Goal，输入使用显式 world time；无 Math.random、wall clock、timer、LLM 或不稳定遍历顺序；active Goal 只提供最小 switch-margin stability。
+- 没有新增 production dependency、schema、migration、API、Event Ledger 或事实写入口；Goal 可从输入重算，完整 Action Loop 仍未开始。
+- M3-T03 tests 9 项，Life Engine 合计 19 项；全仓 lint/typecheck/test/build、clean PostgreSQL M2 integration 4/4、官方 npm audit、30/1000 benchmark 均通过。
+- 主库通过 db:setup 恢复 `PAUSED/1x`，保留 append-only 历史；当前 M3 正式状态为 `M3-T03 = PASS`、`M3 = IN_PROGRESS`。ActionResult、Observation、ActorRef、MOVE/SLEEP、bounded replan、scheduler/driver 与 full domain replay blocker 继续保留；下一允许任务仅为 `M3-T04`，不自动执行。
