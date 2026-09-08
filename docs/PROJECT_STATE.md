@@ -2,8 +2,8 @@
 
 Current milestone: M2 World Kernel
 Current task: M2-T04 Event Ledger
-Status: LOCAL PASS; remote CI pending
-Last verified implementation commit: pending
+Status: PASS
+Last verified implementation commit: 57e53e128ee805e3503aa91491c15d1805779cbc
 
 ## Completed
 
@@ -38,11 +38,11 @@ Last verified implementation commit: pending
 - M2-T03 本地 lint、typecheck、unit tests、build、真实 PostgreSQL integration、双次 db:setup、官方 production audit 与 GitHub Actions run `34199405422` 均 PASS。
 - M2-T04 已新增 PostgreSQL Event Ledger：`world_events` append-only、world-local `world_seq`、数据库一致性 triggers，以及 World Kernel 的 state+event 同 transaction 提交入口。
 - M2-T04 已将 World Clock 的实际 world-time 推进记录为 `WORLD_TIME_ADVANCED`，事件时间使用 world time；没有新增 ActionResult、Projection、Checkpoint、Replay、Simulator 或后续领域能力。
-- M2-T04 本地 install、双次 db:setup、lint、typecheck、unit tests、build、真实 PostgreSQL integration 与官方 production audit 均 PASS；远程 GitHub Actions 待本次提交后执行。
+- M2-T04 本地 install、双次 db:setup、lint、typecheck、unit tests、build、真实 PostgreSQL integration 与官方 production audit 均 PASS；GitHub Actions run `34201564067` 对提交 `57e53e128ee805e3503aa91491c15d1805779cbc` 真实 PASS。
 
 ## In progress
 
-- M2-T04 本地实现与验证已完成，等待远程 GitHub Actions Gate；通过后只同步最终 CI 证据并停止，不进入 M2-T05。
+- M2-T04 已完成本地与远程 Gate；本轮停止，不进入 M2-T05。
 
 ## Blocked
 
@@ -93,9 +93,9 @@ Last verified implementation commit: pending
 - `docs/verification/M2-T01-report.md`（M2-T01 = PASS）
 - `docs/verification/M2-T02-report.md`（M2-T02 = PASS）
 - `docs/verification/M2-T03-report.md`（M2-T03 = PASS）
-- `docs/verification/M2-T04-report.md`（本地 PASS，远程 CI pending）
+- `docs/verification/M2-T04-report.md`（M2-T04 = PASS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2-T04 远程 Gate 通过后只记录 M2-T05；本轮不执行 M2-T05 或任何后续任务。
+- M2-T05；本轮只完成 M2-T04，不执行 M2-T05 或任何后续任务。

@@ -2,7 +2,7 @@
 
 ## 结论
 
-本地实现、真实 PostgreSQL 验证与全仓质量门禁已通过；远程 GitHub Actions Gate 在本报告初次提交时待执行。M2-T04 的实现范围已完成，未进入 M2-T05 或任何后续任务。
+本地实现、真实 PostgreSQL 验证、全仓质量门禁与远程 GitHub Actions 均已通过，Gate 状态为 `M2-T04 = PASS`。M2-T04 的实现范围已完成，未进入 M2-T05 或任何后续任务。
 
 本报告只覆盖 M2-T04，不代表 M2-T05、M3、Life、Memory、Relationship、Economy、AI、3D、Digital Identity 或 Offline Simulation 完成。
 
@@ -58,37 +58,38 @@
 
 ### 本地真实验证结果
 
-| 验证                                                                                                              | 结果                                                                        |
-| ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `pnpm install --frozen-lockfile`                                                                                  | PASS                                                                        |
-| `pnpm db:setup` 第 1 次                                                                                           | PASS                                                                        |
-| `pnpm db:setup` 第 2 次                                                                                           | PASS                                                                        |
-| `pnpm lint`                                                                                                       | PASS                                                                        |
-| `pnpm typecheck`                                                                                                  | PASS                                                                        |
-| `pnpm test`                                                                                                       | PASS                                                                        |
-| `pnpm build`                                                                                                      | PASS                                                                        |
-| `DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm --filter @mirror/api test:integration` | PASS，3/3（World Clock + Event Ledger + Action Request）                    |
-| `pnpm audit --prod --registry=https://registry.npmjs.org`                                                         | PASS，No known vulnerabilities found                                        |
-| Docker PostgreSQL / Redis / MinIO                                                                                 | PASS，healthy                                                               |
-| 最终数据库状态                                                                                                    | PASS，migrations=4、users=1、worlds=1、action_requests=0、world=`PAUSED/1x` |
-| Event Ledger 最终行数                                                                                             | 15 条追加事件；未执行删除，world_seq=15                                     |
-| GitHub Actions                                                                                                    | PENDING，等待本次提交后的远程 Gate                                          |
+| 验证                                                                                                              | 结果                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                                                                                  | PASS                                                                                                                |
+| `pnpm db:setup` 第 1 次                                                                                           | PASS                                                                                                                |
+| `pnpm db:setup` 第 2 次                                                                                           | PASS                                                                                                                |
+| `pnpm lint`                                                                                                       | PASS                                                                                                                |
+| `pnpm typecheck`                                                                                                  | PASS                                                                                                                |
+| `pnpm test`                                                                                                       | PASS                                                                                                                |
+| `pnpm build`                                                                                                      | PASS                                                                                                                |
+| `DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm --filter @mirror/api test:integration` | PASS，3/3（World Clock + Event Ledger + Action Request）                                                            |
+| `pnpm audit --prod --registry=https://registry.npmjs.org`                                                         | PASS，No known vulnerabilities found                                                                                |
+| Docker PostgreSQL / Redis / MinIO                                                                                 | PASS，healthy                                                                                                       |
+| 最终数据库状态                                                                                                    | PASS，migrations=4、users=1、worlds=1、action_requests=0、world=`PAUSED/1x`                                         |
+| Event Ledger 最终行数                                                                                             | 15 条追加事件；未执行删除，world_seq=15                                                                             |
+| GitHub Actions                                                                                                    | PASS，[run 34201564067](https://github.com/zl2796195822/mirror-world/actions/runs/34201564067)，foundation job 成功 |
 
 ## Definition of Done
 
-| DoD                      | 证据                                                                      | 状态    |
-| ------------------------ | ------------------------------------------------------------------------- | ------- |
-| Event Ledger append-only | `world_events` schema、immutable trigger、UPDATE/DELETE integration 断言  | PASS    |
-| world 内单调 seq         | row lock、`world_seq`、唯一约束、并发 append 与跳序断言                   | PASS    |
-| state + event 原子提交   | Kernel transaction helper 与临时 world rollback integration               | PASS    |
-| 数据库阻止绕过写入       | event insert/world_seq trigger 与直接跳增断言                             | PASS    |
-| World Clock 纳入事件账本 | `WORLD_TIME_ADVANCED` 同 transaction 提交与 payload 断言                  | PASS    |
-| 不提前实现 M2-T05+       | 无 ActionResult、Projection、Checkpoint、Replay、Simulator 或后续领域模块 | PASS    |
-| 全仓质量与真实依赖验证   | lint/typecheck/test/build/db integration/audit                            | PASS    |
-| 远程 CI Gate             | 本地报告生成时尚未执行                                                    | PENDING |
+| DoD                      | 证据                                                                      | 状态 |
+| ------------------------ | ------------------------------------------------------------------------- | ---- |
+| Event Ledger append-only | `world_events` schema、immutable trigger、UPDATE/DELETE integration 断言  | PASS |
+| world 内单调 seq         | row lock、`world_seq`、唯一约束、并发 append 与跳序断言                   | PASS |
+| state + event 原子提交   | Kernel transaction helper 与临时 world rollback integration               | PASS |
+| 数据库阻止绕过写入       | event insert/world_seq trigger 与直接跳增断言                             | PASS |
+| World Clock 纳入事件账本 | `WORLD_TIME_ADVANCED` 同 transaction 提交与 payload 断言                  | PASS |
+| 不提前实现 M2-T05+       | 无 ActionResult、Projection、Checkpoint、Replay、Simulator 或后续领域模块 | PASS |
+| 全仓质量与真实依赖验证   | lint/typecheck/test/build/db integration/audit                            | PASS |
+| 远程 CI Gate             | GitHub Actions run 34201564067 对提交 57e53e1 执行并成功                  | PASS |
 
 ## 未验证与后续边界
 
 - 真实生产部署、真实 provider、真实居民领域事实、ActionResult、Projection、Checkpoint、Replay、Simulator 与后续产品能力仍未验证/未实现。
 - 事件账本 integration 使用 M0 world 追加测试事件；由于 `world_events` 是 append-only，最终本地数据库保留这些验证事件，并已恢复 world 为 `PAUSED/1x`。
-- 远程 CI 必须在本提交推送后完成；通过后只同步 CI 证据并停止，不执行 M2-T05。
+- GitHub Actions 仅有既有外部 action 的 Node.js 20 deprecation warning；不影响本次 Gate 结果。
+- 下一任务只记录为 M2-T05，本轮不执行 M2-T05 或任何后续任务。
