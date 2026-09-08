@@ -142,3 +142,12 @@
 - 没有新增 production dependency、schema、migration、API、Event Ledger 或事实写入口；Goal 可从输入重算，完整 Action Loop 仍未开始。
 - M3-T03 tests 9 项，Life Engine 合计 19 项；全仓 lint/typecheck/test/build、clean PostgreSQL M2 integration 4/4、官方 npm audit、30/1000 benchmark 均通过。
 - 主库通过 db:setup 恢复 `PAUSED/1x`，保留 append-only 历史；当前 M3 正式状态为 `M3-T03 = PASS`、`M3 = IN_PROGRESS`。ActionResult、Observation、ActorRef、MOVE/SLEEP、bounded replan、scheduler/driver 与 full domain replay blocker 继续保留；下一允许任务仅为 `M3-T04`，不自动执行。
+
+## 2026-09-08 M3-T04 Gate
+
+- 重新读取 M3 milestone roadmap、M3-T04 原始任务/DoD、Life Engine、Resident/Kernel/Action Contract/Event Ledger/Replay 文档、ADR-0007、M3-T01～T03 reports、RES-M3-001、RES-M3-002 与 RES-M5-001 research-only 边界。
+- 官方任务名称为 `M3-T04 规则决策器`，表面要求是候选行为→硬约束→评分→动作、不调用 LLM，DoD 为 30 人 30 天模拟可完成。
+- Gate 结论为 `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：RES-M3-001 正式接入顺序和 30×30 矩阵要求 ActionRequest、现有 Action Contract、真实 Kernel ActionResult、结果驱动 bounded replan/runtime 与 deterministic driver；不能把它降级成纯候选评分器。
+- 本轮没有修改 runtime、schema、migration、Action Contract、Kernel、Event Ledger、Replay 或数据库；仅新增 `docs/verification/M3-T04-blocked-report.md` 并同步 `PROJECT_STATE.md`/`MEMORY.md`。
+- Pre-Action-Loop blockers：ActionOutcome/ActionResult feedback、Observation/query boundary、Resident→ActorRef mapping、readonly resource boundary、MOVE/SLEEP semantics、bounded replan/backoff、scheduler/driver 与 full resident/domain replay。RES-M5-001 不作为正式数据库实现依据，不采用单一 `committed_event_id` 设计。
+- 下一步只记录 blocker；不得执行 M3-T05 或任何后续任务。

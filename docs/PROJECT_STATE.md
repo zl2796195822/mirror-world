@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3-T03 Routine/Goal
-Status: PASS (M3-T03 PASS; M3 remains IN_PROGRESS)
+Current task: M3-T04 规则决策器
+Status: BLOCKED_BY_PRE_ACTION_LOOP_GATE (M3-T04 blocked; M3 remains IN_PROGRESS)
 Last verified implementation commit: ee0617dfd24e617979680184a7fb88c67d64af66
-Last verified main/doc baseline: 45eefe173bc8625b6235e14293b9b16480abd6db
+Last verified main/doc baseline: a36b109eca669f9b9f1984da35269bff13af47c4
 
 ## Completed
 
@@ -55,20 +55,22 @@ Last verified main/doc baseline: 45eefe173bc8625b6235e14293b9b16480abd6db
 - M3-T03 已按正式 `Routine/Goal` 任务实现纯 deterministic Goal evaluator：Needs、routine、work obligation、context 四类 Goal source，`m3-goals-v1` policy、stable ordering、tie-break 与 active Goal stability。
 - M3-T03 只输出 Goal candidates/selected Goal；没有 Candidate Action、ActionRequest、ActionResult、Kernel execution、scheduler、replan、migration、API、Event Ledger 或事实写入。
 - M3-T03 复用 M3-T01 30 resident fixture 与 M3-T02 `NeedState`；本地 life-engine 19 tests、全仓 lint/typecheck/test/build、clean PostgreSQL M2 integration 4/4 与官方 audit 均 PASS。
+- M3-T04 Gate 已完成正式任务定义重读：官方任务为规则决策器，但 30×30 验收链要求 ActionRequest、真实 Kernel ActionResult、结果驱动 replan/runtime 与 deterministic driver；因此本轮判定 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`。
+- M3-T04 仅新增 blocked verification report 与状态同步；没有修改 runtime、Action Contract、Kernel、schema、migration、API、Event Ledger、Replay 或数据库事实。
 
 ## In progress
 
 - M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
-- M3-T02 Needs Engine 已 PASS；M3-T03 Goal Engine 已 PASS；Candidate Action、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
+- M3-T02 Needs Engine 已 PASS；M3-T03 Goal Engine 已 PASS；M3-T04 被 Pre-Action-Loop Gate 阻断；Candidate Action runtime、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
 
 ## Blocked
 
-- 无。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：ActionOutcome/ActionResult、Observation/query、ActorRef、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭。
 
 ## P0/P1
 
 - P0：0。
-- `MIRROR-FIND-001` 为 P1，标记 `PRE-M3 REQUIRED FOLLOW-UP`：Action execution result / committed event feedback；不阻塞 M2 基础 Gate，但必须在 M3 前处理。
+- `MIRROR-FIND-001` 为 P1，标记 `PRE-M3 REQUIRED FOLLOW-UP`：Action execution result / committed event feedback；不阻塞 M2 基础 Gate，但当前阻塞 M3-T04 Action Loop。
 
 ## Known P2/P3
 
@@ -101,6 +103,7 @@ Last verified main/doc baseline: 45eefe173bc8625b6235e14293b9b16480abd6db
 - ADR-M3-001 只新增 Needs 来源审计和架构决策文档；没有新增 migration、表、API、Event Registry、seed fixture 或 runtime。
 - M3-T02 新增 `packages/life-engine` 纯 evaluator 与测试；没有新增 migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - M3-T03 新增 `packages/life-engine/src/goals.ts` 与 `goals.test.ts`，并从 `src/index.ts` 导出；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
+- M3-T04 只新增 `docs/verification/M3-T04-blocked-report.md`；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 
 ## Relevant ADRs
 
@@ -134,8 +137,9 @@ Last verified main/doc baseline: 45eefe173bc8625b6235e14293b9b16480abd6db
 - `docs/architecture/m3-needs-source-audit.md`（ADR-M3-001 source audit）
 - `docs/verification/M3-T02-report.md`（M3-T02 = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-T03-report.md`（M3-T03 = PASS；M3 仍 IN_PROGRESS）
+- `docs/verification/M3-T04-blocked-report.md`（M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE；M3 仍 IN_PROGRESS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- 仅记录下一任务 `M3-T04`；不得自动执行 M3-T04 或任何后续任务。
+- 仅记录 `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`；必须由单独授权任务关闭 Pre-Action-Loop blockers 后重新 Gate。不得执行 M3-T05 或任何后续任务。
