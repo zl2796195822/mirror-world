@@ -34,7 +34,7 @@ jobs:
         run: docker compose up -d --wait postgres
 
       - name: Prepare integration database
-        run: pnpm db:setup
+        run: DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm db:setup
 
       - name: Lint and format
         run: pnpm lint

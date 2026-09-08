@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-03 Resident ActorRef + Resource Read Bridge (completed)
-Status: PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: 071862681346cf75d1a8e1715842f468cd04c7ea
-Last verified main/doc baseline: 071862681346cf75d1a8e1715842f468cd04c7ea; final docs-only sync follows
+Current task: PRE-AL-04 Resident Runtime State Authority (implemented; CI verification pending)
+Status: PRE-AL-04 = IMPLEMENTED_UNVERIFIED; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: 05354a578cad3563f87d860d96119a866cc72bbe
+Last verified main/doc baseline: 05354a578cad3563f87d860d96119a866cc72bbe; PRE-AL-04 CI verification pending
 
 ## Completed
 
@@ -70,6 +70,10 @@ Last verified main/doc baseline: 071862681346cf75d1a8e1715842f468cd04c7ea; final
 - PRE-AL-03 已将 default Observation 的 `actorRef` 与 `resources` 从 `UNAVAILABLE` 接为 bounded batch `AVAILABLE`；`location`、`activity`、`workObligation` 与 `localContext` 仍为真实 `UNAVAILABLE`。
 - PRE-AL-03 已验证 30 resident stable ordering、world isolation、unknown resident errors、deep immutability、fixture drift protection、read-only Observation 与 clean PostgreSQL M2/ActionOutcome/Observation integration；报告为 `docs/verification/PRE-AL-03-report.md`。
 - PRE-AL-03 implementation commit `071862681346cf75d1a8e1715842f468cd04c7ea` 的 GitHub Actions `foundation-ci` run `34241852554` 真实 PASS；最终 docs-only sync 不改变 runtime。
+- PRE-AL-04 已建立 world-scoped、resident-scoped 的 `resident_runtime_states` durable authority；初始 location 显式来自 home fixture，初始 activity 显式为 `IDLE`，bootstrap 幂等且不覆盖已有 runtime state。
+- PRE-AL-04 已将 `location`、`activity`、`workObligation` 接入 `m3-observation-v1` 的 `AVAILABLE` union；work obligation 按 employment、固定 UTC 工作日 09:00–17:00 与 World Time 确定性推导，无业居民返回 `NO_CURRENT_OBLIGATION`。
+- PRE-AL-04 Life Engine 仍只读 Observation；没有 MOVE/SLEEP executor、ActionRequest submission、World Event、scheduler、replan 或事实写入路径。新增 migration 为 `packages/db/drizzle/0007_flawless_mach_iv.sql`。
+- PRE-AL-04 本地 frozen install、lint、typecheck、test、build、官方 audit、双次 db:setup 与 clean PostgreSQL 7/7 integration 均通过；GitHub Actions 首次 run `34248913024` 在 `Prepare integration database` 失败，当前状态保持 `IMPLEMENTED_UNVERIFIED`，待新 run 完整通过后再升格 PASS。
 
 ## In progress
 
@@ -80,7 +84,7 @@ Last verified main/doc baseline: 071862681346cf75d1a8e1715842f468cd04c7ea; final
 
 - `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：MOVE/SLEEP semantics、authoritative location/activity/obligation、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭；PRE-AL-01 已关闭 ActionOutcome feedback blocker。
 - PRE-AL-02 已关闭 Observation / Query Boundary blocker；PRE-AL-03 已关闭 ActorRef 与 read-only Resource Bridge blocker。
-- PRE-AL-03 后，下一允许工作必须先明确纳入 location/activity/obligation authority re-evaluation，不得直接执行 M3-T04、M3-T05 或后续任务。
+- PRE-AL-04 完成后，M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`；下一允许任务仅记录为 `PRE-AL-05 · MOVE / SLEEP Action Semantics`，不得在本轮执行。
 
 ## P0/P1
 
@@ -123,6 +127,7 @@ Last verified main/doc baseline: 071862681346cf75d1a8e1715842f468cd04c7ea; final
 - PRE-AL-00 只新增 `docs/verification/PRE-AL-00-diagnostic.md`、`docs/verification/PRE-AL-00-report.md` 并格式化既有 M3-T04 blocked report；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - PRE-AL-01 新增 `kernel_action_outcomes`、`kernel_action_outcome_events`、Kernel Action Outcome contract/store、多事件事务提交与 PostgreSQL integration；没有新增 production dependency、Action API、Observation、Action Loop、replan 或 scheduler。
 - PRE-AL-03 新增 shared ActorRef/resource contracts、M3 seed resolver/resource bridge 与 Observation capability wiring；没有新增 migration、table、Action API、World Event、ActionRequest、KernelActionOutcome 或 Action Loop。
+- PRE-AL-04 新增 `resident_runtime_states` 与 migration `0007_flawless_mach_iv.sql`，并新增 runtime-state contract/read port、Kernel read authority、bootstrap 与 Observation wiring；没有新增 Action API、ActionRequest、KernelActionOutcome、runtime event、scheduler 或 Action Loop。
 
 ## Relevant ADRs
 
@@ -162,9 +167,10 @@ Last verified main/doc baseline: 071862681346cf75d1a8e1715842f468cd04c7ea; final
 - `docs/verification/PRE-AL-00-report.md`（PRE-AL-00 = PASS；Main CI Baseline = GREEN）
 - `docs/verification/PRE-AL-01-report.md`（PRE-AL-01 = PASS；Kernel Action Outcome feedback loop）
 - `docs/verification/PRE-AL-03-report.md`（PRE-AL-03 = PASS；Resident ActorRef + Resource Read Bridge）
+- `docs/verification/PRE-AL-04-report.md`（PRE-AL-04 = IMPLEMENTED_UNVERIFIED；CI verification pending）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- No M3-T04 or later task is authorized yet. The next task must explicitly close or re-scope authoritative location/activity/obligation source together with MOVE/SLEEP semantics, then re-run the Pre-Action-Loop blocker audit.
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains; PRE-AL-04/M3-T05 and later tasks were not started.
+- `PRE-AL-04` implementation is complete locally but cannot be marked PASS until a complete GitHub Actions run passes on the pushed main commit.
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. After PRE-AL-04 PASS, the next task is only `PRE-AL-05 · MOVE / SLEEP Action Semantics`; do not execute it in this turn.
