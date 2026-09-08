@@ -101,8 +101,9 @@ The default configured mirror registry returned `ERR_PNPM_AUDIT_ENDPOINT_NOT_EXI
 ## GitHub Actions
 
 - Fix commit: `5f4cf7ec235a50e795e728c8c141d229ba891c2d`
-- Final verification run for the root-cause fix: [foundation-ci run 34227318851](https://github.com/zl2796195822/mirror-world/actions/runs/34227318851)
-- Result: `Success`
+- Root-cause fix verification: [foundation-ci run 34227318851](https://github.com/zl2796195822/mirror-world/actions/runs/34227318851), `Success`
+- Final status-sync commit: `9d51a3036339004e9337ccb1b469bca81a275a46`
+- Final GitHub Actions run: [foundation-ci run 34227826950](https://github.com/zl2796195822/mirror-world/actions/runs/34227826950), `Success`
 - Job: `foundation`
 - Coverage: install, PostgreSQL setup, lint/format, typecheck, unit tests, M2 integration, and build
 - Existing warning: GitHub action dependencies target Node.js 20 and are being forced onto Node.js 24; this did not fail the workflow and was not changed by PRE-AL-00.
@@ -123,6 +124,7 @@ PRE-AL-00 did not implement M3-T04, ActionOutcome, Observation, ActorRef, MOVE/S
 - `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`
 - Main CI baseline: `GREEN`
 - Implementation commit: `5f4cf7ec235a50e795e728c8c141d229ba891c2d`
-- Worktree after implementation commit: clean
+- Final main HEAD at final status-sync verification: `9d51a3036339004e9337ccb1b469bca81a275a46`
+- Worktree after status synchronization: clean
 - No migration or database schema change
 - Next allowed task: `PRE-AL-01` only; it is recorded, not executed.

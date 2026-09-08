@@ -157,5 +157,5 @@
 - `PRE-AL-00 = PASS`；main CI baseline 已恢复 GREEN。
 - 根因是已提交的 `docs/verification/M3-T04-blocked-report.md` 未通过仓库 Prettier 检查；GitHub 失败 Run `34225477788`、`34225711930` 实际停在 `Lint and format`，Typecheck 被跳过。
 - 最小修复为格式化该报告并新增正式证据/验证报告；没有修改 workflow、runtime、业务代码、依赖、lockfile、schema 或 migration。
-- 本地完整验证与 clean PostgreSQL M2 integration 4/4 通过；GitHub Actions `foundation-ci` run `34227318851` 完整 PASS。M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`，M3 仍 `IN_PROGRESS`。
+- 本地完整验证与 clean PostgreSQL M2 integration 4/4 通过；GitHub Actions `foundation-ci` 根因修复 run `34227318851`、最终状态同步 run `34227826950` 均完整 PASS。M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`，M3 仍 `IN_PROGRESS`。
 - 下一允许任务：`PRE-AL-01`；本轮不执行。

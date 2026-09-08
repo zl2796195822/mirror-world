@@ -4,7 +4,7 @@ Current milestone: M3 Life Engine v1
 Current task: PRE-AL-00 Restore Green Main Baseline (completed)
 Status: PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
 Last verified implementation commit: ee0617dfd24e617979680184a7fb88c67d64af66
-Last verified main/doc baseline: 5f4cf7ec235a50e795e728c8c141d229ba891c2d
+Last verified main/doc baseline: 9d51a3036339004e9337ccb1b469bca81a275a46
 
 ## Completed
 
@@ -59,7 +59,7 @@ Last verified main/doc baseline: 5f4cf7ec235a50e795e728c8c141d229ba891c2d
 - M3-T04 仅新增 blocked verification report 与状态同步；没有修改 runtime、Action Contract、Kernel、schema、migration、API、Event Ledger、Replay 或数据库事实。
 - PRE-AL-00 已定位 main CI 红灯根因：已提交的 `docs/verification/M3-T04-blocked-report.md` 未通过仓库 Prettier 检查；GitHub 两次失败 Run 实际停在 `Lint and format`，Typecheck 被跳过。
 - PRE-AL-00 仅格式化该报告并新增证据记录 `docs/verification/PRE-AL-00-diagnostic.md`；没有修改 workflow、TypeScript、依赖、lockfile、runtime、schema 或 migration。
-- PRE-AL-00 本地 frozen install、lint、typecheck、test、build、clean PostgreSQL M2 integration 4/4、M3-T01/T02/T03 回归与官方 npm audit 均通过；GitHub Actions run `34227318851` 完整 `Success`，main CI baseline 已恢复 GREEN。
+- PRE-AL-00 本地 frozen install、lint、typecheck、test、build、clean PostgreSQL M2 integration 4/4、M3-T01/T02/T03 回归与官方 npm audit 均通过；根因修复 run `34227318851` 与最终状态同步 run `34227826950` 均完整 `Success`，main CI baseline 已恢复 GREEN。
 
 ## In progress
 
