@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { createDb } from "@mirror/db";
+import { createDb, worlds } from "@mirror/db";
 import {
   findWorldCheckpoint,
   persistWorldCheckpoint,
@@ -9,6 +9,7 @@ import {
 } from "@mirror/world-kernel";
 
 const worldId = "00000000-0000-4000-8000-000000000002";
+const otherWorldId = "00000000-0000-4000-8000-000000000099";
 
 function replayEvent(row) {
   return {
@@ -88,6 +89,70 @@ test("checkpoint and replay are deterministic, resumable, and world-scoped", asy
       events: events.slice(1),
     });
     assert.equal(resumed.summaryHash, full.summaryHash);
+
+    const resumedAgain = replayFromCheckpoint({
+      checkpoint: {
+        worldId: checkpoint.worldId,
+        worldSeq: checkpoint.worldSeq,
+        checksum: checkpoint.checksum,
+        snapshot: checkpoint.snapshot,
+      },
+      events: events.slice(1),
+    });
+    assert.equal(resumedAgain.summaryHash, full.summaryHash);
+
+    await db.insert(worlds).values({
+      id: otherWorldId,
+      name: "M2-T05 isolation world",
+      timezone: "Asia/Shanghai",
+      status: "PAUSED",
+      seed: "m2-t05-isolation-seed",
+      worldTime: new Date("2026-09-06T22:00:00.000Z"),
+      clockAnchorAt: new Date("2026-09-06T22:00:00.000Z"),
+    });
+    try {
+      const otherReplay = replayWorldEvents({
+        seed: {
+          worldId: otherWorldId,
+          seed: "m2-t05-isolation-seed",
+          initialWorldTime: new Date("2026-09-06T22:00:00.000Z"),
+        },
+        events: [],
+      });
+      const otherCheckpoint = await persistWorldCheckpoint(db, {
+        worldId: otherWorldId,
+        replay: otherReplay,
+      });
+      assert.equal(otherCheckpoint.status, "created");
+      const foundOther = await findWorldCheckpoint(db, {
+        worldId: otherWorldId,
+      });
+      assert.equal(foundOther.worldId, otherWorldId);
+      assert.equal(
+        (await findWorldCheckpoint(db, { worldId })).worldId,
+        worldId,
+      );
+      assert.throws(() =>
+        replayFromCheckpoint({
+          checkpoint: {
+            worldId: otherWorldId,
+            worldSeq: checkpoint.worldSeq,
+            checksum: checkpoint.checksum,
+            snapshot: checkpoint.snapshot,
+          },
+          events: [],
+        }),
+      );
+    } finally {
+      await client`
+        delete from simulation_checkpoints
+        where world_id = ${otherWorldId}
+      `;
+      await client`
+        delete from worlds
+        where id = ${otherWorldId}
+      `;
+    }
 
     const futureSeq = BigInt(world.world_seq) + 1n;
     await assert.rejects(

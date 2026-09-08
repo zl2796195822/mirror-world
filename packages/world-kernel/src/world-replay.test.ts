@@ -118,6 +118,28 @@ describe("world replay", () => {
     ).toThrow();
   });
 
+  it.each([
+    ["wrong world", { worldId: "00000000-0000-4000-8000-000000000099" }],
+    ["wrong schema", { snapshot: { schemaVersion: 2 } }],
+    ["corrupted snapshot", { snapshot: null }],
+  ])("rejects a checkpoint with %s", (_name, changes) => {
+    const prefix = replayWorldEvents({ seed, events: events.slice(0, 1) });
+    const checkpoint = {
+      worldId,
+      worldSeq: prefix.state.appliedSeq,
+      checksum: prefix.summaryHash,
+      snapshot: prefix.snapshot,
+      ...changes,
+    };
+
+    expect(() => replayFromCheckpoint({ checkpoint, events: [] })).toThrowError(
+      expect.objectContaining({
+        code: "REPLAY_CHECKPOINT_INVALID",
+        name: "WorldReplayError",
+      }),
+    );
+  });
+
   it("rejects a checkpoint with a malformed sequence as a replay error", () => {
     const prefix = replayWorldEvents({ seed, events: events.slice(0, 1) });
 

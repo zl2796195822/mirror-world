@@ -88,6 +88,6 @@ export function applyWorldClockControl(
     ...synchronized,
     status: nextStatus,
     timeScale: nextScale,
-    clockAnchorAt: cloneDate(now),
+    clockAnchorAt: cloneDate(synchronized.clockAnchorAt),
   };
 }

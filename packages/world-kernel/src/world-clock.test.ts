@@ -36,6 +36,26 @@ describe("world clock", () => {
     expect(next.clockAnchorAt.toISOString()).toBe("2026-09-08T00:00:00.000Z");
   });
 
+  it("does not move the control anchor backward after a wall-clock rollback", () => {
+    const paused = applyWorldClockControl(
+      base,
+      { status: "PAUSED" },
+      new Date("2026-09-08T00:00:02.000Z"),
+    );
+    const resumedAfterRollback = applyWorldClockControl(
+      paused,
+      { status: "RUNNING" },
+      new Date("2026-09-07T23:59:00.000Z"),
+    );
+
+    expect(resumedAfterRollback.worldTime.toISOString()).toBe(
+      "2026-09-08T00:00:20.000Z",
+    );
+    expect(resumedAfterRollback.clockAnchorAt.toISOString()).toBe(
+      "2026-09-08T00:00:02.000Z",
+    );
+  });
+
   it("forces production to 1x", () => {
     const next = advanceWorldClock(
       base,
