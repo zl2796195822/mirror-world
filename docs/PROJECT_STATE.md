@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: ADR-M3-001 Life Engine Needs Model v1
-Status: IN_PROGRESS (M3-T01 PASS; ADR-M3-001 ACCEPTED; M3 not complete)
-Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
-Last verified main/doc baseline: aa156aa56e2bc509f31bf6c8bc5234bc1c157928
+Current task: M3-T02 Needs Engine
+Status: PASS (M3-T02 PASS; M3 remains IN_PROGRESS)
+Last verified implementation commit: b4518859482301a95732734f599441d8bc9d74a3
+Last verified main/doc baseline: b4518859482301a95732734f599441d8bc9d74a3
 
 ## Completed
 
@@ -49,11 +49,14 @@ Last verified main/doc baseline: aa156aa56e2bc509f31bf6c8bc5234bc1c157928
 - `EnergyLevel`、`conditionBand`、工作义务与资源快照明确为 derived/input boundary；`stress`、`safety`、`money_pressure`、`purpose` 延后，不创建伪事实。
 - Needs authority 已确定为 `World Facts + World Time + Resident Seed/Profile + NeedPolicyVersion → Current Need State`；采用 World-Time lazy evaluation，暂停世界不推进 Needs；没有新增 runtime、schema、migration、API 或事件。
 - Needs 来源审计记录于 `docs/architecture/m3-needs-source-audit.md`，正式 ADR 为 `docs/adr/ADR-0007-m3-life-engine-needs-model-v1.md`。
+- M3-T02 已新增纯 `@mirror/life-engine` Needs evaluator：`HungerPressure`、`RestPressure`、`SocialPressure`，统一 `0=satisfied`、`100=critical`，并输出同源 `EnergyLevel` 与带 hysteresis 的 `conditionBand` 派生值。
+- M3-T02 使用 `NeedPolicyVersion=m3-needs-v1`、resident seed/profile 稳定 variation、World-Time lazy evaluation 与 anchor；`PAUSED/MAINTENANCE` 不推进，没有 timer、scheduler、Needs migration、Event Registry 或事实写入。
+- M3-T02 的 30 resident fixture、全仓回归、clean PostgreSQL M2 integration、性能基线、官方 audit 均通过；GitHub Actions `foundation-ci` run `34220974174` 对 `b4518859482301a95732734f599441d8bc9d74a3` 真实 PASS。
 
 ## In progress
 
 - M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
-- M3-T02 及后续 Life Engine、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
+- M3-T02 Needs Engine 已 PASS；Goal、Candidate Action、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
 
 ## Blocked
 
@@ -73,6 +76,7 @@ Last verified main/doc baseline: aa156aa56e2bc509f31bf6c8bc5234bc1c157928
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，列为 P3，沿用 M0 文档基线记录。
 - M3、Life、Memory、Relationship、Economy、AI、3D、Digital Identity、Offline Simulation 及其他后续任务均未执行。
+- M3-T02 只完成纯 evaluator；ActionResult/Observation/ActorRef、MOVE/SLEEP completion、bounded replan、scheduler/driver 与完整 domain replay 仍是后续 M3 前置边界。
 
 ## Migrations since last state
 
@@ -92,6 +96,7 @@ Last verified main/doc baseline: aa156aa56e2bc509f31bf6c8bc5234bc1c157928
 - M3-T01 仅新增纯 deterministic resident seed fixture：30 个 `NATIVE` 居民、稳定住处/工作引用、5×6 profile、26/4 employment 与非负只读资源 fixture；没有新增居民表、运行时或 Kernel Actor 集成。
 - M3-T01 的 GitHub Actions `foundation-ci` run `34215453306` 对 main commit `84a64d6` 真实 PASS；实现 commit 为 `9077be3b660f2e7ea41a5729e07d001bb68e6f07`。
 - ADR-M3-001 只新增 Needs 来源审计和架构决策文档；没有新增 migration、表、API、Event Registry、seed fixture 或 runtime。
+- M3-T02 新增 `packages/life-engine` 纯 evaluator 与测试；没有新增 migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 
 ## Relevant ADRs
 
@@ -123,8 +128,9 @@ Last verified main/doc baseline: aa156aa56e2bc509f31bf6c8bc5234bc1c157928
 - `docs/verification/M2-milestone-report.md`（M2 = PASS）
 - `docs/verification/M3-T01-report.md`（M3-T01 = PASS；M3 仍 IN_PROGRESS）
 - `docs/architecture/m3-needs-source-audit.md`（ADR-M3-001 source audit）
+- `docs/verification/M3-T02-report.md`（M3-T02 = PASS；M3 仍 IN_PROGRESS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- 仅执行 `M3-T02`（按 `ADR-M3-001` contract）；本轮不执行 M3-T02。
+- 仅记录下一任务 `M3-T03`；不得自动执行 M3-T03 或任何后续任务。

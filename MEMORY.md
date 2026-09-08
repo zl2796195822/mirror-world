@@ -121,3 +121,13 @@
 - `ADR-M3-001 = PASS / ACCEPTED`，正式裁决 M3 v1 不机械选择 4/6/7，而按职责收敛：独立 CORE 为 `HungerPressure`、`RestPressure`、`SocialPressure`；`EnergyLevel`、`conditionBand`、工作义务和资源快照为 derived/input boundary；`stress`、`safety`、`money_pressure`、`purpose` 为 DEFER。
 - Need authority 为 `World Facts + World Time + Resident Seed/Profile + NeedPolicyVersion → Current Need State`；统一 Core pressure 语义为 `0=satisfied, 100=critical`；采用 world-time lazy evaluation 与 scheduled wake 方向，`PAUSED/MAINTENANCE` 不推进 Needs。
 - Needs source audit 为 `docs/architecture/m3-needs-source-audit.md`，ADR 为 `docs/adr/ADR-0007-m3-life-engine-needs-model-v1.md`。本任务没有代码、schema、migration、seed、API、Event Registry 或 runtime 变更；下一允许步骤仅为 `M3-T02`，不自动执行。
+
+## 2026-09-08 M3-T02
+
+- 按 `ADR-M3-001` 完成纯 `@mirror/life-engine` Needs evaluator；实现 commit `b4518859482301a95732734f599441d8bc9d74a3`。
+- CORE 仅为 `HungerPressure`、`RestPressure`、`SocialPressure`，统一 `0=satisfied`、`100=critical`；`EnergyLevel` 和 `conditionBand` 为 derived，`stress/safety/money_pressure/purpose` 未实现。
+- NeedPolicy 为 `m3-needs-v1`；calibration baseline 集中定义，resident variation 使用 SHA-256 stable derivation 与 T01 profile；无 `Math.random()`、wall clock、timer 或高频 tick。
+- 采用 anchor + World-Time lazy evaluation；`PAUSED/MAINTENANCE` 不推进；不新增 migration、表、API、Event Registry、Action Loop 或资源写入；anchor reset 由未来 accepted-result 输入边界负责。
+- M3-T02 tests 10/10；全仓 lint/typecheck/test/build、clean PostgreSQL M2 integration 4/4、官方 npm audit、30/1000 resident evaluator benchmark 均通过。
+- GitHub Actions `foundation-ci` run `34220974174` 对实现 commit 真实 PASS；验证报告为 `docs/verification/M3-T02-report.md`。
+- 当前状态 `M3-T02 = PASS`、`M3 = IN_PROGRESS`；ActionResult/Observation/ActorRef、MOVE/SLEEP、bounded replan、scheduler/driver 和完整 domain replay 等既有 blocker 继续保留；下一允许任务仅为 `M3-T03`，不自动执行。
