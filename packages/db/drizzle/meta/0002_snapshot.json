@@ -1,0 +1,273 @@
+{
+  "id": "889793e3-faf3-4429-b925-b3a70e22e8c2",
+  "prevId": "5ae6e7b9-3d83-43c9-ba4b-0401ac5ca3dd",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.action_requests": {
+      "name": "action_requests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "world_id": {
+          "name": "world_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actor_id": {
+          "name": "actor_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action_type": {
+          "name": "action_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "requested_by": {
+          "name": "requested_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "idempotency_key": {
+          "name": "idempotency_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expected_actor_version": {
+          "name": "expected_actor_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "requested_at_world_time": {
+          "name": "requested_at_world_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trace_id": {
+          "name": "trace_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "request_fingerprint": {
+          "name": "request_fingerprint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "action_requests_world_id_worlds_id_fk": {
+          "name": "action_requests_world_id_worlds_id_fk",
+          "tableFrom": "action_requests",
+          "tableTo": "worlds",
+          "columnsFrom": ["world_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "action_requests_world_idempotency_key_unique": {
+          "name": "action_requests_world_idempotency_key_unique",
+          "nullsNotDistinct": false,
+          "columns": ["world_id", "idempotency_key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "action_requests_action_type_check": {
+          "name": "action_requests_action_type_check",
+          "value": "\"action_requests\".\"action_type\" in ('MOVE', 'EAT', 'SLEEP', 'WORK', 'TALK', 'BUY')"
+        },
+        "action_requests_requested_by_check": {
+          "name": "action_requests_requested_by_check",
+          "value": "\"action_requests\".\"requested_by\" in ('HUMAN', 'RULE', 'AI', 'PROXY')"
+        },
+        "action_requests_idempotency_key_check": {
+          "name": "action_requests_idempotency_key_check",
+          "value": "length(trim(\"action_requests\".\"idempotency_key\")) between 1 and 255"
+        },
+        "action_requests_expected_actor_version_check": {
+          "name": "action_requests_expected_actor_version_check",
+          "value": "\"action_requests\".\"expected_actor_version\" is null or \"action_requests\".\"expected_actor_version\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACTIVE'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": ["email"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.worlds": {
+      "name": "worlds",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Asia/Shanghai'"
+        },
+        "time_scale": {
+          "name": "time_scale",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PAUSED'"
+        },
+        "seed": {
+          "name": "seed",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "world_time": {
+          "name": "world_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "clock_anchor_at": {
+          "name": "clock_anchor_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "worlds_status_check": {
+          "name": "worlds_status_check",
+          "value": "\"worlds\".\"status\" in ('RUNNING', 'PAUSED', 'MAINTENANCE')"
+        },
+        "worlds_time_scale_check": {
+          "name": "worlds_time_scale_check",
+          "value": "\"worlds\".\"time_scale\" in (1, 10, 100)"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

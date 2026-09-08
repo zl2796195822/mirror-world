@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M2 World Kernel
-Current task: M2-T02 Action Contract
-Status: PASS
-Last verified implementation commit: 8b9c2eee82109c9a4b1e3e87315edcf2d0411912
+Current task: M2-T03 Kernel Validator
+Status: IMPLEMENTED_UNVERIFIED
+Last verified implementation commit: pending remote CI
 
 ## Completed
 
@@ -33,10 +33,13 @@ Last verified implementation commit: 8b9c2eee82109c9a4b1e3e87315edcf2d0411912
 - M2-T02 已新增 `@mirror/contracts` Action Contract：六类基础动作的结构化 Zod schema、类型与纯解析入口；非法字段、类型、格式和参数边界由 schema 拒绝。
 - M2-T02 没有新增数据库、API、事件、事实写入、幂等执行或 Kernel validator；新增 Zod 已登记并完成官方 production audit。
 - M2-T02 本地与 GitHub Actions 均真实通过；run `34196620662` 执行 install、DB setup、lint、typecheck、unit tests、World Clock integration 与 build，结果为 PASS。
+- M2-T03 已新增 Kernel action validator：复用 Action Contract，并使用显式 World Clock 与只读领域 snapshot 校验 actor、权限、world 状态、时间、版本、位置、资源和六类动作前置条件。
+- M2-T03 已新增最小 `action_requests` durable request metadata 表与 migration；PostgreSQL 唯一约束、transaction、fingerprint 支持 duplicate/conflict 幂等语义，但没有写入世界事实。
+- M2-T03 本地 lint、typecheck、unit tests、build、真实 PostgreSQL integration、双次 db:setup 与官方 production audit 均 PASS；远程 CI 尚未执行。
 
 ## In progress
 
-- 无；M2-T02 已完成并通过，当前停止在 M2-T02，不进入 M2-T03。
+- M2-T03 本地实现已完成，等待 GitHub Actions 对提交执行真实 Gate；在 CI PASS 前不宣布正式 PASS。
 
 ## Blocked
 
@@ -50,7 +53,7 @@ Last verified implementation commit: 8b9c2eee82109c9a4b1e3e87315edcf2d0411912
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
-- M2-T03 及后续任务均未执行；M2-T02 的 ActionRequest 去重、Kernel 规则校验、事件账本和 replay 仍未实现。
+- M2-T04 及后续任务均未执行；M2-T03 不包含 Event Ledger、ActionResult、event seq、Checkpoint、Replay、Simulator 或事实 mutation。
 
 ## Migrations since last state
 
@@ -71,6 +74,7 @@ Last verified implementation commit: 8b9c2eee82109c9a4b1e3e87315edcf2d0411912
 - M2-T01 的 wall-clock anchor、生产 1x、Kernel 写边界与 migration 记录于 ADR-0002。
 - `docs/adr/ADR-0003-m2-t02-action-contract.md`
 - M2-T02 的结构化 Action Contract 字段、参数边界与后续 Kernel 分层记录于 ADR-0003。
+- `docs/adr/ADR-0004-m2-t03-kernel-validation-idempotency.md`：M2-T03 validator snapshot、World Clock 输入与 PostgreSQL 幂等边界。
 
 ## Verification report
 
@@ -81,8 +85,9 @@ Last verified implementation commit: 8b9c2eee82109c9a4b1e3e87315edcf2d0411912
 - `docs/verification/M1-milestone-report.md`
 - `docs/verification/M2-T01-report.md`（M2-T01 = PASS）
 - `docs/verification/M2-T02-report.md`（M2-T02 = PASS）
+- `docs/verification/M2-T03-report.md`（本地 PASS，远程 CI PENDING）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2-T03；只记录，不执行，必须重新取得任务授权。
+- M2-T04；M2-T03 Gate 完成后只记录，不自动执行。

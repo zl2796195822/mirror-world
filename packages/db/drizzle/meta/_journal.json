@@ -15,6 +15,13 @@
       "when": 1788841756449,
       "tag": "0001_late_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788851796988,
+      "tag": "0002_wandering_moonstone",
+      "breakpoints": true
     }
   ]
 }

@@ -126,6 +126,9 @@ importers:
 
   packages/world-kernel:
     dependencies:
+      '@mirror/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@mirror/db':
         specifier: workspace:*
         version: link:../db

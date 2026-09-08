@@ -83,3 +83,10 @@
 - Action Contract 只做结构、类型、格式与基本数值边界检查；不实现 Kernel validator、actor/位置/资源/权限/幂等执行、ActionResult、数据库 action_requests、事件账本、API、Replay 或 M2-T03+ 能力。
 - 新增 ADR-0003、契约单测 15 项，`pnpm install --frozen-lockfile`、双次 `db:setup`、lint、typecheck、test、build、World Clock 真实 PostgreSQL 回归和官方 npm audit 均 PASS；Docker 依赖 healthy，数据库已恢复 M0 paused 基线。
 - 当前状态为 `M2-T02 = PASS`；实现与本地验证提交为 `8b9c2eee82109c9a4b1e3e87315edcf2d0411912`，GitHub Actions run `34196620662` 真实 PASS。下一任务只记录 `M2-T03`，不自动执行。
+
+## 2026-09-08 M2-T03
+
+- 按原始任务只实现 Kernel validator 与请求幂等：新增 `packages/world-kernel/src/action-validator.ts`，复用 `@mirror/contracts`，使用显式 World Clock 和只读领域 snapshot 校验 actor、requestedBy 权限、RUNNING、请求世界时间、expectedActorVersion、MOVE/EAT/SLEEP/WORK/TALK/BUY 的位置与资源前置条件。
+- 当前仓库尚无居民、地点、库存、工作或经济事实表，因此 validator 不伪造持久化领域事实；新增 `packages/db/src/schema.ts` 的最小 `action_requests` 表和 `0002_wandering_moonstone.sql` 只保存通过校验的请求 metadata、payload 与 fingerprint。
+- `persistValidatedActionRequest` 在 PostgreSQL transaction 中依赖 `(world_id,idempotency_key)` 唯一约束；同 payload 重试返回 `KERNEL_DUPLICATE_REQUEST`，同 key 不同 payload 返回 `KERNEL_CONFLICT`，并发只保留一条 request row；没有改变 `worlds`、没有 Event Ledger、ActionResult、event seq、Replay、Checkpoint、Action API 或 M2-T04+ 能力。
+- 本地 install、双次 db:setup、lint、typecheck、unit test、build、真实 PostgreSQL integration 和官方 npm audit 均 PASS；最终数据库恢复为 migrations=3、users=1、worlds=1、action_requests=0、world=`PAUSED/1x`。远程 CI 在提交前仍待验证，任务状态为 `IMPLEMENTED_UNVERIFIED`，下一任务只记录 `M2-T04`。

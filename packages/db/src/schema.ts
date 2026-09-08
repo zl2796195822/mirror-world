@@ -2,9 +2,11 @@ import { sql } from "drizzle-orm";
 import {
   check,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -43,5 +45,51 @@ export const worlds = pgTable(
       sql`${table.status} in ('RUNNING', 'PAUSED', 'MAINTENANCE')`,
     ),
     check("worlds_time_scale_check", sql`${table.timeScale} in (1, 10, 100)`),
+  ],
+);
+
+export const actionRequests = pgTable(
+  "action_requests",
+  {
+    id: uuid("id").primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    actorId: uuid("actor_id").notNull(),
+    actionType: text("action_type").notNull(),
+    requestedBy: text("requested_by").notNull(),
+    idempotencyKey: text("idempotency_key").notNull(),
+    expectedActorVersion: integer("expected_actor_version"),
+    requestedAtWorldTime: timestamp("requested_at_world_time", {
+      withTimezone: true,
+    }).notNull(),
+    traceId: text("trace_id").notNull(),
+    requestFingerprint: text("request_fingerprint").notNull(),
+    payload: jsonb("payload").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("action_requests_world_idempotency_key_unique").on(
+      table.worldId,
+      table.idempotencyKey,
+    ),
+    check(
+      "action_requests_action_type_check",
+      sql`${table.actionType} in ('MOVE', 'EAT', 'SLEEP', 'WORK', 'TALK', 'BUY')`,
+    ),
+    check(
+      "action_requests_requested_by_check",
+      sql`${table.requestedBy} in ('HUMAN', 'RULE', 'AI', 'PROXY')`,
+    ),
+    check(
+      "action_requests_idempotency_key_check",
+      sql`length(trim(${table.idempotencyKey})) between 1 and 255`,
+    ),
+    check(
+      "action_requests_expected_actor_version_check",
+      sql`${table.expectedActorVersion} is null or ${table.expectedActorVersion} >= 0`,
+    ),
   ],
 );
