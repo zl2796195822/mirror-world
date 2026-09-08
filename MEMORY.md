@@ -113,4 +113,5 @@
 - 固定 `worldId + seed` 生成恰好 30 个 `NATIVE` 居民，stable SHA-256-derived UUID、lexicographic ordering、5 个 profile 各 6 人、26 employed/4 unemployed、第一条街 fixture-only home/work 引用，以及 `cashCents/foodUnits/version=0` 只读资源 fixture。
 - Resident Identity、Digital/Auth Identity、fixture-only ActorRef 分离；没有创建 residents/actors/needs/accounts/inventory/migration，没有 Kernel integration、ActionResult、runtime、scheduler、30×30、M3-T02+ 能力。
 - `packages/db` T01 tests 6 项通过；frozen install、双次 db setup、lint、typecheck、全仓 tests、build、官方 npm audit 和 disposable clean DB 上 M2 PostgreSQL integration 4/4 均通过。首次复用已有 append-only 主库的 integration 因重复验证事件链失败，未归因于 T01，随后以临时 clean DB 重跑通过。
+- GitHub Actions `foundation-ci` run `34215453306` 对 main commit `84a64d6` 真实 PASS；最终实现 commit 为 `9077be3b660f2e7ea41a5729e07d001bb68e6f07`。
 - 当前正式状态：`M3-T01 = PASS`，`M3 = IN_PROGRESS`。下一步仅记录并解决 M3-T02 前的 Needs 4/6/7 ADR/Pre-T02 Decision；本轮停止。

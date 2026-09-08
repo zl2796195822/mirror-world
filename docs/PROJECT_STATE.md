@@ -84,6 +84,7 @@ Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
 - 新增内部 World Kernel Replay/Checkpoint store；没有新增 API、ActionResult、Projection、Simulator 或事件 schema 破坏性变更。
 - M2 Gate 仅新增测试证据与 rollback 修复；没有新增 Action API、ActionResult、Projection、Simulator 或 M3+ 领域事实写入口。
 - M3-T01 仅新增纯 deterministic resident seed fixture：30 个 `NATIVE` 居民、稳定住处/工作引用、5×6 profile、26/4 employment 与非负只读资源 fixture；没有新增居民表、运行时或 Kernel Actor 集成。
+- M3-T01 的 GitHub Actions `foundation-ci` run `34215453306` 对 main commit `84a64d6` 真实 PASS；实现 commit 为 `9077be3b660f2e7ea41a5729e07d001bb68e6f07`。
 
 ## Relevant ADRs
 

@@ -87,7 +87,7 @@ An initial integration attempt against the already-used local append-only databa
 ## Git and follow-up
 
 - Implementation commit: `9077be3b660f2e7ea41a5729e07d001bb68e6f07`.
-- Final main HEAD: recorded after documentation sync.
-- GitHub Actions: recorded after push; CI must pass on the implementation commit before final release status is reported.
+- Final main HEAD at CI verification: `84a64d6`.
+- GitHub Actions: `foundation-ci` run `34215453306` PASS for `84a64d6` ([run](https://github.com/zl2796195822/mirror-world/actions/runs/34215453306)).
 - Database impact: 5 existing migrations remain; no schema change.
 - Next allowed step: record and resolve the Needs pre-T02 decision, then consider `M3-T02`; neither was executed in this task.
