@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-04 Resident Runtime State Authority (implemented; CI verification pending)
-Status: PRE-AL-04 = IMPLEMENTED_UNVERIFIED; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: 05354a578cad3563f87d860d96119a866cc72bbe
-Last verified main/doc baseline: 05354a578cad3563f87d860d96119a866cc72bbe; PRE-AL-04 CI verification pending
+Current task: PRE-AL-04 Resident Runtime State Authority (completed)
+Status: PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: bbdd4b0
+Last verified main/doc baseline: bbdd4b0; final documentation sync is docs-only
 
 ## Completed
 
@@ -73,7 +73,8 @@ Last verified main/doc baseline: 05354a578cad3563f87d860d96119a866cc72bbe; PRE-A
 - PRE-AL-04 已建立 world-scoped、resident-scoped 的 `resident_runtime_states` durable authority；初始 location 显式来自 home fixture，初始 activity 显式为 `IDLE`，bootstrap 幂等且不覆盖已有 runtime state。
 - PRE-AL-04 已将 `location`、`activity`、`workObligation` 接入 `m3-observation-v1` 的 `AVAILABLE` union；work obligation 按 employment、固定 UTC 工作日 09:00–17:00 与 World Time 确定性推导，无业居民返回 `NO_CURRENT_OBLIGATION`。
 - PRE-AL-04 Life Engine 仍只读 Observation；没有 MOVE/SLEEP executor、ActionRequest submission、World Event、scheduler、replan 或事实写入路径。新增 migration 为 `packages/db/drizzle/0007_flawless_mach_iv.sql`。
-- PRE-AL-04 本地 frozen install、lint、typecheck、test、build、官方 audit、双次 db:setup 与 clean PostgreSQL 7/7 integration 均通过；GitHub Actions run `34248913024`/`34249840037` 暴露 clean runner 未先构建 contracts 的 seed 边界，已由 `@mirror/db db:seed` 显式构建 contracts 修复，当前仍待新 run 完整通过后再升格 PASS。
+- PRE-AL-04 本地 frozen install、lint、typecheck、test、build、官方 audit、双次 db:setup 与 clean PostgreSQL 7/7 integration 均通过；GitHub Actions run `34248913024`/`34249840037` 暴露 clean runner 未先构建 contracts 的 seed 边界，已由 `@mirror/db db:seed` 显式构建 contracts 修复。
+- PRE-AL-04 最终实现验证 run `34250817438` 的 migration、seed、lint、typecheck、unit tests、integration tests、build 全部 PASS；当前正式状态为 `PRE-AL-04 = PASS`，M3 仍 `IN_PROGRESS`。
 
 ## In progress
 
@@ -167,10 +168,10 @@ Last verified main/doc baseline: 05354a578cad3563f87d860d96119a866cc72bbe; PRE-A
 - `docs/verification/PRE-AL-00-report.md`（PRE-AL-00 = PASS；Main CI Baseline = GREEN）
 - `docs/verification/PRE-AL-01-report.md`（PRE-AL-01 = PASS；Kernel Action Outcome feedback loop）
 - `docs/verification/PRE-AL-03-report.md`（PRE-AL-03 = PASS；Resident ActorRef + Resource Read Bridge）
-- `docs/verification/PRE-AL-04-report.md`（PRE-AL-04 = IMPLEMENTED_UNVERIFIED；CI verification pending）
+- `docs/verification/PRE-AL-04-report.md`（PRE-AL-04 = PASS；Resident Runtime State Authority）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `PRE-AL-04` implementation is complete locally but cannot be marked PASS until a complete GitHub Actions run passes on the pushed main commit.
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. After PRE-AL-04 PASS, the next task is only `PRE-AL-05 · MOVE / SLEEP Action Semantics`; do not execute it in this turn.
+- `PRE-AL-04 = PASS`，最终实现验证为 GitHub Actions run `34250817438`；最终 docs-only sync 仍需保持同一完整 CI 门禁。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. The next task is only `PRE-AL-05 · MOVE / SLEEP Action Semantics`; do not execute it in this turn.

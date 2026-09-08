@@ -2,21 +2,18 @@
 
 ## Result
 
-`PRE-AL-04 = IMPLEMENTED_UNVERIFIED` while the first GitHub Actions run for
-the implementation is being rechecked. Local and disposable clean PostgreSQL
-verification passed; the first remote run (`34248913024`) failed in database
-preparation before lint, typecheck, tests, or build. The status must not be
-promoted to `PASS` until a complete remote run passes.
-
-This task establishes the Resident Runtime State Authority and read boundary
-only. It does not implement any Action execution or Action Loop.
+`PRE-AL-04 = PASS`。Local, disposable clean PostgreSQL, and complete GitHub
+Actions verification passed. The task establishes the Resident Runtime State
+Authority and read boundary only; it does not implement any Action execution or
+Action Loop.
 
 ## Task and baselines
 
 - Task ID: `PRE-AL-04`
 - Official Task Name: `Resident Runtime State Authority`
 - Original main HEAD: `1cc5a26de38bef43b57c03e59fdbe3852cb60a41`
-- Implementation commit: `05354a578cad3563f87d860d96119a866cc72bbe`
+- Runtime implementation commit: `05354a578cad3563f87d860d96119a866cc72bbe`
+- Clean-runner seed fix commit: `bbdd4b0` (`@mirror/db db:seed` builds contracts)
 - Branch: `main`
 - Scope: World/Resident Authority → Resident Runtime State → Runtime State
   Read Port → `WorldObservationSnapshot` → Life Engine
@@ -259,8 +256,8 @@ behavior and absence of runtime N+1.
 - The failure logs are not accessible anonymously from the public Actions
   page. Local Node 24/pnpm 9.15.4/PostgreSQL 18.6 equivalent setup passes.
 - The CI workflow supplies the Compose database URL explicitly and separates
-  migration/seed steps. A fresh complete run on the pushed fix is required
-  before changing this report to `PASS`.
+  migration/seed steps. The pushed fix passed the complete remote gate in run
+  `34250817438`.
 
 ## Risk and Remaining Blocker Audit
 
@@ -281,9 +278,9 @@ authorize or implement the next task.
 
 - Original main HEAD: `1cc5a26de38bef43b57c03e59fdbe3852cb60a41`.
 - Implementation commit: `05354a578cad3563f87d860d96119a866cc72bbe`.
-- Current report status: `IMPLEMENTED_UNVERIFIED` pending complete remote CI.
+- Current report status: `PASS`.
 - Report path: `docs/verification/PRE-AL-04-report.md`.
-- `docs/PROJECT_STATE.md` is synchronized to the pending CI state.
-- After the remote run passes, the final report must record the final pushed
-  main HEAD, CI URL, `PRE-AL-04 = PASS`, `M3 = IN_PROGRESS`, and the next
-  allowed task only as `PRE-AL-05` without starting it.
+- `docs/PROJECT_STATE.md` is synchronized to `PRE-AL-04 = PASS`.
+- Final implementation verification: [foundation-ci run 34250817438](https://github.com/zl2796195822/mirror-world/actions/runs/34250817438),
+  all workflow steps successful. The final documentation sync is docs-only and
+  does not change runtime behavior; its own CI run is the final mainline gate.

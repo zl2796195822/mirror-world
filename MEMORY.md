@@ -185,3 +185,12 @@
 - 本地 `pnpm install --frozen-lockfile`、lint、typecheck、test、build、双次 `db:setup`、官方 audit 均通过；clean disposable PostgreSQL 上 M2 integration 4/4、PRE-AL-01、PRE-AL-02 Observation 与 PRE-AL-03 30-resident read-only integration 均通过。
 - 实现提交 `071862681346cf75d1a8e1715842f468cd04c7ea` 的 GitHub Actions `foundation-ci` run `34241852554` 真实 PASS；docs-only sync 不改变 runtime。
 - 下一允许工作不能直接进入 M3-T04；必须先处理 authoritative location/activity/obligation source、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay，并重新做 30×30 Gate 审查。
+
+## 2026-09-09 PRE-AL-04
+
+- `PRE-AL-04 = PASS`；实现 Resident Runtime State Authority，`M3 = IN_PROGRESS`，`M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` 保持不变。
+- 新增 world-scoped/resident-scoped `resident_runtime_states` durable authority 与 migration `0007_flawless_mach_iv.sql`；current location 只来自 runtime authority，bootstrap policy `m3-runtime-state-v1` 显式以 home fixture 初始化 location、以 `IDLE` 初始化 activity，幂等且不覆盖已有 state。
+- Work obligation 是 employment + 固定 UTC 周一至周五 09:00–17:00 + World Time 的 deterministic read model；26 employed/4 unemployed 正确区分 `NOT_DUE` 与 `NO_CURRENT_OBLIGATION`。Observation `m3-observation-v1` 的 location/activity/workObligation 已为合法 `AVAILABLE`，Life Engine 仍只读 Observation。
+- 没有实现 MOVE/SLEEP、Action executor、ActionRequest submission、World Event、replan、scheduler、driver 或 30×30；剩余 blocker 为 action semantics、bounded replan、scheduler/driver 与 full resident/domain replay。
+- Local full regression、clean PostgreSQL 7/7 integration、official audit 与 GitHub Actions run `34250817438` 均通过。Clean runner 暴露的 contracts 未构建 seed 边界已通过 `@mirror/db db:seed` 显式构建 contracts 修复。
+- 下一允许任务仅记录 `PRE-AL-05 · MOVE / SLEEP Action Semantics`，完成 PRE-AL-04 后立即停止。
