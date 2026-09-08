@@ -2,8 +2,8 @@
 
 Current milestone: M2 World Kernel
 Current task: M2-T03 Kernel Validator
-Status: IMPLEMENTED_UNVERIFIED
-Last verified implementation commit: pending remote CI
+Status: PASS
+Last verified implementation commit: cb6205b21613f684944d1daaf94141fb442f56dd
 
 ## Completed
 
@@ -35,11 +35,11 @@ Last verified implementation commit: pending remote CI
 - M2-T02 本地与 GitHub Actions 均真实通过；run `34196620662` 执行 install、DB setup、lint、typecheck、unit tests、World Clock integration 与 build，结果为 PASS。
 - M2-T03 已新增 Kernel action validator：复用 Action Contract，并使用显式 World Clock 与只读领域 snapshot 校验 actor、权限、world 状态、时间、版本、位置、资源和六类动作前置条件。
 - M2-T03 已新增最小 `action_requests` durable request metadata 表与 migration；PostgreSQL 唯一约束、transaction、fingerprint 支持 duplicate/conflict 幂等语义，但没有写入世界事实。
-- M2-T03 本地 lint、typecheck、unit tests、build、真实 PostgreSQL integration、双次 db:setup 与官方 production audit 均 PASS；远程 CI 尚未执行。
+- M2-T03 本地 lint、typecheck、unit tests、build、真实 PostgreSQL integration、双次 db:setup、官方 production audit 与 GitHub Actions run `34199405422` 均 PASS。
 
 ## In progress
 
-- M2-T03 本地实现已完成，等待 GitHub Actions 对提交执行真实 Gate；在 CI PASS 前不宣布正式 PASS。
+- M2-T03 已完成并通过本地与远程 Gate；本轮停止，不进入 M2-T04。
 
 ## Blocked
 
@@ -85,7 +85,7 @@ Last verified implementation commit: pending remote CI
 - `docs/verification/M1-milestone-report.md`
 - `docs/verification/M2-T01-report.md`（M2-T01 = PASS）
 - `docs/verification/M2-T02-report.md`（M2-T02 = PASS）
-- `docs/verification/M2-T03-report.md`（本地 PASS，远程 CI PENDING）
+- `docs/verification/M2-T03-report.md`（M2-T03 = PASS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task

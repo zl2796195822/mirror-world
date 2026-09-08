@@ -2,7 +2,7 @@
 
 ## 结论
 
-本地实现与真实 PostgreSQL 验证已通过；远程 GitHub Actions 尚未执行，因此当前 Gate 状态为 `M2-T03 = IMPLEMENTED_UNVERIFIED`，等待远程 CI 对本次提交复核。
+本地实现、真实 PostgreSQL 验证与远程 GitHub Actions 均已通过，Gate 状态为 `M2-T03 = PASS`。
 
 本报告只覆盖 M2-T03，不代表 M2-T04、M2 里程碑或任何后续能力完成。
 
@@ -52,34 +52,33 @@ ActionRequest 仍然不是 World Fact。M2-T02 schema 只证明请求形状合�
 
 ### 本地真实验证结果
 
-| 验证                                                                                                              | 结果                                                                        |
-| ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `pnpm install --frozen-lockfile`                                                                                  | PASS                                                                        |
-| `pnpm db:setup` 第 1 次                                                                                           | PASS                                                                        |
-| `pnpm db:setup` 第 2 次                                                                                           | PASS                                                                        |
-| `pnpm lint`                                                                                                       | PASS                                                                        |
-| `pnpm typecheck`                                                                                                  | PASS                                                                        |
-| `pnpm test`                                                                                                       | PASS                                                                        |
-| `pnpm build`                                                                                                      | PASS                                                                        |
-| `DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm --filter @mirror/api test:integration` | PASS，2/2（World Clock + action request）                                   |
-| `pnpm audit --prod --registry=https://registry.npmjs.org`                                                         | PASS，No known vulnerabilities found                                        |
-| Docker PostgreSQL / Redis / MinIO                                                                                 | PASS，healthy                                                               |
-| 最终数据库恢复                                                                                                    | PASS，migrations=3、users=1、worlds=1、action_requests=0，world=`PAUSED/1x` |
-| GitHub Actions                                                                                                    | PENDING                                                                     |
+| 验证                                                                                                              | 结果                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                                                                                  | PASS                                                                                           |
+| `pnpm db:setup` 第 1 次                                                                                           | PASS                                                                                           |
+| `pnpm db:setup` 第 2 次                                                                                           | PASS                                                                                           |
+| `pnpm lint`                                                                                                       | PASS                                                                                           |
+| `pnpm typecheck`                                                                                                  | PASS                                                                                           |
+| `pnpm test`                                                                                                       | PASS                                                                                           |
+| `pnpm build`                                                                                                      | PASS                                                                                           |
+| `DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm --filter @mirror/api test:integration` | PASS，2/2（World Clock + action request）                                                      |
+| `pnpm audit --prod --registry=https://registry.npmjs.org`                                                         | PASS，No known vulnerabilities found                                                           |
+| Docker PostgreSQL / Redis / MinIO                                                                                 | PASS，healthy                                                                                  |
+| 最终数据库恢复                                                                                                    | PASS，migrations=3、users=1、worlds=1、action_requests=0，world=`PAUSED/1x`                    |
+| GitHub Actions                                                                                                    | PASS，[run 34199405422](https://github.com/zl2796195822/mirror-world/actions/runs/34199405422) |
 
 ## Definition of Done
 
-| DoD                                | 证据                                                                   | 状态    |
-| ---------------------------------- | ---------------------------------------------------------------------- | ------- |
-| 校验 actor、位置、时间、资源、权限 | validator snapshot 规则与 9 项单测                                     | PASS    |
-| 幂等请求不重复生效                 | PostgreSQL 唯一约束、并发 integration、duplicate/conflict 断言         | PASS    |
-| 不绕过 World Kernel 写事实         | 仅 Kernel 导出 validator/store；无 API action route；world row 未变化  | PASS    |
-| 不提前实现 M2-T04+                 | 无 Event Ledger、ActionResult、event seq、Replay、Simulator 或后续模块 | PASS    |
-| 全仓质量与真实依赖验证             | lint/typecheck/test/build/db integration/audit                         | PASS    |
-| 远程 CI Gate                       | GitHub Actions                                                         | PENDING |
+| DoD                                | 证据                                                                                            | 状态 |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------- | ---- |
+| 校验 actor、位置、时间、资源、权限 | validator snapshot 规则与 9 项单测                                                              | PASS |
+| 幂等请求不重复生效                 | PostgreSQL 唯一约束、并发 integration、duplicate/conflict 断言                                  | PASS |
+| 不绕过 World Kernel 写事实         | 仅 Kernel 导出 validator/store；无 API action route；world row 未变化                           | PASS |
+| 不提前实现 M2-T04+                 | 无 Event Ledger、ActionResult、event seq、Replay、Simulator 或后续模块                          | PASS |
+| 全仓质量与真实依赖验证             | lint/typecheck/test/build/db integration/audit                                                  | PASS |
+| 远程 CI Gate                       | `foundation-ci` run 34199405422 对 commit `cb6205b21613f684944d1daaf94141fb442f56dd` 执行并成功 | PASS |
 
 ## 未验证与后续边界
 
 - 本地真实 provider、生产部署、真实居民领域表、事件账本、ActionResult、Replay、Simulator 仍未验证/未实现；这些不属于 M2-T03。
-- GitHub Actions 必须对提交后的完整仓库重新执行；在其 PASS 前不得将本任务标记为正式 Gate PASS。
 - 下一允许任务只记录为 `M2-T04`，本轮不执行。
