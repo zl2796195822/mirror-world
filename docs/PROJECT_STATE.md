@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M2 World Kernel
-Current task: M2-T05 Checkpoint / Replay
+Current task: M2 Milestone Gate
 Status: PASS
-Last verified implementation commit: 838c6e5eede3aaf413c5a9966893444ae7cb92ad
+Last verified implementation commit: 7f5377f37d441c9989dd94ce2f6d97f30980603d
 
 ## Completed
 
@@ -42,10 +42,12 @@ Last verified implementation commit: 838c6e5eede3aaf413c5a9966893444ae7cb92ad
 - M2-T05 已新增 `simulation_checkpoints` 与 migration `0004_old_ares.sql`；checkpoint 只作为可删除、可重建的恢复/加速数据，PostgreSQL Event Ledger 仍是 durable truth。
 - M2-T05 已新增固定 seed + ordered event replay、canonical SHA-256 history/summary hash、checkpoint suffix replay，以及 world/seq/schema/checksum 校验；Replay 不重新执行 ActionRequest。
 - M2-T05 本地 frozen install、clean database 双次 setup、lint、typecheck、unit tests、build、真实 PostgreSQL 全 M2 integration 与官方 production audit 均 PASS；GitHub Actions run `34204276572` 对实现提交 `838c6e5eede3aaf413c5a9966893444ae7cb92ad` 真实 PASS。
+- M2 Milestone Gate 已复核 M2-T01～T05 的 authority、clock、Action Contract、validator、幂等、Event Ledger、transaction、sequence、world isolation、checkpoint 与 deterministic replay；发现并修复 wall-clock rollback 下的 control anchor 回写缺陷，补齐 checkpoint 错误 world/schema/corruption 与重复 suffix replay 证据。
+- M2 Gate 本地真实验证、API/Web 回归、官方 production audit 与范围审计均 PASS；Gate 修复提交为 `7f5377f37d441c9989dd94ce2f6d97f30980603d`，最终状态为 `M2 = PASS`。
 
 ## In progress
 
-- M2-T05 已完成本地与远程 Gate；本轮停止，不执行 M2 Milestone Gate、M3 或任何后续任务。
+- 无。M2 Milestone Gate 已完成；本轮停止，不执行 M3 或任何后续任务。
 
 ## Blocked
 
@@ -53,12 +55,16 @@ Last verified implementation commit: 838c6e5eede3aaf413c5a9966893444ae7cb92ad
 
 ## P0/P1
 
-- 未发现已确认的 P0/P1。
+- P0：0。
+- `MIRROR-FIND-001` 为 P1，标记 `PRE-M3 REQUIRED FOLLOW-UP`：Action execution result / committed event feedback；不阻塞 M2 基础 Gate，但必须在 M3 前处理。
 
 ## Known P2/P3
 
-- 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
+- `MIRROR-FIND-002`：`causation_id`，P2，M3/M6 前处理。
+- `MIRROR-FIND-003`：细粒度、版本化 Event payload schema，P2，具体领域事件落地前处理。
+- `MIRROR-FIND-004`：scheduler/heartbeat，P2，M3 前处理。
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
+- 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，列为 P3，沿用 M0 文档基线记录。
 - M3、Life、Memory、Relationship、Economy、AI、3D、Digital Identity、Offline Simulation 及其他后续任务均未执行。
 
 ## Migrations since last state
@@ -67,7 +73,7 @@ Last verified implementation commit: 838c6e5eede3aaf413c5a9966893444ae7cb92ad
 - 新增 migration `packages/db/drizzle/0002_wandering_moonstone.sql`：M2-T03 `action_requests` durable request metadata 与幂等唯一约束。
 - 新增 migration `packages/db/drizzle/0003_cold_viper.sql`：M2-T04 `world_events`、`world_seq`、append-only 与 sequence consistency triggers。
 - 新增 migration `packages/db/drizzle/0004_old_ares.sql`：M2-T05 `simulation_checkpoints`、版本/序列约束与 checkpoint position trigger。
-- 当前本地数据库为 `migrations=4`、`users=1`、`worlds=1`、`action_requests=0`；`world_events` 保留真实 integration 追加的 20 条账本事件，world 已恢复 `PAUSED/1x`，checkpoint 表为空，world fact 与 event ledger 均由 PostgreSQL 保存。
+- 当前本地数据库为 `migrations=5`、`users=1`、`worlds=1`、`action_requests=0`；`world_events` 保留真实 integration 追加的 20 条账本事件，world 已恢复 `PAUSED/1x`，checkpoint 表为空，world fact 与 event ledger 均由 PostgreSQL 保存。
 
 ## API/Event changes
 
@@ -75,6 +81,7 @@ Last verified implementation commit: 838c6e5eede3aaf413c5a9966893444ae7cb92ad
 - 新增内部 `@mirror/contracts` ActionRequest schema；本轮没有新增 Action API、Event Ledger、WebSocket 或事件写入。
 - 新增 `world_events` Event Ledger、world-local `world_seq` 与 `WORLD_TIME_ADVANCED` 事件写入；没有新增 Action API、ActionResult、Projection、Checkpoint、Replay 或 WebSocket。
 - 新增内部 World Kernel Replay/Checkpoint store；没有新增 API、ActionResult、Projection、Simulator 或事件 schema 破坏性变更。
+- M2 Gate 仅新增测试证据与 rollback 修复；没有新增 Action API、ActionResult、Projection、Simulator 或 M3+ 领域事实写入口。
 
 ## Relevant ADRs
 
@@ -101,8 +108,9 @@ Last verified implementation commit: 838c6e5eede3aaf413c5a9966893444ae7cb92ad
 - `docs/verification/M2-T03-report.md`（M2-T03 = PASS）
 - `docs/verification/M2-T04-report.md`（M2-T04 = PASS）
 - `docs/verification/M2-T05-report.md`（M2-T05 = PASS）
+- `docs/verification/M2-milestone-report.md`（M2 = PASS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2 Milestone Gate；本轮只完成 M2-T05，不执行 M2 Milestone Gate、M3 或任何后续任务。
+- 仅记录 `RES-M3-002`；不执行 M3 或任何后续任务。

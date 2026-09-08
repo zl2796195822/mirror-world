@@ -97,3 +97,12 @@
 - 新增 `packages/world-kernel/src/world-replay.ts`、`world-checkpoint-store.ts` 及单测；非时间事件在当前无领域事实前提下只做 schema-validated no-op，但进入 history digest；Replay 不重新执行 ActionRequest，没有新增 API、ActionResult、Projection、Simulator、Life 或 M3+。
 - 临时 clean PostgreSQL 上完整 M2 integration（World Clock、Event Ledger、Replay/Checkpoint、Action Request）4/4 PASS；frozen install、双次 clean `db:setup`、lint、typecheck、unit tests、build、官方 npm production audit 均 PASS。
 - M2-T05 实现 commit `838c6e5eede3aaf413c5a9966893444ae7cb92ad`；GitHub Actions `foundation-ci` run `34204276572` 真实 PASS。主库最终恢复 `PAUSED/1x`，保留既有 20 条 append-only events、`world_seq=20`、无 checkpoint。当前状态 `M2-T05 = PASS`，下一允许步骤仅为 `M2 Milestone Gate`，不执行任何后续任务。
+
+## 2026-09-08 M2 Milestone Gate
+
+- 完成 M2 Milestone Gate，M2-T01～T05 全部 PASS；本轮只做审计、真实验证与 Gate 阻塞修复，没有执行 M3、Life、Memory、Relationship、Economy、AI、3D、Digital Identity 或 Offline Simulation。
+- 发现并修复 World Clock control 在 wall-clock rollback 时回写较早 `clockAnchorAt` 的缺陷；修复提交为 `7f5377f37d441c9989dd94ce2f6d97f30980603d`，并补齐 checkpoint wrong-world/schema/corruption、重复 suffix replay 与 A/B world isolation 测试。
+- Gate 真实证据：frozen install、双次 clean `db:setup`、lint、typecheck、test、build、M2 PostgreSQL integration 4/4、API live regression、Web 五路由回归、Docker healthy 与官方 npm production audit 均 PASS；world-kernel 25、contracts 15、db 1、web 3、API contract 6。
+- 最终主库保持 5 migrations、1 user、1 world、0 action request、20 条 append-only events、`world_seq=20`、0 checkpoint，world=`PAUSED/1x`；没有删除历史 events。
+- Gate 报告为 `docs/verification/M2-milestone-report.md`；P0=0。`MIRROR-FIND-001` 为 P1 的 `PRE-M3 REQUIRED FOLLOW-UP`，`MIRROR-FIND-002`～`004` 为后续 P2；manifest 不一致列 P3，Node.js 20 action warning 继续记录。
+- 当前状态为 `M2 = PASS`；下一允许步骤仅记录 `RES-M3-002`，不执行 M3。

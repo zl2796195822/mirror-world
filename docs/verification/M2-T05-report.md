@@ -54,12 +54,12 @@
 | 同一 clean database `pnpm db:setup` 第 2 次               | PASS                                                                                                                    |
 | `pnpm lint`                                               | PASS                                                                                                                    |
 | `pnpm typecheck`                                          | PASS                                                                                                                    |
-| `pnpm test`                                               | PASS；world-kernel 21 tests，既有 contracts/db/web/API tests 全部通过                                                   |
+| `pnpm test`                                               | PASS；world-kernel 25 tests，既有 contracts/db/web/API tests 全部通过                                                   |
 | `pnpm build`                                              | PASS                                                                                                                    |
 | 临时 clean PostgreSQL 上 M2 全部 integration              | PASS；World Clock、Event Ledger、Replay/Checkpoint、Action Request 4/4                                                  |
 | `pnpm audit --prod --registry=https://registry.npmjs.org` | PASS；No known vulnerabilities found                                                                                    |
 | Docker PostgreSQL / Redis / MinIO                         | PASS；healthy                                                                                                           |
-| 主库最终状态                                              | PASS；migration=4、users=1、worlds=1、action_requests=0、world_events=20、world_seq=20、checkpoint=0、world=`PAUSED/1x` |
+| 主库最终状态                                              | PASS；migration=5、users=1、worlds=1、action_requests=0、world_events=20、world_seq=20、checkpoint=0、world=`PAUSED/1x` |
 | GitHub Actions                                            | PASS；[foundation-ci run 34204276572](https://github.com/zl2796195822/mirror-world/actions/runs/34204276572)            |
 
 ## Definition of Done
