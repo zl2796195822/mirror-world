@@ -2,27 +2,28 @@
 
 只登记实际引入的运行时/构建依赖；没有复制外部源码。所有版本以 `pnpm-lock.yaml` 为最终解析依据。
 
-| ID        | Project / package | Version | Reuse mode | License status   | Purpose                       | Related milestone |
-| --------- | ----------------- | ------- | ---------- | ---------------- | ----------------------------- | ----------------- |
-| TP-M0-001 | Turborepo         | 2.5.6   | DEPENDENCY | PASS: MIT        | monorepo task runner          | M0                |
-| TP-M0-002 | Drizzle ORM       | 0.45.2  | DEPENDENCY | PASS: Apache-2.0 | PostgreSQL schema/query       | M0                |
-| TP-M0-003 | Drizzle Kit       | 0.31.4  | DEPENDENCY | PASS: MIT        | migration generation          | M0                |
-| TP-M0-004 | postgres.js       | 3.4.7   | DEPENDENCY | PASS: Unlicense  | PostgreSQL driver             | M0                |
-| TP-M0-005 | Vitest            | 3.2.4   | DEPENDENCY | PASS: MIT        | unit test runner              | M0                |
-| TP-M0-006 | Prettier          | 3.6.2   | DEPENDENCY | PASS: MIT        | code formatting               | M0                |
-| TP-M0-007 | @eslint/js        | 9.35.0  | DEPENDENCY | PASS: MIT        | ESLint JavaScript rules       | M0                |
-| TP-M0-008 | @types/node       | 24.3.0  | DEPENDENCY | PASS: MIT        | Node.js type definitions      | M0                |
-| TP-M0-009 | ESLint            | 9.35.0  | DEPENDENCY | PASS: MIT        | code linting                  | M0                |
-| TP-M0-010 | tsx               | 4.20.3  | DEPENDENCY | PASS: MIT        | TypeScript script runner      | M0                |
-| TP-M0-011 | TypeScript        | 5.9.2   | DEPENDENCY | PASS: Apache-2.0 | type checking/build           | M0                |
-| TP-M0-012 | typescript-eslint | 8.42.0  | DEPENDENCY | PASS: MIT        | TypeScript ESLint integration | M0                |
-| TP-M1-001 | Next.js           | 16.3.4  | DEPENDENCY | PASS: MIT        | App Router 产品壳与生产构建   | M1-T01            |
-| TP-M1-002 | React             | 19.2.8  | DEPENDENCY | PASS: MIT        | 产品壳组件运行时              | M1-T01            |
-| TP-M1-003 | React DOM         | 19.2.8  | DEPENDENCY | PASS: MIT        | 浏览器渲染                    | M1-T01            |
-| TP-M1-004 | @types/react      | 19.2.2  | DEPENDENCY | PASS: MIT        | React 类型定义                | M1-T01            |
-| TP-M1-005 | @types/react-dom  | 19.2.2  | DEPENDENCY | PASS: MIT        | React DOM 类型定义            | M1-T01            |
-| TP-M1-006 | Fastify           | 5.12.3  | DEPENDENCY | PASS: MIT        | API skeleton HTTP server      | M1-T04            |
-| TP-M1-007 | @fastify/swagger  | 9.8.1   | DEPENDENCY | PASS: MIT        | Fastify OpenAPI generation    | M1-T04            |
+| ID        | Project / package | Version | Reuse mode | License status   | Purpose                        | Related milestone |
+| --------- | ----------------- | ------- | ---------- | ---------------- | ------------------------------ | ----------------- |
+| TP-M0-001 | Turborepo         | 2.5.6   | DEPENDENCY | PASS: MIT        | monorepo task runner           | M0                |
+| TP-M0-002 | Drizzle ORM       | 0.45.2  | DEPENDENCY | PASS: Apache-2.0 | PostgreSQL schema/query        | M0                |
+| TP-M0-003 | Drizzle Kit       | 0.31.4  | DEPENDENCY | PASS: MIT        | migration generation           | M0                |
+| TP-M0-004 | postgres.js       | 3.4.7   | DEPENDENCY | PASS: Unlicense  | PostgreSQL driver              | M0                |
+| TP-M0-005 | Vitest            | 3.2.4   | DEPENDENCY | PASS: MIT        | unit test runner               | M0                |
+| TP-M0-006 | Prettier          | 3.6.2   | DEPENDENCY | PASS: MIT        | code formatting                | M0                |
+| TP-M0-007 | @eslint/js        | 9.35.0  | DEPENDENCY | PASS: MIT        | ESLint JavaScript rules        | M0                |
+| TP-M0-008 | @types/node       | 24.3.0  | DEPENDENCY | PASS: MIT        | Node.js type definitions       | M0                |
+| TP-M0-009 | ESLint            | 9.35.0  | DEPENDENCY | PASS: MIT        | code linting                   | M0                |
+| TP-M0-010 | tsx               | 4.20.3  | DEPENDENCY | PASS: MIT        | TypeScript script runner       | M0                |
+| TP-M0-011 | TypeScript        | 5.9.2   | DEPENDENCY | PASS: Apache-2.0 | type checking/build            | M0                |
+| TP-M0-012 | typescript-eslint | 8.42.0  | DEPENDENCY | PASS: MIT        | TypeScript ESLint integration  | M0                |
+| TP-M1-001 | Next.js           | 16.3.4  | DEPENDENCY | PASS: MIT        | App Router 产品壳与生产构建    | M1-T01            |
+| TP-M1-002 | React             | 19.2.8  | DEPENDENCY | PASS: MIT        | 产品壳组件运行时               | M1-T01            |
+| TP-M1-003 | React DOM         | 19.2.8  | DEPENDENCY | PASS: MIT        | 浏览器渲染                     | M1-T01            |
+| TP-M1-004 | @types/react      | 19.2.2  | DEPENDENCY | PASS: MIT        | React 类型定义                 | M1-T01            |
+| TP-M1-005 | @types/react-dom  | 19.2.2  | DEPENDENCY | PASS: MIT        | React DOM 类型定义             | M1-T01            |
+| TP-M1-006 | Fastify           | 5.12.3  | DEPENDENCY | PASS: MIT        | API skeleton HTTP server       | M1-T04            |
+| TP-M1-007 | @fastify/swagger  | 9.8.1   | DEPENDENCY | PASS: MIT        | Fastify OpenAPI generation     | M1-T04            |
+| TP-M2-001 | Zod               | 4.5.4   | DEPENDENCY | PASS: MIT        | Action Contract runtime schema | M2-T02            |
 
 ## Source links
 
@@ -37,6 +38,7 @@
 | @fastify/swagger | <https://www.npmjs.com/package/@fastify%2Fswagger> |
 | drizzle-orm      | <https://www.npmjs.com/package/drizzle-orm>        |
 | postgres         | <https://www.npmjs.com/package/postgres>           |
+| zod              | <https://www.npmjs.com/package/zod>                |
 
 核验依据：安装后的包元数据与 `pnpm licenses list --json`。本轮没有复制外部源码、资产或模型进入主仓；所有条目均为依赖模式。
 

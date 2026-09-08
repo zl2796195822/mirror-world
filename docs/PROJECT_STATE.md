@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M2 World Kernel
-Current task: M2-T01 世界时钟
-Status: PASS
-Last verified implementation commit: ed65036966d4349f4a4b9f4970cc4e54727c36de
+Current task: M2-T02 Action Contract
+Status: IMPLEMENTED_UNVERIFIED (local PASS; CI pending)
+Last verified implementation commit: pending CI
 
 ## Completed
 
@@ -30,10 +30,12 @@ Last verified implementation commit: ed65036966d4349f4a4b9f4970cc4e54727c36de
 - 新增 `@mirror/world-kernel`，API 时钟读写只能通过 Kernel store 进入 PostgreSQL transaction；没有新增 Action、Event Ledger、Checkpoint、Replay 或后续领域能力。
 - 新增 M2-T01 migration，补充 `clock_anchor_at` 与 `worlds` 的 status/time-scale 数据库约束；clean DB migration/seed 与真实时钟 integration test 已通过。
 - M1 API/Web 回归、lint、typecheck、test、build 与官方 npm audit 已通过；GitHub Actions run `34187838878` 对实现 commit 真实 PASS。
+- M2-T02 已新增 `@mirror/contracts` Action Contract：六类基础动作的结构化 Zod schema、类型与纯解析入口；非法字段、类型、格式和参数边界由 schema 拒绝。
+- M2-T02 没有新增数据库、API、事件、事实写入、幂等执行或 Kernel validator；新增 Zod 已登记并完成官方 production audit。
 
 ## In progress
 
-- 无；M2-T01 已完成并通过，当前停止在 M2-T01，不进入 M2-T02。
+- M2-T02 已完成本地实现与验证，等待独立提交的 GitHub Actions 真实结果；在 CI 通过前不宣布 PASS。
 
 ## Blocked
 
@@ -47,7 +49,7 @@ Last verified implementation commit: ed65036966d4349f4a4b9f4970cc4e54727c36de
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
-- M2-T02 及后续任务均未实现；本轮只执行 M2-T01。
+- M2-T03 及后续任务均未执行；M2-T02 的 ActionRequest 去重、Kernel 规则校验、事件账本和 replay 仍未实现。
 
 ## Migrations since last state
 
@@ -57,7 +59,7 @@ Last verified implementation commit: ed65036966d4349f4a4b9f4970cc4e54727c36de
 ## API/Event changes
 
 - M1 API skeleton 保持；新增 `GET /api/v1/worlds/:worldId` 与 development-only `POST /api/v1/worlds/:worldId/admin/time`，OpenAPI 已同步。
-- 本轮没有新增 Event Ledger、ActionRequest、WebSocket 或事件写入；时钟写入只经过 `@mirror/world-kernel`。
+- 新增内部 `@mirror/contracts` ActionRequest schema；本轮没有新增 Action API、Event Ledger、WebSocket 或事件写入。
 
 ## Relevant ADRs
 
@@ -75,8 +77,9 @@ Last verified implementation commit: ed65036966d4349f4a4b9f4970cc4e54727c36de
 - `docs/verification/M1-T01-report.md`
 - `docs/verification/M1-milestone-report.md`
 - `docs/verification/M2-T01-report.md`（M2-T01 = PASS）
+- `docs/verification/M2-T02-report.md`（本地 IMPLEMENTED_UNVERIFIED，CI pending）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2-T02；只记录，不执行。
+- M2-T03；M2-T02 CI 通过后才可进入下一任务，且必须重新取得任务授权。
