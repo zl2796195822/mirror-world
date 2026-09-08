@@ -45,5 +45,5 @@
 - 按项目文档原始定义实现 World Overview：世界时间、运行状态、30 居民占位、最近事件占位；所有未接入能力以 unavailable/empty 呈现，不伪造世界正在运行。
 - 只修改 `apps/web` World Overview 页面与共享观察样式，保留 M1-T02 `requireUser()`、开发身份、刷新/退出/生产 fail-closed 边界；无 API、World Kernel、数据库、Redis、world event 或后续能力。
 - 新增最小 Web 页面契约测试；未新增 production dependency；截图保存在 `docs/verification/screenshots/M1-T03/`。
-- 本地 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build`、官方 audit（HIGH=0、CRITICAL=0）与 1440/390 浏览器验证已通过；GitHub Actions 待提交后补记。
-- 当前状态为 `M1-T03 = IN_PROGRESS`，下一步只完成最终 audit、push/CI 与证据文档，不进入 M1-T04。
+- 本地 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build`、官方 audit（HIGH=0、CRITICAL=0）与 1440/390 浏览器验证已通过；GitHub Actions run `34181243953` PASS。
+- 当前状态为 `M1-T03 = PASS`；实现提交为 `01dc550ae5b64e5ee513d606f14859ca32c85c05`，最终文档验证提交为 `eb9d474cde555a3f7c5ef94c3da75bdda27b2c55`。下一允许任务为 M1-T04，本轮已停止，不进入 M1-T04。

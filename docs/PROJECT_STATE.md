@@ -2,8 +2,8 @@
 
 Current milestone: M1
 Current task: M1-T03 World Overview
-Status: IN_PROGRESS
-Last verified implementation commit: pending
+Status: PASS
+Last verified implementation commit: 01dc550ae5b64e5ee513d606f14859ca32c85c05
 
 ## Completed
 
@@ -21,7 +21,7 @@ Last verified implementation commit: pending
 
 ## In progress
 
-- M1-T03 实现与本地/浏览器验证已完成，等待独立提交后的 GitHub Actions 结果。
+- M1-T03 已完成并通过本地验证、浏览器验收、官方 production audit 与 GitHub Actions；本轮停止，不进入 M1-T04。
 
 ## Blocked
 
@@ -60,4 +60,4 @@ Last verified implementation commit: pending
 
 ## Next allowed task
 
-- M1-T04；M1-T03 通过 Gate 后才允许进入。本轮不执行 M1-T04、M2 或其他后续任务。
+- M1-T04；本轮不执行 M1-T04、M2 或其他后续任务。
