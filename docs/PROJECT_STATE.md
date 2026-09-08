@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
-Current milestone: M1
-Current task: M1 Milestone Gate
-Status: PASS
-Last verified implementation commit: 15c02dfd43067bdfadb242e27ba777c4a78c7a19
+Current milestone: M2 World Kernel
+Current task: M2-T01 世界时钟
+Status: IN_PROGRESS
+Last verified implementation commit: pending
 
 ## Completed
 
@@ -26,10 +26,14 @@ Last verified implementation commit: 15c02dfd43067bdfadb242e27ba777c4a78c7a19
 - 本轮真实失库验证确认 `/health` 保持 200，`/ready` 与 `/worlds` 均 503 且使用统一 error envelope/requestId。
 - 本轮重新执行 frozen install、lint、typecheck、test、build 与官方 npm audit，均 PASS；P0=0、P1=0、HIGH=0、CRITICAL=0。
 - 本轮补齐第三方登记的官方 source links，并修正 ADR-0001 的 SameSite 文案与实际 Strict cookie 实现一致。
+- M2-T01 已实现最小 World Clock：显式 wall-clock 输入、world-time 推进、开发态 pause/1x/10x/100x、生产态 1x 守门，以及 PostgreSQL durable anchor。
+- 新增 `@mirror/world-kernel`，API 时钟读写只能通过 Kernel store 进入 PostgreSQL transaction；没有新增 Action、Event Ledger、Checkpoint、Replay 或后续领域能力。
+- 新增 M2-T01 migration，补充 `clock_anchor_at` 与 `worlds` 的 status/time-scale 数据库约束；clean DB migration/seed 与真实时钟 integration test 已通过。
+- M1 API/Web 回归、lint、typecheck、test、build 与官方 npm audit 已通过；GitHub Actions 最终结果待本轮提交后补录。
 
 ## In progress
 
-- 无；M1 已完成 Milestone Gate 并通过，本轮停止于 M1，不进入 M2。
+- M2-T01 已完成本地实现与验证，等待最终 GitHub Actions 结果后关闭本任务。
 
 ## Blocked
 
@@ -43,23 +47,25 @@ Last verified implementation commit: 15c02dfd43067bdfadb242e27ba777c4a78c7a19
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
-- M2 及后续任务均未实现；下一允许任务只记录为 M2-T01。
+- M2-T02 及后续任务均未实现；本轮只执行 M2-T01。
 
 ## Migrations since last state
 
-- NO DATABASE CHANGE。M1-T04 未修改数据库 schema/migration；仅新增只读数据库查询与 readiness 检查。
-- M0 基线数据库只读核对仍为 `migrations=1`、`users=1`、`worlds=1`。
+- 新增 migration `packages/db/drizzle/0001_late_karma.sql`：`worlds.clock_anchor_at`、status/time_scale check constraints；clean migration/seed 已通过。
+- 当前本地数据库基线为 `migrations=2`、`users=1`、`worlds=1`；world fact 仍由 PostgreSQL 保存，Redis 未存时钟事实。
 
 ## API/Event changes
 
-- 新增 M1 API skeleton 只读路由与 OpenAPI；无 Event Ledger、ActionRequest 或世界事实写入。
-- 没有新增 API 写入路径；未来世界事实仍必须经 World Kernel。
+- M1 API skeleton 保持；新增 `GET /api/v1/worlds/:worldId` 与 development-only `POST /api/v1/worlds/:worldId/admin/time`，OpenAPI 已同步。
+- 本轮没有新增 Event Ledger、ActionRequest、WebSocket 或事件写入；时钟写入只经过 `@mirror/world-kernel`。
 
 ## Relevant ADRs
 
 - `docs/adr/ADR-0000-template.md`
 - `docs/adr/ADR-0001-m1-t02-development-auth.md`
 - M1-T02 的开发身份与生产 fail-closed 边界记录于 ADR-0001。
+- `docs/adr/ADR-0002-m2-t01-world-clock.md`
+- M2-T01 的 wall-clock anchor、生产 1x、Kernel 写边界与 migration 记录于 ADR-0002。
 
 ## Verification report
 
@@ -68,8 +74,9 @@ Last verified implementation commit: 15c02dfd43067bdfadb242e27ba777c4a78c7a19
 - `docs/verification/M1-T04-report.md`
 - `docs/verification/M1-T01-report.md`
 - `docs/verification/M1-milestone-report.md`
+- `docs/verification/M2-T01-report.md`
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2-T01；只记录，不执行。
+- M2-T02；只记录，不执行，直到 M2-T01 最终 Gate 完成。

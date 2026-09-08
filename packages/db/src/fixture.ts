@@ -17,5 +17,6 @@ export const M0_FIXTURE = {
     status: "PAUSED",
     seed: "mirror-m0-foundation-v1",
     worldTime: new Date("2026-09-07T06:00:00+08:00"),
+    clockAnchorAt: new Date("2026-09-07T06:00:00+08:00"),
   },
 } as const;

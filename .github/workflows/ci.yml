@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Start PostgreSQL for integration tests
+        run: docker compose up -d --wait postgres
+
+      - name: Prepare integration database
+        run: pnpm db:setup
+
       - name: Lint and format
         run: pnpm lint
 
@@ -38,6 +44,9 @@ jobs:
 
       - name: Unit tests
         run: pnpm test
+
+      - name: World clock integration tests
+        run: DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror pnpm --filter @mirror/api test:integration
 
       - name: Build
         run: pnpm build

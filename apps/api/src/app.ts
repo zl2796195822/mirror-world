@@ -6,11 +6,27 @@ import Fastify, {
 } from "fastify";
 import swagger from "@fastify/swagger";
 import { createDb, worlds } from "@mirror/db";
+import {
+  syncWorldClock,
+  updateWorldClockControl,
+  WorldClockStoreError,
+  type WorldClockEnvironment,
+  type WorldClockScale,
+  type WorldClockStatus,
+} from "@mirror/world-kernel";
 
 type Database = ReturnType<typeof createDb>;
 
 export type ApiAppOptions = {
   database?: Database | null;
+  environment?: WorldClockEnvironment;
+  clockNow?: () => Date;
+};
+
+type WorldParams = { worldId: string };
+type WorldTimeControl = {
+  status?: WorldClockStatus;
+  timeScale?: WorldClockScale;
 };
 
 type WorldRecord = {
@@ -144,6 +160,10 @@ export async function buildApp(
 ): Promise<FastifyInstance> {
   const database =
     options.database === undefined ? configuredDatabase() : options.database;
+  const environment =
+    options.environment ??
+    (process.env.NODE_ENV === "production" ? "production" : "development");
+  const clockNow = options.clockNow ?? (() => new Date());
   const app = Fastify({
     logger: false,
     requestIdHeader: "x-request-id",
@@ -251,6 +271,100 @@ export async function buildApp(
     }
   };
 
+  const worldClockHandler = async (
+    request: FastifyRequest<{ Params: WorldParams }>,
+    reply: FastifyReply,
+  ) => {
+    if (!database) {
+      return failure(
+        request,
+        reply,
+        503,
+        "WORLD_DATA_UNAVAILABLE",
+        "World data is not available",
+      );
+    }
+
+    try {
+      const world = await syncWorldClock(
+        database.db,
+        request.params.worldId,
+        clockNow(),
+        environment,
+      );
+      return success(request, reply, { world: serializeWorld(world) });
+    } catch (error) {
+      if (
+        error instanceof WorldClockStoreError &&
+        error.code === "WORLD_NOT_FOUND"
+      ) {
+        return failure(request, reply, 404, "WORLD_NOT_FOUND", error.message);
+      }
+
+      return failure(
+        request,
+        reply,
+        503,
+        "WORLD_DATA_UNAVAILABLE",
+        "World clock is unavailable",
+      );
+    }
+  };
+
+  const worldTimeControlHandler = async (
+    request: FastifyRequest<{
+      Params: WorldParams;
+      Body: WorldTimeControl;
+    }>,
+    reply: FastifyReply,
+  ) => {
+    if (!database) {
+      return failure(
+        request,
+        reply,
+        503,
+        "WORLD_DATA_UNAVAILABLE",
+        "World data is not available",
+      );
+    }
+
+    if (environment === "production") {
+      return failure(
+        request,
+        reply,
+        403,
+        "WORLD_TIME_CONTROL_DISABLED",
+        "World clock control is disabled in production",
+      );
+    }
+
+    try {
+      const world = await updateWorldClockControl(
+        database.db,
+        request.params.worldId,
+        request.body,
+        clockNow(),
+        environment,
+      );
+      return success(request, reply, { world: serializeWorld(world) });
+    } catch (error) {
+      if (
+        error instanceof WorldClockStoreError &&
+        error.code === "WORLD_NOT_FOUND"
+      ) {
+        return failure(request, reply, 404, "WORLD_NOT_FOUND", error.message);
+      }
+
+      return failure(
+        request,
+        reply,
+        400,
+        "WORLD_TIME_CONTROL_INVALID",
+        "World clock control could not be applied",
+      );
+    }
+  };
+
   const healthSchema = {
     tags: ["operations"],
     response: {
@@ -278,6 +392,48 @@ export async function buildApp(
       503: errorResponseSchema,
     },
   };
+  const worldSchemaResponse = {
+    tags: ["worlds"],
+    params: {
+      type: "object",
+      additionalProperties: false,
+      required: ["worldId"],
+      properties: { worldId: { type: "string", format: "uuid" } },
+    },
+    response: {
+      200: successResponseSchema({
+        type: "object",
+        additionalProperties: false,
+        required: ["world"],
+        properties: { world: worldSchema },
+      }),
+      404: errorResponseSchema,
+      503: errorResponseSchema,
+    },
+  };
+  const worldTimeControlSchema = {
+    tags: ["worlds"],
+    params: worldSchemaResponse.params,
+    body: {
+      type: "object",
+      additionalProperties: false,
+      minProperties: 1,
+      properties: {
+        status: {
+          type: "string",
+          enum: ["RUNNING", "PAUSED", "MAINTENANCE"],
+        },
+        timeScale: { type: "integer", enum: [1, 10, 100] },
+      },
+    },
+    response: {
+      200: worldSchemaResponse.response[200],
+      400: errorResponseSchema,
+      403: errorResponseSchema,
+      404: errorResponseSchema,
+      503: errorResponseSchema,
+    },
+  };
 
   await app.register(swagger, {
     openapi: {
@@ -286,7 +442,7 @@ export async function buildApp(
         title: "Mirror World API",
         version: "0.1.0",
         description:
-          "Read-only M1 API skeleton for operational and world metadata access.",
+          "Operational and world metadata access with the M2-T01 world clock boundary.",
       },
       tags: [
         { name: "operations", description: "Process and dependency status" },
@@ -298,6 +454,16 @@ export async function buildApp(
   app.get("/api/v1/health", { schema: healthSchema }, healthHandler);
   app.get("/api/v1/ready", { schema: readySchema }, readyHandler);
   app.get("/api/v1/worlds", { schema: worldsSchema }, worldsHandler);
+  app.get(
+    "/api/v1/worlds/:worldId",
+    { schema: worldSchemaResponse },
+    worldClockHandler,
+  );
+  app.post(
+    "/api/v1/worlds/:worldId/admin/time",
+    { schema: worldTimeControlSchema },
+    worldTimeControlHandler,
+  );
 
   // Keep the task's short operational paths usable while the versioned contract is canonical.
   app.get(

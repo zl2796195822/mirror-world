@@ -70,5 +70,24 @@ test("openapi is generated from the registered routes", async () => {
   assert.ok(document.paths["/api/v1/health"]);
   assert.ok(document.paths["/api/v1/ready"]);
   assert.ok(document.paths["/api/v1/worlds"]);
+  assert.ok(document.paths["/api/v1/worlds/{worldId}"]);
+  assert.ok(document.paths["/api/v1/worlds/{worldId}/admin/time"]);
   assert.equal(document.paths["/health"], undefined);
+});
+
+test("world clock routes fail closed without a database", async () => {
+  const read = await app.inject({
+    method: "GET",
+    url: "/api/v1/worlds/00000000-0000-4000-8000-000000000002",
+  });
+  assert.equal(read.statusCode, 503);
+  assert.equal(read.json().error.code, "WORLD_DATA_UNAVAILABLE");
+
+  const control = await app.inject({
+    method: "POST",
+    url: "/api/v1/worlds/00000000-0000-4000-8000-000000000002/admin/time",
+    payload: { status: "RUNNING", timeScale: 10 },
+  });
+  assert.equal(control.statusCode, 503);
+  assert.equal(control.json().error.code, "WORLD_DATA_UNAVAILABLE");
 });

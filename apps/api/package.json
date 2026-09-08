@@ -9,11 +9,13 @@
     "generate:openapi": "node scripts/generate-openapi.mjs && pnpm exec prettier --write openapi.json",
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "pnpm run build && node --test scripts/*.test.mjs"
+    "test": "pnpm run build && node --test scripts/api-contract.test.mjs",
+    "test:integration": "node --test scripts/world-clock.integration.test.mjs"
   },
   "dependencies": {
     "@fastify/swagger": "9.8.1",
     "@mirror/db": "workspace:*",
+    "@mirror/world-kernel": "workspace:*",
     "fastify": "5.12.3"
   },
   "devDependencies": {

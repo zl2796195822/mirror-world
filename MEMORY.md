@@ -68,3 +68,11 @@
 - Gate 发现并修正两处文档一致性问题：ADR-0001 的 SameSite 文案改为实际 `Strict`；第三方登记补充直接 production 依赖的官方 npm source links。没有修改 M1 业务代码、schema 或 migration。
 - 新增总体验收报告 `docs/verification/M1-milestone-report.md`；GitHub Actions 当前 HEAD run `34184147783` PASS。M2、World Kernel、Event Ledger、ActionRequest 与所有后续能力均未执行。
 - 未决 P2：文档库 manifest 文件数量/文件名不一致；GitHub Actions 外部 action 的 Node.js 20 runtime deprecation warning。下一允许任务只记录为 `M2-T01`，不得自动执行。
+
+## 2026-09-08 M2-T01
+
+- 按文档原始定义仅实现世界时钟：real time/world time/time_scale；development 支持 pause/1x/10x/100x；production 强制有效倍率 1x；未实现 M2-T02 及后续任务。
+- 新增 `packages/world-kernel`，显式注入 wall clock；`PAUSED/MAINTENANCE` 不推进 world time；wall clock 回拨不让 world time 倒退；API 不直接更新 worlds，时钟写入集中在 Kernel store 的 PostgreSQL transaction/row lock。
+- 新增 `worlds.clock_anchor_at` 与 status/time_scale check constraints migration；重复 db:setup、真实 PostgreSQL integration、M1 API/Web 回归、lint/typecheck/test/build 和官方 npm audit 均通过。
+- 新增 ADR-0002、`docs/verification/M2-T01-report.md`；GitHub Actions 需在推送后等待真实 PASS。既有 P2 继续保留：manifest 不一致、外部 action Node.js 20 deprecation warning。
+- 下一允许任务为 `M2-T02`，只记录，不执行。

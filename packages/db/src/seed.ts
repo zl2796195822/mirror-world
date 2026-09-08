@@ -28,6 +28,7 @@ try {
         status: M0_FIXTURE.world.status,
         seed: M0_FIXTURE.world.seed,
         worldTime: M0_FIXTURE.world.worldTime,
+        clockAnchorAt: M0_FIXTURE.world.clockAnchorAt,
         updatedAt: new Date(),
       },
     });

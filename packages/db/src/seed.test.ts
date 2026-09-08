@@ -12,5 +12,6 @@ describe("M0 fixture", () => {
     expect(M0_FIXTURE.world.worldTime.toISOString()).toBe(
       "2026-09-06T22:00:00.000Z",
     );
+    expect(M0_FIXTURE.world.clockAnchorAt).toEqual(M0_FIXTURE.world.worldTime);
   });
 });
