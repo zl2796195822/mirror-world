@@ -2,9 +2,9 @@
 
 ## 当前范围
 
-- M0、M1-T01、M1-T02、M1-T03 已通过；下一允许任务为 M1-T04。
-- 本轮不得执行 M1-T04、M2 或任何后续任务。
-- M1-T03 只实现 World Overview 的世界时间、运行状态、30 居民占位与最近事件占位；未接入的事实必须显示诚实空/不可用状态，不实现 API、World Kernel、世界、居民行为、3D、AI、数字人、模拟器或 Worker。
+- M0、M1-T01、M1-T02、M1-T03 已通过；本轮只执行 M1-T04。
+- 本轮不得执行 M2 或任何后续任务。
+- M1-T04 只实现 Fastify API skeleton：`/health`、`/ready`、`/worlds`、统一 error envelope/requestId 与 OpenAPI 生成；不实现世界事实写入或后续领域能力。
 - 每个任务完成后必须运行真实验证；未通过不得宣布 M0 完成。
 
 ## 不可破坏边界

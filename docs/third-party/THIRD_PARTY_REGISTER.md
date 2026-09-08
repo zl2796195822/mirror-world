@@ -21,6 +21,8 @@
 | TP-M1-003 | React DOM         | 19.2.8  | DEPENDENCY | PASS: MIT        | 浏览器渲染                    | M1-T01            |
 | TP-M1-004 | @types/react      | 19.2.2  | DEPENDENCY | PASS: MIT        | React 类型定义                | M1-T01            |
 | TP-M1-005 | @types/react-dom  | 19.2.2  | DEPENDENCY | PASS: MIT        | React DOM 类型定义            | M1-T01            |
+| TP-M1-006 | Fastify           | 5.12.3  | DEPENDENCY | PASS: MIT        | API skeleton HTTP server      | M1-T04            |
+| TP-M1-007 | @fastify/swagger  | 9.8.1   | DEPENDENCY | PASS: MIT        | Fastify OpenAPI generation    | M1-T04            |
 
 核验依据：安装后的包元数据与 `pnpm licenses list --json`。本轮没有复制外部源码、资产或模型进入主仓；所有条目均为依赖模式。
 

@@ -1,0 +1,23 @@
+{
+  "name": "@mirror/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/generate-openapi.mjs && pnpm exec prettier --write openapi.json",
+    "start": "node dist/server.js",
+    "generate:openapi": "node scripts/generate-openapi.mjs && pnpm exec prettier --write openapi.json",
+    "lint": "eslint src",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test scripts/*.test.mjs"
+  },
+  "dependencies": {
+    "@fastify/swagger": "9.8.1",
+    "@mirror/db": "workspace:*",
+    "fastify": "5.12.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "typescript": "5.9.2"
+  }
+}

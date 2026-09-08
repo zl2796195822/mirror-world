@@ -1,6 +1,6 @@
 # 镜界
 
-Persistent Digital Society 的工程仓库。M1-T03：World Overview 已通过；下一允许任务为 M1-T04，世界事实、居民、事件、API、3D、AI 与模拟能力按后续任务逐步接入。
+Persistent Digital Society 的工程仓库。M1-T04 API skeleton 正在当前范围内实现；世界事实、居民、事件、3D、AI 与模拟能力按后续任务逐步接入。
 
 ## 当前范围
 
@@ -10,6 +10,7 @@ Persistent Digital Society 的工程仓库。M1-T03：World Overview 已通过�
 - Drizzle migration 与 `users` / `worlds` 最小种子
 - CI 基线：lint、typecheck、unit test、build
 - `apps/web`：M1-T01 深色、低密度、非游戏 HUD 产品壳、M1-T02 开发身份与 M1-T03 World Overview
+- `apps/api`：M1-T04 Fastify 只读健康、就绪、世界元信息接口与 OpenAPI
 
 ## 开发前提
 
@@ -28,6 +29,14 @@ pnpm build
 
 # 启动 M1-T03 World Overview 验证
 MIRROR_DEV_AUTH=true pnpm --filter @mirror/web dev
+
+# 启动 M1-T04 API skeleton 验证
+DATABASE_URL=postgres://mirror:mirror_dev_only@localhost:5432/mirror \
+  pnpm --filter @mirror/api start
+
+# 生成 API OpenAPI 文档
+pnpm --filter @mirror/api build
+pnpm --filter @mirror/api generate:openapi
 ```
 
 停止本地依赖：
@@ -36,4 +45,4 @@ MIRROR_DEV_AUTH=true pnpm --filter @mirror/web dev
 docker compose down
 ```
 
-M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)，M1-T01 验证记录见 [`docs/verification/M1-T01-report.md`](docs/verification/M1-T01-report.md)，M1-T02 验证记录见 [`docs/verification/M1-T02-report.md`](docs/verification/M1-T02-report.md)，M1-T03 验证记录见 [`docs/verification/M1-T03-report.md`](docs/verification/M1-T03-report.md)。M1-T03 已完成，本轮不执行 M1-T04 或任何后续任务。
+M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)，M1-T01 验证记录见 [`docs/verification/M1-T01-report.md`](docs/verification/M1-T01-report.md)，M1-T02 验证记录见 [`docs/verification/M1-T02-report.md`](docs/verification/M1-T02-report.md)，M1-T03 验证记录见 [`docs/verification/M1-T03-report.md`](docs/verification/M1-T03-report.md)。M1-T04 验证记录见 [`docs/verification/M1-T04-report.md`](docs/verification/M1-T04-report.md)。完成 M1-T04 后需停止在 M1 Milestone Gate，不自动进入 M2。
