@@ -3,7 +3,7 @@
 Current milestone: M1
 Current task: M1-T02 开发身份
 Status: PASS
-Last verified implementation commit: 08842eb756b1c91521c2447d6745f76adcf4adaa
+Last verified implementation commit: 085b421591a56c498b540c10d1cf039e9185a5e5
 
 ## Completed
 

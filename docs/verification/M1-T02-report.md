@@ -92,15 +92,15 @@ M1-T02「开发身份」要求：
 
 ## 自动化验证
 
-| 检查                                                   | 结果               | 证据                                                                                  |
-| ------------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------- |
-| `pnpm lint`                                            | PASS               | `@mirror/db`、`@mirror/web` lint 与 Prettier 全部通过                                 |
-| `pnpm typecheck`                                       | PASS               | 两个 workspace 类型检查通过                                                           |
-| `pnpm test`                                            | PASS               | DB 1 个测试 + Web production guard 2 个测试，共 3 个测试通过                          |
-| `MIRROR_DEV_AUTH=true pnpm --filter @mirror/web build` | PASS（按预期失败） | production guard 阻断构建，退出码 1，明确报错不允许 dev auth                          |
-| `NODE_ENV=production MIRROR_DEV_AUTH=false pnpm build` | PASS               | DB build 与 Next.js 16.3.4 production build 成功                                      |
-| Production dependency audit                            | N/A                | 本任务未新增 production dependency；沿用 M1-T01 官方 registry 结果 HIGH=0、CRITICAL=0 |
-| Database migration                                     | NO DATABASE CHANGE | 未修改 schema、migration 或数据库写入路径                                             |
+| 检查                                                      | 结果               | 证据                                                                   |
+| --------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------- |
+| `pnpm lint`                                               | PASS               | `@mirror/db`、`@mirror/web` lint 与 Prettier 全部通过                  |
+| `pnpm typecheck`                                          | PASS               | 两个 workspace 类型检查通过                                            |
+| `pnpm test`                                               | PASS               | DB 1 个测试 + Web production guard 2 个测试，共 3 个测试通过           |
+| `MIRROR_DEV_AUTH=true pnpm --filter @mirror/web build`    | PASS（按预期失败） | production guard 阻断构建，退出码 1，明确报错不允许 dev auth           |
+| `NODE_ENV=production MIRROR_DEV_AUTH=false pnpm build`    | PASS               | DB build 与 Next.js 16.3.4 production build 成功                       |
+| `pnpm audit --prod --registry=https://registry.npmjs.org` | PASS               | `No known vulnerabilities found`；HIGH=0、CRITICAL=0；本任务未新增依赖 |
+| Database migration                                        | NO DATABASE CHANGE | 未修改 schema、migration 或数据库写入路径                              |
 
 ## Docker 与数据库
 
@@ -135,11 +135,12 @@ M1-T02「开发身份」要求：
 ## GitHub Actions
 
 - 首次 run `34174320461`：FAIL。公开 run 页面确认 `foundation` Job 在 `Lint and format` 步骤失败；本地重新执行 `pnpm lint` 复现为本报告未经过 Prettier 的格式错误，已修复。
-- 最终 run `34174530489`：PASS；`foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
+- run `34174530489`：PASS；`foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
+- 最终 run `34174708348`：PASS；文档同步后的 `foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
 - workflow：`foundation-ci`，真实执行 install、lint、typecheck、unit tests、build。
 - 首次失败 run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174320461>
-- 最终 PASS run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174530489>
-- commit SHA：`08842eb756b1c91521c2447d6745f76adcf4adaa`。
+- 最终 PASS run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174708348>
+- commit SHA：`085b421591a56c498b540c10d1cf039e9185a5e5`。
 - 实现提交 SHA：`c6f8d63ec0445c8dc83c32869830cf5f07742af0`。
 - Job `foundation`：PASS；Install dependencies、Lint and format、Typecheck、Unit tests、Build：PASS。
 - 备注：GitHub 页面保留一个 action Node.js 20 runtime deprecation warning；不影响项目步骤成功。
@@ -175,5 +176,5 @@ M1-T02「开发身份」要求：
 ## Commit
 
 - M1-T02 实现 commit SHA：`c6f8d63ec0445c8dc83c32869830cf5f07742af0`。
-- GitHub Actions 最终验证提交 SHA：`08842eb756b1c91521c2447d6745f76adcf4adaa`。
-- GitHub Actions run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174530489>。
+- GitHub Actions 最终验证提交 SHA：`085b421591a56c498b540c10d1cf039e9185a5e5`。
+- GitHub Actions run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174708348>。
