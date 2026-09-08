@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
-Current milestone: M2 World Kernel
-Current task: M2 Milestone Gate
-Status: PASS
-Last verified implementation commit: 7f5377f37d441c9989dd94ce2f6d97f30980603d
+Current milestone: M3 Life Engine v1
+Current task: M3-T01 Resident Seed Generator
+Status: IN_PROGRESS (M3-T01 PASS; M3 not complete)
+Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
 
 ## Completed
 
@@ -47,7 +47,8 @@ Last verified implementation commit: 7f5377f37d441c9989dd94ce2f6d97f30980603d
 
 ## In progress
 
-- 无。M2 Milestone Gate 已完成；本轮停止，不执行 M3 或任何后续任务。
+- M3-T01 Resident Seed Generator 已 PASS；M3 仍为 IN_PROGRESS。
+- M3-T02 及后续 Life Engine、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
 
 ## Blocked
 
@@ -82,6 +83,7 @@ Last verified implementation commit: 7f5377f37d441c9989dd94ce2f6d97f30980603d
 - 新增 `world_events` Event Ledger、world-local `world_seq` 与 `WORLD_TIME_ADVANCED` 事件写入；没有新增 Action API、ActionResult、Projection、Checkpoint、Replay 或 WebSocket。
 - 新增内部 World Kernel Replay/Checkpoint store；没有新增 API、ActionResult、Projection、Simulator 或事件 schema 破坏性变更。
 - M2 Gate 仅新增测试证据与 rollback 修复；没有新增 Action API、ActionResult、Projection、Simulator 或 M3+ 领域事实写入口。
+- M3-T01 仅新增纯 deterministic resident seed fixture：30 个 `NATIVE` 居民、稳定住处/工作引用、5×6 profile、26/4 employment 与非负只读资源 fixture；没有新增居民表、运行时或 Kernel Actor 集成。
 
 ## Relevant ADRs
 
@@ -109,8 +111,9 @@ Last verified implementation commit: 7f5377f37d441c9989dd94ce2f6d97f30980603d
 - `docs/verification/M2-T04-report.md`（M2-T04 = PASS）
 - `docs/verification/M2-T05-report.md`（M2-T05 = PASS）
 - `docs/verification/M2-milestone-report.md`（M2 = PASS）
+- `docs/verification/M3-T01-report.md`（M3-T01 = PASS；M3 仍 IN_PROGRESS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- 仅记录 `RES-M3-002`；不执行 M3 或任何后续任务。
+- 仅记录 M3-T02 前的 Needs 规格 ADR/Pre-T02 Decision；本轮不执行 M3-T02。
