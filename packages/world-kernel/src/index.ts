@@ -59,6 +59,16 @@ export {
   type WorldStatePatch,
 } from "./world-events-store.js";
 export {
+  createObservationQuery,
+  createPostgresObservationQuery,
+  ObservationQueryError,
+  OBSERVATION_QUERY_POLICY,
+  type ObservationQueryDatabase,
+  type ObservationQueryErrorCode,
+  type ObservationResidentSource,
+  type ObservationSource,
+} from "./observation-query-store.js";
+export {
   findWorldCheckpoint,
   persistWorldCheckpoint,
   WorldCheckpointStoreError,

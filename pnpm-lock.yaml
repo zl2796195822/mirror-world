@@ -125,6 +125,10 @@ importers:
         version: 3.2.4(@types/node@24.3.0)(tsx@4.20.3)(yaml@2.9.0)
 
   packages/life-engine:
+    dependencies:
+      '@mirror/contracts':
+        specifier: workspace:*
+        version: link:../contracts
     devDependencies:
       '@mirror/db':
         specifier: workspace:*

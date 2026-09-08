@@ -16,3 +16,19 @@ export {
   type KernelActionOutcomeEvent,
   type KernelActionRejectionReasonCode,
 } from "./action-outcome-contract.js";
+export {
+  OBSERVATION_POLICY_VERSION,
+  buildWorldObservationSnapshot,
+  observationUnavailableReasonCodeSchema,
+  observationWorldStatusSchema,
+  parseWorldObservationSnapshot,
+  worldObservationSnapshotSchema,
+  type ObservationResidentRecord,
+  type ObservationBatchQueryInput,
+  type ObservationQueryInput,
+  type ObservationQueryPort,
+  type ObservationUnavailableReasonCode,
+  type ObservationWorldRecord,
+  type ObservationWorldStatus,
+  type WorldObservationSnapshot,
+} from "./observation-contract.js";

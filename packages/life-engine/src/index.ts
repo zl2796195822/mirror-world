@@ -16,6 +16,12 @@ export {
   type ResidentNeedProfile,
 } from "./needs.js";
 export {
+  type ObservationBatchQueryInput,
+  type ObservationQueryInput,
+  type ObservationQueryPort,
+  type WorldObservationSnapshot,
+} from "./observation.js";
+export {
   GOAL_POLICY_V1,
   GOAL_POLICY_VERSION,
   evaluateGoals,
