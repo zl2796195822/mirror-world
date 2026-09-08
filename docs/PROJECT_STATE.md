@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-01 Kernel Action Outcome / Execution Feedback (completed)
-Status: PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: 58b81b30b9f05404084421708381c1ff1409e747
-Last verified main/doc baseline: 58b81b30b9f05404084421708381c1ff1409e747
+Current task: PRE-AL-02 Observation / Query Boundary (completed)
+Status: PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: 3907e56414957f4fbc377868b18bf6b84fd5fbc9
+Last verified main/doc baseline: 3907e56414957f4fbc377868b18bf6b84fd5fbc9
 
 ## Completed
 
@@ -63,6 +63,9 @@ Last verified main/doc baseline: 58b81b30b9f05404084421708381c1ff1409e747
 - PRE-AL-01 已完成正式 `ActionRequest → World Kernel → KernelActionOutcome` 反馈闭环：durable status 只有 `COMMITTED`、`REJECTED`、`CONFLICT`；`DUPLICATE`/`IDEMPOTENCY_CONFLICT` 为调用处置；`TIMED_OUT` 不落 Kernel outcome。
 - PRE-AL-01 新增 outcome contract、0/1/N event association、同事务多事件提交、幂等结果复用、版本冲突/拒绝 reason code、executor rollback 与 world-scoped 复合约束；没有实现 Observation、ActorRef、Resource Bridge、MOVE/SLEEP、replan、scheduler 或 Action Loop。
 - PRE-AL-01 本地 frozen install、lint、typecheck、test、build、clean PostgreSQL 双次 setup、M2 integration 4/4、ActionOutcome integration 1/1、M3-T01/T02/T03 regression 与官方 npm audit 均通过；实现提交 `58b81b30b9f05404084421708381c1ff1409e747` 的 GitHub Actions run `34232707578` 完整 `Success`。
+- PRE-AL-02 已建立确定性、bounded、world-scoped、resident-scoped、read-only 的 Decision Observation / Query Boundary；Life Engine 只依赖 Observation contract/port，不直接依赖 DB、SQL、Drizzle 或 Event Ledger。
+- PRE-AL-02 明确以现有 `worlds` authority 与 T01 30-resident fixture 构建 `m3-observation-v1` snapshot，携带 `sourceWorldSeq`；ActorRef、location/activity runtime、obligation source、Resource Bridge 与 local context 未伪造，按 contract 返回 unavailable capability。
+- PRE-AL-02 本地完整回归、clean PostgreSQL M2 integration 4/4、PRE-AL-01、M3-T01/T02/T03、官方 audit 与 GitHub Actions run `34237453432` 均通过；实现提交为 `3907e56414957f4fbc377868b18bf6b84fd5fbc9`。
 
 ## In progress
 
@@ -72,6 +75,7 @@ Last verified main/doc baseline: 58b81b30b9f05404084421708381c1ff1409e747
 ## Blocked
 
 - `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：Observation/query、ActorRef、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭；PRE-AL-01 已关闭 ActionOutcome feedback blocker。
+- PRE-AL-02 已关闭 Observation / Query Boundary blocker；下一正式任务为 `PRE-AL-03 · ActorRef + Resource Bridge`。
 
 ## P0/P1
 
@@ -155,5 +159,5 @@ Last verified main/doc baseline: 58b81b30b9f05404084421708381c1ff1409e747
 
 ## Next allowed task
 
-- `PRE-AL-02 · Observation / Query Boundary` only; record it, do not execute it in this task.
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains; no M3-T05, Pre-Action-Loop runtime fix, or later task was started.
+- `PRE-AL-03 · ActorRef + Resource Bridge` only; record it, do not execute it in this task.
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains; no PRE-AL-03 implementation, M3-T05, or later task was started.

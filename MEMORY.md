@@ -167,3 +167,11 @@
 - 新增 outcome contract/store、同事务多事件提交、事件关联、幂等结果复用、拒绝/版本冲突 reason code、executor rollback、world isolation 复合约束及 migrations `0005`/`0006`；未实现 Observation、ActorRef、Resource Bridge、MOVE/SLEEP、bounded replan、scheduler 或 Action Loop。
 - 本地 frozen install、lint、typecheck、test、build、clean PostgreSQL 双次 setup、M2 integration 4/4、ActionOutcome integration 1/1、M3-T01/T02/T03 regression 与官方 audit 均通过；实现 commit `58b81b30b9f05404084421708381c1ff1409e747` 的 GitHub Actions run `34232707578` 完整 PASS。
 - 下一允许任务：`PRE-AL-02 · Observation / Query Boundary`；本轮不执行。
+
+## 2026-09-08 PRE-AL-02
+
+- `PRE-AL-02 = PASS`；建立确定性、bounded、world-scoped、resident-scoped、read-only 的 Decision Observation / Query Boundary，`M3 = IN_PROGRESS`，`M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` 保持不变。
+- Life Engine 只依赖 Observation contract/port，不直接依赖 DB、SQL、Drizzle 或 Event Ledger；snapshot 使用 `m3-observation-v1`、正式 `worlds` authority、`sourceWorldSeq` 与 T01 30-resident fixture。
+- ActorRef、Resource Bridge、location/activity runtime、formal obligation source、MOVE/SLEEP、bounded replan、scheduler/driver 与 full replay 仍未实现；未伪造对应 truth。
+- 本地完整回归、clean PostgreSQL M2 integration 4/4、PRE-AL-01、M3-T01/T02/T03、官方 audit 与 GitHub Actions run `34237453432` 均 PASS；实现提交 `3907e56414957f4fbc377868b18bf6b84fd5fbc9`。
+- 下一允许任务：`PRE-AL-03 · ActorRef + Resource Bridge`；本轮不执行。
