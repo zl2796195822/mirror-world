@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M1
-Current task: M1-T03 World Overview
+Current task: M1-T04 API skeleton
 Status: PASS
-Last verified implementation commit: 01dc550ae5b64e5ee513d606f14859ca32c85c05
+Last verified implementation commit: 5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f
 
 ## Completed
 
@@ -18,10 +18,14 @@ Last verified implementation commit: 01dc550ae5b64e5ee513d606f14859ca32c85c05
 - GitHub Actions `foundation-ci` 已对 M1-T02 最终验证提交真实执行并 PASS：run `34176497873`，install、lint、typecheck、unit tests、build 全部成功。
 - M1-T03 World Overview 已在现有认证产品壳中实现诚实的世界时间、运行状态、30 居民占位与最近事件空状态。
 - M1-T03 未连接 API、数据库、Redis 或 World Kernel；没有世界事实写入，也没有新增依赖。
+- M1-T04 已实现 Fastify `/api/v1/health`、`/api/v1/ready`、`/api/v1/worlds`、统一 error envelope/requestId 与 OpenAPI 生成。
+- M1-T04 `/worlds` 只读 PostgreSQL 世界元信息；`/health` 不访问依赖；`/ready` 与世界读取在依赖不可用时 fail-closed。
+- M1-T04 本地 install、lint、typecheck、test、build、真实 API runtime、浏览器回归与官方 production audit 均 PASS。
+- GitHub Actions `foundation-ci` 对 M1-T04 最终代码验证提交真实执行并 PASS：run `34183633011`。
 
 ## In progress
 
-- M1-T03 已完成并通过本地验证、浏览器验收、官方 production audit 与 GitHub Actions；本轮停止，不进入 M1-T04。
+- M1-T04 已完成并通过本地验证、真实 API 验收、浏览器回归、官方 production audit 与 GitHub Actions；本轮停止在 M1 Milestone Gate，不进入 M2。
 
 ## Blocked
 
@@ -34,16 +38,17 @@ Last verified implementation commit: 01dc550ae5b64e5ee513d606f14859ca32c85c05
 ## Known P2/P3
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
-- M1-T04 API skeleton 及后续任务均未实现，属于当前范围外。
+- M2 及后续任务均未实现；需先完成独立的 M1 Milestone Gate。
 
 ## Migrations since last state
 
-- NO DATABASE CHANGE。M1-T03 未修改数据库 schema/migration，也未新增数据库访问路径。
+- NO DATABASE CHANGE。M1-T04 未修改数据库 schema/migration；仅新增只读数据库查询与 readiness 检查。
 - M0 基线数据库只读核对仍为 `migrations=1`、`users=1`、`worlds=1`。
 
 ## API/Event changes
 
-- 无。M1-T03 不调用业务 API、不产生 world event，也不建立绕过 World Kernel 的事实写入路径。
+- 新增 M1 API skeleton 只读路由与 OpenAPI；无 Event Ledger、ActionRequest 或世界事实写入。
+- 没有新增 API 写入路径；未来世界事实仍必须经 World Kernel。
 
 ## Relevant ADRs
 
@@ -55,9 +60,10 @@ Last verified implementation commit: 01dc550ae5b64e5ee513d606f14859ca32c85c05
 
 - `docs/verification/M1-T02-report.md`
 - `docs/verification/M1-T03-report.md`
+- `docs/verification/M1-T04-report.md`
 - `docs/verification/M1-T01-report.md`
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M1-T04；本轮不执行 M1-T04、M2 或其他后续任务。
+- M1 Milestone Gate；只进行 M1 一致性门禁确认，不执行 M2。

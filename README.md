@@ -1,6 +1,6 @@
 # 镜界
 
-Persistent Digital Society 的工程仓库。M1-T04 API skeleton 正在当前范围内实现；世界事实、居民、事件、3D、AI 与模拟能力按后续任务逐步接入。
+Persistent Digital Society 的工程仓库。M1-T04 API skeleton 已通过；当前停止在 M1 Milestone Gate。世界事实、居民、事件、3D、AI 与模拟能力按后续任务逐步接入。
 
 ## 当前范围
 
@@ -45,4 +45,4 @@ pnpm --filter @mirror/api generate:openapi
 docker compose down
 ```
 
-M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)，M1-T01 验证记录见 [`docs/verification/M1-T01-report.md`](docs/verification/M1-T01-report.md)，M1-T02 验证记录见 [`docs/verification/M1-T02-report.md`](docs/verification/M1-T02-report.md)，M1-T03 验证记录见 [`docs/verification/M1-T03-report.md`](docs/verification/M1-T03-report.md)。M1-T04 验证记录见 [`docs/verification/M1-T04-report.md`](docs/verification/M1-T04-report.md)。完成 M1-T04 后需停止在 M1 Milestone Gate，不自动进入 M2。
+M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)，M1-T01 验证记录见 [`docs/verification/M1-T01-report.md`](docs/verification/M1-T01-report.md)，M1-T02 验证记录见 [`docs/verification/M1-T02-report.md`](docs/verification/M1-T02-report.md)，M1-T03 验证记录见 [`docs/verification/M1-T03-report.md`](docs/verification/M1-T03-report.md)，M1-T04 验证记录见 [`docs/verification/M1-T04-report.md`](docs/verification/M1-T04-report.md)。M1-T04 已完成，下一阶段仅为 M1 Milestone Gate，不自动进入 M2。

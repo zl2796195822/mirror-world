@@ -47,3 +47,14 @@
 - 新增最小 Web 页面契约测试；未新增 production dependency；截图保存在 `docs/verification/screenshots/M1-T03/`。
 - 本地 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build`、官方 audit（HIGH=0、CRITICAL=0）与 1440/390 浏览器验证已通过；GitHub Actions run `34181243953` PASS。
 - 当前状态为 `M1-T03 = PASS`；实现提交为 `01dc550ae5b64e5ee513d606f14859ca32c85c05`，最终文档验证提交为 `eb9d474cde555a3f7c5ef94c3da75bdda27b2c55`。下一允许任务为 M1-T04，本轮已停止，不进入 M1-T04。
+
+## 2026-09-08 M1-T04
+
+- 按文档原始定义完成 API skeleton：Fastify `/api/v1/health`、`/api/v1/ready`、`/api/v1/worlds`，统一 error envelope/requestId 与 OpenAPI 生成；短路径只作隐藏兼容入口。
+- `/health` 只检查进程；`/ready` 执行数据库 readiness；`/worlds` 只读 PostgreSQL `worlds` 元信息。没有 World Kernel、Event Ledger、ActionRequest、业务写入、事件、居民、AI、3D 或其他后续能力。
+- 新增 `fastify@5.12.3` 与 `@fastify/swagger@9.8.1`，均 MIT，已登记；官方 npm registry production audit PASS，HIGH=0、CRITICAL=0。
+- `NO DATABASE CHANGE`；数据库基线保持 `migrations=1`、`users=1`、`worlds=1`。新增 `HOST=127.0.0.1`、`PORT=3001` 示例，安全默认仍绑定 loopback。
+- 本地 `pnpm install --frozen-lockfile`、lint、typecheck、test、build、真实 API runtime 与 M1 Web 浏览器回归 PASS；截图在 `docs/verification/screenshots/M1-T04/`。
+- GitHub Actions 首次 run #16 因 clean runner 缺少上游 DB build 失败，run #17 因 API test 缺少自身 build 失败；通过 Turbo typecheck 依赖和 API test 自构建修复，最终 run #18 `34183633011` 对 `5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f` PASS。
+- M1-T04 实现 commit 为 `536cbb176e5fbce2e6ef5bdf6adcdfd26f9adb7d`，CI 修复 commits 为 `f68f091873a4e89b8ffd1ebd9b97335671678d94` 与 `5f9f948f9a327f2fd3fc5fb4495f098a91a18c9f`。
+- 当前状态为 `M1-T04 = PASS`；下一阶段只记录为 `M1 Milestone Gate`，不执行 M2。

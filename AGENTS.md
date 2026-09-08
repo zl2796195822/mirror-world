@@ -2,9 +2,9 @@
 
 ## 当前范围
 
-- M0、M1-T01、M1-T02、M1-T03 已通过；本轮只执行 M1-T04。
+- M0、M1-T01、M1-T02、M1-T03、M1-T04 已通过；本轮停止在 M1 Milestone Gate。
 - 本轮不得执行 M2 或任何后续任务。
-- M1-T04 只实现 Fastify API skeleton：`/health`、`/ready`、`/worlds`、统一 error envelope/requestId 与 OpenAPI 生成；不实现世界事实写入或后续领域能力。
+- M1-T04 只实现 Fastify API skeleton：`/health`、`/ready`、`/worlds`、统一 error envelope/requestId 与 OpenAPI 生成；已完成，不得顺便进入 M2 或实现后续领域能力。
 - 每个任务完成后必须运行真实验证；未通过不得宣布 M0 完成。
 
 ## 不可破坏边界
