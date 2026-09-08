@@ -90,3 +90,10 @@
 - 当前仓库尚无居民、地点、库存、工作或经济事实表，因此 validator 不伪造持久化领域事实；新增 `packages/db/src/schema.ts` 的最小 `action_requests` 表和 `0002_wandering_moonstone.sql` 只保存通过校验的请求 metadata、payload 与 fingerprint。
 - `persistValidatedActionRequest` 在 PostgreSQL transaction 中依赖 `(world_id,idempotency_key)` 唯一约束；同 payload 重试返回 `KERNEL_DUPLICATE_REQUEST`，同 key 不同 payload 返回 `KERNEL_CONFLICT`，并发只保留一条 request row；没有改变 `worlds`、没有 Event Ledger、ActionResult、event seq、Replay、Checkpoint、Action API 或 M2-T04+ 能力。
 - 本地 install、双次 db:setup、lint、typecheck、unit test、build、真实 PostgreSQL integration 和官方 npm audit 均 PASS；最终数据库恢复为 migrations=3、users=1、worlds=1、action_requests=0、world=`PAUSED/1x`。实现 commit `cb6205b21613f684944d1daaf94141fb442f56dd` 的 GitHub Actions run `34199405422` 真实 PASS，当前 `M2-T03 = PASS`，下一任务只记录 `M2-T04`。
+
+## 2026-09-08 M2-T05
+
+- 按原始任务只实现 Checkpoint/Replay：新增 `simulation_checkpoints` migration `0004_old_ares.sql`、固定 seed + ordered Event Ledger replay、checkpoint suffix replay、canonical SHA-256 summary hash 与 world/seq/schema/checksum 校验；PostgreSQL Event Ledger 仍是 durable truth，checkpoint 可删除重建。
+- 新增 `packages/world-kernel/src/world-replay.ts`、`world-checkpoint-store.ts` 及单测；非时间事件在当前无领域事实前提下只做 schema-validated no-op，但进入 history digest；Replay 不重新执行 ActionRequest，没有新增 API、ActionResult、Projection、Simulator、Life 或 M3+。
+- 临时 clean PostgreSQL 上完整 M2 integration（World Clock、Event Ledger、Replay/Checkpoint、Action Request）4/4 PASS；frozen install、双次 clean `db:setup`、lint、typecheck、unit tests、build、官方 npm production audit 均 PASS。
+- M2-T05 实现 commit `838c6e5eede3aaf413c5a9966893444ae7cb92ad`；GitHub Actions `foundation-ci` run `34204276572` 真实 PASS。主库最终恢复 `PAUSED/1x`，保留既有 20 条 append-only events、`world_seq=20`、无 checkpoint。当前状态 `M2-T05 = PASS`，下一允许步骤仅为 `M2 Milestone Gate`，不执行任何后续任务。
