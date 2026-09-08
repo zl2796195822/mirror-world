@@ -21,6 +21,8 @@ export {
 } from "./resident-seed.js";
 export {
   actionRequests,
+  kernelActionOutcomeEvents,
+  kernelActionOutcomes,
   simulationCheckpoints,
   users,
   worldEvents,

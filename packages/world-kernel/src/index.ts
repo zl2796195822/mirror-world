@@ -27,15 +27,27 @@ export {
 } from "./action-validator.js";
 export {
   actionRequestFingerprint,
+  ensureActionRequestInTransaction,
   persistValidatedActionRequest,
   ActionRequestStoreError,
   type ActionRequestDatabase,
+  type ActionRequestEnsureResult,
   type ActionRequestPersistenceResult,
 } from "./action-request-store.js";
+export {
+  executeKernelActionRequest,
+  findKernelActionOutcome,
+  KernelActionOutcomeStoreError,
+  type ActionOutcomeDatabase,
+  type ExecuteKernelActionRequestInput,
+  type KernelActionExecution,
+  type KernelActionRequestExecutionResult,
+} from "./action-outcome-store.js";
 export {
   appendWorldEvent,
   commitWorldStateWithEvent,
   commitWorldStateWithEventInTransaction,
+  commitWorldStateWithEventsInTransaction,
   WorldEventStoreError,
   WORLD_EVENT_TYPES,
   type WorldEventCommitResult,

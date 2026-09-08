@@ -51,6 +51,7 @@ export type WorldKernelTransaction = Parameters<
 
 export type WorldEventCommitResult = {
   event: typeof worldEvents.$inferSelect;
+  events: Array<typeof worldEvents.$inferSelect>;
   world: typeof worlds.$inferSelect;
 };
 
@@ -88,22 +89,31 @@ function assertOccurredAt(occurredAt: Date): void {
   }
 }
 
-export async function commitWorldStateWithEventInTransaction(
+export async function commitWorldStateWithEventsInTransaction(
   transaction: WorldKernelTransaction,
   input: {
     worldId: string;
     state: WorldStatePatch;
-    event: WorldEventInput;
+    events: readonly WorldEventInput[];
   },
 ): Promise<WorldEventCommitResult> {
-  if (input.event.worldId !== input.worldId) {
+  if (input.events.length === 0) {
     throw new WorldEventStoreError(
       "WORLD_EVENT_INVALID",
-      "World event worldId must match the committed world",
+      "At least one world event is required for a committed world state",
     );
   }
-  assertPayload(input.event.payload);
-  assertOccurredAt(input.event.occurredAt);
+
+  for (const event of input.events) {
+    if (event.worldId !== input.worldId) {
+      throw new WorldEventStoreError(
+        "WORLD_EVENT_INVALID",
+        "World event worldId must match the committed world",
+      );
+    }
+    assertPayload(event.payload);
+    assertOccurredAt(event.occurredAt);
+  }
 
   const [world] = await transaction
     .select()
@@ -115,36 +125,58 @@ export async function commitWorldStateWithEventInTransaction(
     throw new WorldEventStoreError("WORLD_NOT_FOUND", "World was not found");
   }
 
-  const nextSeq = world.worldSeq + 1n;
-  const [event] = await transaction
-    .insert(worldEvents)
-    .values({
-      id: input.event.id,
-      worldId: input.event.worldId,
-      seq: nextSeq,
-      type: input.event.type,
-      actorId: input.event.actorId,
-      targetId: input.event.targetId,
-      payload: input.event.payload,
-      occurredAt: input.event.occurredAt,
-      correlationId: input.event.correlationId,
-    })
-    .returning();
+  let nextSeq = world.worldSeq;
+  const events: Array<typeof worldEvents.$inferSelect> = [];
+  let persistedWorld = world;
 
-  const [persistedWorld] = await transaction
-    .update(worlds)
-    .set({ ...input.state, worldSeq: nextSeq })
-    .where(eq(worlds.id, input.worldId))
-    .returning();
+  for (const eventInput of input.events) {
+    nextSeq += 1n;
+    const [event] = await transaction
+      .insert(worldEvents)
+      .values({
+        id: eventInput.id,
+        worldId: eventInput.worldId,
+        seq: nextSeq,
+        type: eventInput.type,
+        actorId: eventInput.actorId,
+        targetId: eventInput.targetId,
+        payload: eventInput.payload,
+        occurredAt: eventInput.occurredAt,
+        correlationId: eventInput.correlationId,
+      })
+      .returning();
 
-  if (!event || !persistedWorld) {
-    throw new WorldEventStoreError(
-      "WORLD_EVENT_INVALID",
-      "World event transaction could not be persisted",
-    );
+    [persistedWorld] = await transaction
+      .update(worlds)
+      .set({ ...input.state, worldSeq: nextSeq })
+      .where(eq(worlds.id, input.worldId))
+      .returning();
+
+    if (!event || !persistedWorld) {
+      throw new WorldEventStoreError(
+        "WORLD_EVENT_INVALID",
+        "World event transaction could not be persisted",
+      );
+    }
+    events.push(event);
   }
 
-  return { event, world: persistedWorld };
+  return { event: events[0], events, world: persistedWorld };
+}
+
+export function commitWorldStateWithEventInTransaction(
+  transaction: WorldKernelTransaction,
+  input: {
+    worldId: string;
+    state: WorldStatePatch;
+    event: WorldEventInput;
+  },
+): Promise<WorldEventCommitResult> {
+  return commitWorldStateWithEventsInTransaction(transaction, {
+    worldId: input.worldId,
+    state: input.state,
+    events: [input.event],
+  });
 }
 
 export function commitWorldStateWithEvent(

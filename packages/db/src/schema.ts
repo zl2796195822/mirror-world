@@ -2,9 +2,11 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   check,
+  foreignKey,
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   unique,
@@ -76,6 +78,7 @@ export const actionRequests = pgTable(
       .defaultNow(),
   },
   (table) => [
+    unique("action_requests_id_world_id_unique").on(table.id, table.worldId),
     unique("action_requests_world_idempotency_key_unique").on(
       table.worldId,
       table.idempotencyKey,
@@ -95,6 +98,55 @@ export const actionRequests = pgTable(
     check(
       "action_requests_expected_actor_version_check",
       sql`${table.expectedActorVersion} is null or ${table.expectedActorVersion} >= 0`,
+    ),
+  ],
+);
+
+export const kernelActionOutcomes = pgTable(
+  "kernel_action_outcomes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    actionRequestId: uuid("action_request_id")
+      .notNull()
+      .references(() => actionRequests.id),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    status: text("status").notNull(),
+    reasonCode: text("reason_code"),
+    eventCount: integer("event_count").notNull().default(0),
+    worldSeqStart: bigint("world_seq_start", { mode: "bigint" }),
+    worldSeqEnd: bigint("world_seq_end", { mode: "bigint" }),
+    recordedAt: timestamp("recorded_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("kernel_action_outcomes_id_world_id_unique").on(
+      table.id,
+      table.worldId,
+    ),
+    unique("kernel_action_outcomes_request_unique").on(table.actionRequestId),
+    foreignKey({
+      columns: [table.actionRequestId, table.worldId],
+      foreignColumns: [actionRequests.id, actionRequests.worldId],
+      name: "kernel_action_outcomes_request_world_fk",
+    }),
+    check(
+      "kernel_action_outcomes_status_check",
+      sql`${table.status} in ('COMMITTED', 'REJECTED', 'CONFLICT')`,
+    ),
+    check(
+      "kernel_action_outcomes_reason_check",
+      sql`${table.reasonCode} is null or ${table.reasonCode} in ('KERNEL_INVALID_ACTION', 'KERNEL_ACTOR_NOT_FOUND', 'KERNEL_PERMISSION_DENIED', 'KERNEL_INVALID_LOCATION', 'KERNEL_INSUFFICIENT_FUNDS', 'KERNEL_INSUFFICIENT_RESOURCE', 'WORLD_NOT_RUNNING', 'KERNEL_CONFLICT')`,
+    ),
+    check(
+      "kernel_action_outcomes_shape_check",
+      sql`(
+        (${table.status} = 'COMMITTED' and ${table.reasonCode} is null and ${table.eventCount} > 0 and ${table.worldSeqStart} is not null and ${table.worldSeqEnd} is not null)
+        or
+        (${table.status} in ('REJECTED', 'CONFLICT') and ${table.reasonCode} is not null and ${table.eventCount} = 0 and ${table.worldSeqStart} is null and ${table.worldSeqEnd} is null)
+      )`,
     ),
   ],
 );
@@ -119,6 +171,60 @@ export const worldEvents = pgTable(
   },
   (table) => [
     unique("world_events_world_id_seq_unique").on(table.worldId, table.seq),
+    unique("world_events_id_world_id_unique").on(table.id, table.worldId),
+    unique("world_events_id_world_id_seq_unique").on(
+      table.id,
+      table.worldId,
+      table.seq,
+    ),
+  ],
+);
+
+export const kernelActionOutcomeEvents = pgTable(
+  "kernel_action_outcome_events",
+  {
+    outcomeId: uuid("outcome_id")
+      .notNull()
+      .references(() => kernelActionOutcomes.id),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => worldEvents.id),
+    eventIndex: integer("event_index").notNull(),
+    eventSeq: bigint("event_seq", { mode: "bigint" }).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.outcomeId, table.eventIndex] }),
+    foreignKey({
+      columns: [table.outcomeId, table.worldId],
+      foreignColumns: [kernelActionOutcomes.id, kernelActionOutcomes.worldId],
+      name: "kernel_action_outcome_events_outcome_world_fk",
+    }),
+    foreignKey({
+      columns: [table.eventId, table.worldId],
+      foreignColumns: [worldEvents.id, worldEvents.worldId],
+      name: "kernel_action_outcome_events_event_world_fk",
+    }),
+    foreignKey({
+      columns: [table.eventId, table.worldId, table.eventSeq],
+      foreignColumns: [worldEvents.id, worldEvents.worldId, worldEvents.seq],
+      name: "kernel_action_outcome_events_event_position_fk",
+    }),
+    unique("kernel_action_outcome_events_event_unique").on(table.eventId),
+    unique("kernel_action_outcome_events_outcome_event_unique").on(
+      table.outcomeId,
+      table.eventId,
+    ),
+    check(
+      "kernel_action_outcome_events_index_check",
+      sql`${table.eventIndex} >= 0`,
+    ),
+    check(
+      "kernel_action_outcome_events_seq_check",
+      sql`${table.eventSeq} >= 1`,
+    ),
   ],
 );
 

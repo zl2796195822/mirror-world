@@ -36,6 +36,20 @@
       "when": 1788854806474,
       "tag": "0004_old_ares",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788873166298,
+      "tag": "0005_previous_fabian_cortez",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788873571453,
+      "tag": "0006_absurd_stephen_strange",
+      "breakpoints": true
     }
   ]
 }
