@@ -124,7 +124,9 @@ Outputs are `GoalEvaluation`：`policyVersion`、sorted `candidates` 和 `select
 ## Git, CI and state
 
 - Implementation commit：`ee0617dfd24e617979680184a7fb88c67d64af66`。
-- Final main HEAD and CI URL：在文档同步提交后补入；实现提交已通过本地全部验证。
+- Verification main HEAD：`45eefe173bc8625b6235e14293b9b16480abd6db`。
+- GitHub Actions `foundation-ci`： [run 34223831452](https://github.com/zl2796195822/mirror-world/actions/runs/34223831452)，success；foundation install、lint、typecheck、unit tests、build 全部通过。
+- CI 保留既有外部 action 的 Node.js 20 deprecation warning；不影响项目门禁。
 - `PROJECT_STATE.md`：同步为 `M3-T03 = PASS`、`M3 = IN_PROGRESS`。
 - `MEMORY.md`：同步记录实现、验证、边界和未决 blocker。
 

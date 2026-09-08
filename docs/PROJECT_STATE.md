@@ -4,7 +4,7 @@ Current milestone: M3 Life Engine v1
 Current task: M3-T03 Routine/Goal
 Status: PASS (M3-T03 PASS; M3 remains IN_PROGRESS)
 Last verified implementation commit: ee0617dfd24e617979680184a7fb88c67d64af66
-Last verified main/doc baseline: pending M3-T03 documentation sync commit
+Last verified main/doc baseline: 45eefe173bc8625b6235e14293b9b16480abd6db
 
 ## Completed
 
