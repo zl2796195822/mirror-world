@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3-T04 规则决策器
-Status: BLOCKED_BY_PRE_ACTION_LOOP_GATE (M3-T04 blocked; M3 remains IN_PROGRESS)
+Current task: PRE-AL-00 Restore Green Main Baseline (completed)
+Status: PRE-AL-00 = PASS; Main CI Baseline = GREEN; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
 Last verified implementation commit: ee0617dfd24e617979680184a7fb88c67d64af66
-Last verified main/doc baseline: a36b109eca669f9b9f1984da35269bff13af47c4
+Last verified main/doc baseline: 5f4cf7ec235a50e795e728c8c141d229ba891c2d
 
 ## Completed
 
@@ -57,6 +57,9 @@ Last verified main/doc baseline: a36b109eca669f9b9f1984da35269bff13af47c4
 - M3-T03 复用 M3-T01 30 resident fixture 与 M3-T02 `NeedState`；本地 life-engine 19 tests、全仓 lint/typecheck/test/build、clean PostgreSQL M2 integration 4/4 与官方 audit 均 PASS。
 - M3-T04 Gate 已完成正式任务定义重读：官方任务为规则决策器，但 30×30 验收链要求 ActionRequest、真实 Kernel ActionResult、结果驱动 replan/runtime 与 deterministic driver；因此本轮判定 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`。
 - M3-T04 仅新增 blocked verification report 与状态同步；没有修改 runtime、Action Contract、Kernel、schema、migration、API、Event Ledger、Replay 或数据库事实。
+- PRE-AL-00 已定位 main CI 红灯根因：已提交的 `docs/verification/M3-T04-blocked-report.md` 未通过仓库 Prettier 检查；GitHub 两次失败 Run 实际停在 `Lint and format`，Typecheck 被跳过。
+- PRE-AL-00 仅格式化该报告并新增证据记录 `docs/verification/PRE-AL-00-diagnostic.md`；没有修改 workflow、TypeScript、依赖、lockfile、runtime、schema 或 migration。
+- PRE-AL-00 本地 frozen install、lint、typecheck、test、build、clean PostgreSQL M2 integration 4/4、M3-T01/T02/T03 回归与官方 npm audit 均通过；GitHub Actions run `34227318851` 完整 `Success`，main CI baseline 已恢复 GREEN。
 
 ## In progress
 
@@ -104,6 +107,7 @@ Last verified main/doc baseline: a36b109eca669f9b9f1984da35269bff13af47c4
 - M3-T02 新增 `packages/life-engine` 纯 evaluator 与测试；没有新增 migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - M3-T03 新增 `packages/life-engine/src/goals.ts` 与 `goals.test.ts`，并从 `src/index.ts` 导出；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 - M3-T04 只新增 `docs/verification/M3-T04-blocked-report.md`；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
+- PRE-AL-00 只新增 `docs/verification/PRE-AL-00-diagnostic.md`、`docs/verification/PRE-AL-00-report.md` 并格式化既有 M3-T04 blocked report；没有新增 production dependency、migration、表、API、Event Registry、Action Loop 或 World Kernel 写入。
 
 ## Relevant ADRs
 
@@ -138,8 +142,11 @@ Last verified main/doc baseline: a36b109eca669f9b9f1984da35269bff13af47c4
 - `docs/verification/M3-T02-report.md`（M3-T02 = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-T03-report.md`（M3-T03 = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-T04-blocked-report.md`（M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE；M3 仍 IN_PROGRESS）
+- `docs/verification/PRE-AL-00-diagnostic.md`（CI failure evidence）
+- `docs/verification/PRE-AL-00-report.md`（PRE-AL-00 = PASS；Main CI Baseline = GREEN）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- 仅记录 `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`；必须由单独授权任务关闭 Pre-Action-Loop blockers 后重新 Gate。不得执行 M3-T05 或任何后续任务。
+- `PRE-AL-01` only; record it, do not execute it in this task.
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains; no M3-T05, Pre-Action-Loop runtime fix, or later task was started.
