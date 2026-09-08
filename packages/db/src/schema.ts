@@ -55,6 +55,40 @@ export const worlds = pgTable(
   ],
 );
 
+export const residentRuntimeStates = pgTable(
+  "resident_runtime_states",
+  {
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    residentId: uuid("resident_id").notNull(),
+    currentLocationId: uuid("current_location_id").notNull(),
+    currentActivity: text("current_activity").notNull(),
+    stateVersion: integer("state_version").notNull().default(0),
+    sourceWorldSeq: bigint("source_world_seq", { mode: "bigint" })
+      .notNull()
+      .default(sql`0`),
+    runtimePolicyVersion: text("runtime_policy_version").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.worldId, table.residentId] }),
+    check(
+      "resident_runtime_states_activity_check",
+      sql`${table.currentActivity} in ('IDLE')`,
+    ),
+    check(
+      "resident_runtime_states_version_check",
+      sql`${table.stateVersion} >= 0 and ${table.sourceWorldSeq} >= 0`,
+    ),
+  ],
+);
+
 export const actionRequests = pgTable(
   "action_requests",
   {

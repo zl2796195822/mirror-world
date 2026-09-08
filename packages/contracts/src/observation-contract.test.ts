@@ -118,4 +118,55 @@ describe("WorldObservationSnapshot contract", () => {
     expect(snapshot.activity.status).toBe("UNAVAILABLE");
     expect(snapshot.workObligation.status).toBe("UNAVAILABLE");
   });
+
+  it("exposes runtime location, activity, and obligation only from the runtime authority", () => {
+    const snapshot = buildWorldObservationSnapshot({
+      world,
+      resident: {
+        ...resident,
+        runtimeState: {
+          runtimeState: {
+            policyVersion: "m3-runtime-state-v1",
+            worldId: world.id,
+            residentId: resident.residentId,
+            currentLocation: {
+              worldId: world.id,
+              locationId: resident.homeLocationId,
+              key: "home-unit-01",
+              kind: "HOME",
+            },
+            activity: { kind: "IDLE" },
+            stateVersion: 0,
+            sourceWorldSeq: "12",
+          },
+          workObligation: {
+            policyVersion: "m3-runtime-state-v1",
+            worldId: world.id,
+            residentId: resident.residentId,
+            status: "DUE",
+            workplaceId: resident.employment.workplaceId,
+            startsAtWorldTime: "2026-09-08T09:00:00.000Z",
+            endsAtWorldTime: "2026-09-08T17:00:00.000Z",
+          },
+        },
+      },
+    });
+
+    expect(snapshot.policyVersion).toBe(OBSERVATION_POLICY_VERSION);
+    expect(snapshot.location).toMatchObject({
+      status: "AVAILABLE",
+      location: { locationId: resident.homeLocationId, kind: "HOME" },
+    });
+    expect(snapshot.activity).toEqual({
+      status: "AVAILABLE",
+      activity: { kind: "IDLE" },
+    });
+    expect(snapshot.workObligation).toMatchObject({
+      status: "AVAILABLE",
+      obligation: {
+        status: "DUE",
+        workplaceId: resident.employment.workplaceId,
+      },
+    });
+  });
 });

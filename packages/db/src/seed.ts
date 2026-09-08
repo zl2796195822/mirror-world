@@ -1,5 +1,6 @@
 import { createDb } from "./client.js";
 import { M0_FIXTURE, M0_FIXTURE_IDS } from "./fixture.js";
+import { bootstrapResidentRuntimeStates } from "./resident-runtime-state.js";
 import { users, worlds } from "./schema.js";
 
 const { db, client } = createDb(
@@ -32,6 +33,8 @@ try {
         updatedAt: new Date(),
       },
     });
+
+  await bootstrapResidentRuntimeStates(db, { worldId: M0_FIXTURE_IDS.world });
 
   console.log(
     `Seeded M0 fixtures: user=${M0_FIXTURE_IDS.user} world=${M0_FIXTURE_IDS.world}`,

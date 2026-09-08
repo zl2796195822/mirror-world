@@ -63,12 +63,23 @@ test("Observation query is read-only, deterministic, bounded, and world-versione
       first.every(
         ({ actorRef, location, activity, resources }) =>
           actorRef.status === "AVAILABLE" &&
-          location.status === "UNAVAILABLE" &&
-          activity.status === "UNAVAILABLE" &&
+          location.status === "AVAILABLE" &&
+          location.location.kind === "HOME" &&
+          activity.status === "AVAILABLE" &&
+          activity.activity.kind === "IDLE" &&
           resources.status === "AVAILABLE" &&
           resources.snapshot.cashCents >= 0 &&
           resources.snapshot.foodUnits >= 0 &&
           resources.snapshot.version === 0,
+      ),
+    );
+    assert.ok(
+      first.every(
+        ({ workObligation }) =>
+          workObligation.status === "AVAILABLE" &&
+          ["NO_CURRENT_OBLIGATION", "NOT_DUE", "DUE", "LATE"].includes(
+            workObligation.obligation.status,
+          ),
       ),
     );
     assert.equal(Object.isFrozen(first[0]), true);

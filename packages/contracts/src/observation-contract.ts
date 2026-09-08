@@ -7,6 +7,13 @@ import {
   type ActorRef,
   type ResidentResourceSnapshot,
 } from "./resident-bridge-contract.js";
+import {
+  parseResidentRuntimeObservation,
+  residentActivitySchema,
+  residentLocationRefSchema,
+  workObligationSchema,
+  type ResidentRuntimeObservation,
+} from "./runtime-state-contract.js";
 
 export const OBSERVATION_POLICY_VERSION = "m3-observation-v1" as const;
 
@@ -55,6 +62,27 @@ const availableResourceCapabilitySchema = z
   .object({
     status: z.literal("AVAILABLE"),
     snapshot: residentResourceSnapshotSchema,
+  })
+  .strict();
+
+const availableLocationCapabilitySchema = z
+  .object({
+    status: z.literal("AVAILABLE"),
+    location: residentLocationRefSchema,
+  })
+  .strict();
+
+const availableActivityCapabilitySchema = z
+  .object({
+    status: z.literal("AVAILABLE"),
+    activity: residentActivitySchema,
+  })
+  .strict();
+
+const availableWorkObligationCapabilitySchema = z
+  .object({
+    status: z.literal("AVAILABLE"),
+    obligation: workObligationSchema,
   })
   .strict();
 
@@ -120,15 +148,24 @@ export const worldObservationSnapshotSchema = z
         reasonCode: z.literal("ACTOR_REF_PENDING"),
       }),
     ]),
-    location: unavailableCapabilitySchema.extend({
-      reasonCode: z.literal("CURRENT_LOCATION_UNAVAILABLE"),
-    }),
-    activity: unavailableCapabilitySchema.extend({
-      reasonCode: z.literal("CURRENT_ACTIVITY_UNAVAILABLE"),
-    }),
-    workObligation: unavailableCapabilitySchema.extend({
-      reasonCode: z.literal("OBLIGATION_SOURCE_UNAVAILABLE"),
-    }),
+    location: z.union([
+      availableLocationCapabilitySchema,
+      unavailableCapabilitySchema.extend({
+        reasonCode: z.literal("CURRENT_LOCATION_UNAVAILABLE"),
+      }),
+    ]),
+    activity: z.union([
+      availableActivityCapabilitySchema,
+      unavailableCapabilitySchema.extend({
+        reasonCode: z.literal("CURRENT_ACTIVITY_UNAVAILABLE"),
+      }),
+    ]),
+    workObligation: z.union([
+      availableWorkObligationCapabilitySchema,
+      unavailableCapabilitySchema.extend({
+        reasonCode: z.literal("OBLIGATION_SOURCE_UNAVAILABLE"),
+      }),
+    ]),
     resources: z.union([
       availableResourceCapabilitySchema,
       unavailableCapabilitySchema.extend({
@@ -177,6 +214,7 @@ export type ObservationResidentRecord = Readonly<{
   }>;
   actorRef?: ActorRef;
   resources?: ResidentResourceSnapshot;
+  runtimeState?: ResidentRuntimeObservation;
 }>;
 export type WorldObservationSnapshot = Readonly<
   z.infer<typeof worldObservationSnapshotSchema>
@@ -256,6 +294,22 @@ export function buildWorldObservationSnapshot(input: {
     );
   }
 
+  const runtimeState = input.resident.runtimeState
+    ? parseResidentRuntimeObservation(input.resident.runtimeState)
+    : null;
+  if (
+    runtimeState &&
+    (runtimeState.runtimeState.worldId !== input.world.id ||
+      runtimeState.runtimeState.residentId !== input.resident.residentId ||
+      BigInt(runtimeState.runtimeState.sourceWorldSeq) > input.world.worldSeq ||
+      runtimeState.workObligation.worldId !== input.world.id ||
+      runtimeState.workObligation.residentId !== input.resident.residentId)
+  ) {
+    throw new Error(
+      "Observation runtime state belongs to a different resident, world, or a future world sequence",
+    );
+  }
+
   return parseWorldObservationSnapshot({
     policyVersion: OBSERVATION_POLICY_VERSION,
     worldId: input.world.id,
@@ -287,18 +341,27 @@ export function buildWorldObservationSnapshot(input: {
     actorRef: actorRef
       ? { status: "AVAILABLE", actorRef }
       : { status: "UNAVAILABLE", reasonCode: "ACTOR_REF_PENDING" },
-    location: {
-      status: "UNAVAILABLE",
-      reasonCode: "CURRENT_LOCATION_UNAVAILABLE",
-    },
-    activity: {
-      status: "UNAVAILABLE",
-      reasonCode: "CURRENT_ACTIVITY_UNAVAILABLE",
-    },
-    workObligation: {
-      status: "UNAVAILABLE",
-      reasonCode: "OBLIGATION_SOURCE_UNAVAILABLE",
-    },
+    location: runtimeState
+      ? {
+          status: "AVAILABLE",
+          location: runtimeState.runtimeState.currentLocation,
+        }
+      : {
+          status: "UNAVAILABLE",
+          reasonCode: "CURRENT_LOCATION_UNAVAILABLE",
+        },
+    activity: runtimeState
+      ? { status: "AVAILABLE", activity: runtimeState.runtimeState.activity }
+      : {
+          status: "UNAVAILABLE",
+          reasonCode: "CURRENT_ACTIVITY_UNAVAILABLE",
+        },
+    workObligation: runtimeState
+      ? { status: "AVAILABLE", obligation: runtimeState.workObligation }
+      : {
+          status: "UNAVAILABLE",
+          reasonCode: "OBLIGATION_SOURCE_UNAVAILABLE",
+        },
     resources: resources
       ? { status: "AVAILABLE", snapshot: resources }
       : { status: "UNAVAILABLE", reasonCode: "RESOURCE_BRIDGE_PENDING" },

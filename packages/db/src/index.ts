@@ -1,4 +1,12 @@
 export { createDb } from "./client.js";
+export {
+  bootstrapResidentRuntimeStates,
+  readResidentRuntimeStateRows,
+  ResidentRuntimeStateBootstrapError,
+  RUNTIME_STATE_BOOTSTRAP_POLICY_VERSION,
+  type ResidentRuntimeStateDatabase,
+  type ResidentRuntimeStateRow,
+} from "./resident-runtime-state.js";
 export { M0_FIXTURE, M0_FIXTURE_IDS } from "./fixture.js";
 export {
   EMPLOYED_RESIDENT_COUNT,
@@ -27,4 +35,5 @@ export {
   users,
   worldEvents,
   worlds,
+  residentRuntimeStates,
 } from "./schema.js";

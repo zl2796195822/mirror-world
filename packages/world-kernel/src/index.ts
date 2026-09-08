@@ -82,6 +82,13 @@ export {
   type ResidentBridgeFactory,
 } from "./resident-bridges.js";
 export {
+  createPostgresResidentRuntimeStateReadPort,
+  deriveResidentRuntimeObservation,
+  M3_RUNTIME_STATE_POLICY,
+  RESIDENT_RUNTIME_MAX_BATCH_SIZE,
+  ResidentRuntimeAuthorityError,
+} from "./resident-runtime-authority.js";
+export {
   findWorldCheckpoint,
   persistWorldCheckpoint,
   WorldCheckpointStoreError,
