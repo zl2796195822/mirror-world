@@ -2,9 +2,9 @@
 
 ## 结论
 
-`M1-T02 = IMPLEMENTED_UNVERIFIED`
+`M1-T02 = PASS`
 
-本地实现与产品验收已通过；GitHub Actions 远程验证将在提交并 push 后执行，当前报告先保留为未完成远程验证状态。本报告只覆盖 M1-T02，不执行 M1-T03、M1-T04、M2 或任何后续任务。
+本地、浏览器与 GitHub Actions 真实验证均已通过。本报告只覆盖 M1-T02，不执行 M1-T03、M1-T04、M2 或任何后续任务。
 
 ## Task ID
 
@@ -134,17 +134,18 @@ M1-T02「开发身份」要求：
 
 ## GitHub Actions
 
-- 首次 run `34174320461`：FAIL。公开 run 页面确认 `foundation` Job 在 `Lint and format` 步骤失败；本地重新执行 `pnpm lint` 复现为本报告未经过 Prettier 的格式错误，已在本次修复中格式化报告。
-- 当前状态：已修复，待 push 本次文档修复提交后重新执行。
-- workflow：沿用 `foundation-ci`，应真实执行 install、lint、typecheck、unit tests、build。
+- 首次 run `34174320461`：FAIL。公开 run 页面确认 `foundation` Job 在 `Lint and format` 步骤失败；本地重新执行 `pnpm lint` 复现为本报告未经过 Prettier 的格式错误，已修复。
+- 最终 run `34174530489`：PASS；`foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
+- workflow：`foundation-ci`，真实执行 install、lint、typecheck、unit tests、build。
 - 首次失败 run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174320461>
-- 最终 PASS run URL：待 push 后记录。
-- commit SHA：实现提交为 `c6f8d63ec0445c8dc83c32869830cf5f07742af0`；最终验证提交待记录。
-- Job 状态：待真实 run 后记录。
+- 最终 PASS run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174530489>
+- commit SHA：`08842eb756b1c91521c2447d6745f76adcf4adaa`。
+- 实现提交 SHA：`c6f8d63ec0445c8dc83c32869830cf5f07742af0`。
+- Job `foundation`：PASS；Install dependencies、Lint and format、Typecheck、Unit tests、Build：PASS。
+- 备注：GitHub 页面保留一个 action Node.js 20 runtime deprecation warning；不影响项目步骤成功。
 
 ## 未完成项
 
-- 远程 GitHub Actions 尚未对本任务提交执行；因此当前结论不能升级为 PASS。
 - 真实身份认证仍未接入，属于后续任务能力，不是本任务遗漏。
 
 ## 已知问题
@@ -168,10 +169,11 @@ M1-T02「开发身份」要求：
 - [x] 未实现 M1-T03、M1-T04、M2 或任何禁止范围。
 - [x] lint、typecheck、test、build 本地真实通过。
 - [x] 浏览器桌面/移动端与 production fail-closed 验收通过。
-- [ ] GitHub Actions 对最终提交真实执行并 PASS。
-- [ ] 最终 commit SHA、run URL 与各 Job 状态已写入本报告。
+- [x] GitHub Actions 对最终提交真实执行并 PASS。
+- [x] 最终 commit SHA、run URL 与各 Job 状态已写入本报告。
 
 ## Commit
 
-- M1-T02 实现 commit SHA：待提交。
-- GitHub Actions 最终验证提交 SHA：待远程 run 后记录。
+- M1-T02 实现 commit SHA：`c6f8d63ec0445c8dc83c32869830cf5f07742af0`。
+- GitHub Actions 最终验证提交 SHA：`08842eb756b1c91521c2447d6745f76adcf4adaa`。
+- GitHub Actions run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174530489>。

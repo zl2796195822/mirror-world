@@ -2,8 +2,8 @@
 
 Current milestone: M1
 Current task: M1-T02 开发身份
-Status: IMPLEMENTED_UNVERIFIED
-Last verified implementation commit: pending GitHub Actions verification
+Status: PASS
+Last verified implementation commit: 08842eb756b1c91521c2447d6745f76adcf4adaa
 
 ## Completed
 
@@ -14,11 +14,12 @@ Last verified implementation commit: pending GitHub Actions verification
 - 已登记 M1-T01 新增的 Next.js、React、React DOM 与 React 类型依赖；许可证均为 MIT。
 - GitHub Actions `foundation-ci` 已对最终文档同步提交真实执行并 PASS：run `34152941758`。
 - 已实现 M1-T02 开发身份：开发环境 seed 用户、Auth Adapter 边界、HttpOnly 会话、受保护路由与生产 fail-closed 守门。
-- 本地 lint、typecheck、test、build、开发/生产浏览器验收均通过；远程 GitHub Actions 尚待本任务提交执行。
+- 本地 lint、typecheck、test、build、开发/生产浏览器验收均通过。
+- GitHub Actions `foundation-ci` 已对 M1-T02 最终验证提交真实执行并 PASS：run `34174530489`，install、lint、typecheck、unit tests、build 全部成功。
 
 ## In progress
 
-- M1-T02 已完成本地实现与验证，等待 GitHub Actions 对本任务提交真实执行。
+- M1-T02 已完成并通过本地、浏览器与 GitHub Actions 验证。
 
 ## Blocked
 
@@ -56,4 +57,4 @@ Last verified implementation commit: pending GitHub Actions verification
 
 ## Next allowed task
 
-- M1-T03；仅在 M1-T02 GitHub Actions 最终 PASS 后允许开始。当前仍禁止提前进入 M1-T04、M2 或其他后续任务。
+- M1-T03；本轮不执行。当前仍禁止提前进入 M1-T04、M2 或其他后续任务。
