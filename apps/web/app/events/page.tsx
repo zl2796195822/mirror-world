@@ -1,6 +1,9 @@
 import { ContextEmpty } from "../components/context-empty";
+import { requireUser } from "../../lib/auth/require-user";
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  await requireUser();
+
   return (
     <ContextEmpty
       eyebrow="TEMPORAL / EVENTS"

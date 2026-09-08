@@ -48,6 +48,51 @@ a {
   gap: 24px;
 }
 
+.identity-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.identity-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.identity-pill__label {
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.signout-button,
+.identity-state {
+  border: 0;
+  color: var(--quiet);
+  font: inherit;
+  font-size: 11px;
+}
+
+.signout-button {
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.signout-button:hover,
+.signout-button:focus-visible {
+  color: var(--ink);
+  outline: none;
+}
+
+.identity-state {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .site-header {
   flex-wrap: wrap;
 }
@@ -193,6 +238,69 @@ h1 {
   font-size: 17px;
 }
 
+.auth-context {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  align-items: end;
+  gap: clamp(28px, 7vw, 112px);
+}
+
+.auth-card {
+  display: grid;
+  min-height: 250px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  align-content: space-between;
+}
+
+.auth-card__label {
+  margin: 0 0 14px;
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.auth-card__identity {
+  display: block;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.auth-card__note {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.auth-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 0 8px;
+  border: 0;
+  border-bottom: 1px solid var(--accent);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+
+.auth-action span {
+  color: var(--accent);
+  font-size: 17px;
+}
+
+.auth-action:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 5px;
+}
+
 .surface-note {
   z-index: 1;
   position: absolute;
@@ -320,6 +428,11 @@ h1 {
     width: 100%;
   }
 
+  .identity-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .nav-link {
     padding-inline: 9px;
   }
@@ -329,6 +442,11 @@ h1 {
   }
 
   .world-context {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .auth-context {
     grid-template-columns: 1fr;
     gap: 20px;
   }

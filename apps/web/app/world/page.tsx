@@ -1,6 +1,9 @@
 import { ContextEmpty } from "../components/context-empty";
+import { requireUser } from "../../lib/auth/require-user";
 
-export default function WorldPage() {
+export default async function WorldPage() {
+  await requireUser();
+
   return (
     <ContextEmpty
       eyebrow="WORLD / OBSERVE"

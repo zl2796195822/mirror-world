@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { requireUser } from "../lib/auth/require-user";
 
-export default function HomePage() {
+export default async function HomePage() {
+  await requireUser();
+
   return (
     <section
       className="world-context world-context--home"

@@ -1,6 +1,9 @@
 import { ContextEmpty } from "../components/context-empty";
+import { requireUser } from "../../lib/auth/require-user";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  await requireUser();
+
   return (
     <ContextEmpty
       eyebrow="CONTEXT / SETTINGS"

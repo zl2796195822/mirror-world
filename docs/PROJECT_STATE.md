@@ -1,9 +1,9 @@
 # PROJECT_STATE
 
 Current milestone: M1
-Current task: M1-T01 Next.js 产品壳
-Status: PASS
-Last verified implementation commit: 8b486e7a3ce8798502fc5907e7babd43b12d20ba
+Current task: M1-T02 开发身份
+Status: IMPLEMENTED_UNVERIFIED
+Last verified implementation commit: pending GitHub Actions verification
 
 ## Completed
 
@@ -13,10 +13,12 @@ Last verified implementation commit: 8b486e7a3ce8798502fc5907e7babd43b12d20ba
 - 所有未接入后端能力均显示诚实空状态；产品壳不连接数据库、Redis、API 或 World Kernel，也不写入世界事实。
 - 已登记 M1-T01 新增的 Next.js、React、React DOM 与 React 类型依赖；许可证均为 MIT。
 - GitHub Actions `foundation-ci` 已对最终文档同步提交真实执行并 PASS：run `34152941758`。
+- 已实现 M1-T02 开发身份：开发环境 seed 用户、Auth Adapter 边界、HttpOnly 会话、受保护路由与生产 fail-closed 守门。
+- 本地 lint、typecheck、test、build、开发/生产浏览器验收均通过；远程 GitHub Actions 尚待本任务提交执行。
 
 ## In progress
 
-- 无。M1-T01 已完成。
+- M1-T02 已完成本地实现与验证，等待 GitHub Actions 对本任务提交真实执行。
 
 ## Blocked
 
@@ -29,11 +31,11 @@ Last verified implementation commit: 8b486e7a3ce8798502fc5907e7babd43b12d20ba
 ## Known P2/P3
 
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，沿用 M0 文档基线记录。
-- M1-T02 开发身份/登录、M1-T03 World Overview 数据、M1-T04 API skeleton 及后续任务均未实现，属于当前范围外。
+- M1-T03 World Overview 数据、M1-T04 API skeleton 及后续任务均未实现，属于当前范围外。
 
 ## Migrations since last state
 
-- 无。M1-T01 只实现产品壳，没有数据库 schema 或 migration 变更。
+- 无。M1-T02 只实现开发身份边界，没有数据库 schema 或 migration 变更。
 - M0 基线数据库只读核对仍为 `migrations=1`、`users=1`、`worlds=1`。
 
 ## API/Event changes
@@ -43,13 +45,15 @@ Last verified implementation commit: 8b486e7a3ce8798502fc5907e7babd43b12d20ba
 ## Relevant ADRs
 
 - `docs/adr/ADR-0000-template.md`
-- M1-T01 未产生需要新增 ADR 的持久化或事实写入架构变更；架构边界记录于 M1-T01 验证报告。
+- `docs/adr/ADR-0001-m1-t02-development-auth.md`
+- M1-T02 的开发身份与生产 fail-closed 边界记录于 ADR-0001。
 
 ## Verification report
 
+- `docs/verification/M1-T02-report.md`
 - `docs/verification/M1-T01-report.md`
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M1-T02；本轮未执行，禁止提前进入 M1-T03、M1-T04 或 M2。
+- M1-T03；仅在 M1-T02 GitHub Actions 最终 PASS 后允许开始。当前仍禁止提前进入 M1-T04、M2 或其他后续任务。

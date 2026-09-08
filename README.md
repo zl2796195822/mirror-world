@@ -1,6 +1,6 @@
 # 镜界
 
-Persistent Digital Society 的工程仓库。当前执行 M1-T01：Next.js 产品壳；世界事实、居民、事件、身份、API、3D、AI 与模拟能力按后续任务逐步接入。
+Persistent Digital Society 的工程仓库。当前执行 M1-T02：开发身份；世界事实、居民、事件、API、3D、AI 与模拟能力按后续任务逐步接入。
 
 ## 当前范围
 
@@ -9,7 +9,7 @@ Persistent Digital Society 的工程仓库。当前执行 M1-T01：Next.js 产�
 - PostgreSQL、Redis、MinIO 本地依赖
 - Drizzle migration 与 `users` / `worlds` 最小种子
 - CI 基线：lint、typecheck、unit test、build
-- `apps/web`：M1-T01 深色、低密度、非游戏 HUD 产品壳
+- `apps/web`：M1-T01 深色、低密度、非游戏 HUD 产品壳与 M1-T02 开发身份
 
 ## 开发前提
 
@@ -26,8 +26,8 @@ pnpm typecheck
 pnpm test
 pnpm build
 
-# 启动 M1-T01 产品壳
-pnpm --filter @mirror/web dev
+# 启动 M1-T02 开发身份验证
+MIRROR_DEV_AUTH=true pnpm --filter @mirror/web dev
 ```
 
 停止本地依赖：
@@ -36,4 +36,4 @@ pnpm --filter @mirror/web dev
 docker compose down
 ```
 
-M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)，M1-T01 验证记录见 [`docs/verification/M1-T01-report.md`](docs/verification/M1-T01-report.md)。本轮不执行 M1-T02 或任何后续任务。
+M0 验证记录见 [`docs/verification/M0-report.md`](docs/verification/M0-report.md)，M1-T01 验证记录见 [`docs/verification/M1-T01-report.md`](docs/verification/M1-T01-report.md)。M1-T02 验证记录见 [`docs/verification/M1-T02-report.md`](docs/verification/M1-T02-report.md)。本轮不执行 M1-T03、M1-T04 或任何后续任务。

@@ -29,3 +29,11 @@
 - 生产浏览器在 1440×1000 与 390×844 验证五个路由无横向溢出，导航上下文正确，console Errors/Warnings=0；Docker PostgreSQL/Redis/MinIO healthy，数据库基线仍为 `migrations=1`、`users=1`、`worlds=1`。
 - 当前状态为 `M1-T01 = PASS`；下一允许任务为 M1-T02，本轮停止于 M1-T01。
 - GitHub Actions `foundation-ci` 已对最终文档同步提交 `e6a6af00397de633ea9fd20cc4426583ec0f5ffe` 真实执行并 PASS：run `34152941758`，install/lint/typecheck/unit tests/build 全部成功。
+
+## 2026-09-08 M1-T02
+
+- 按 M1-T02 原始定义实现开发身份：`MIRROR_DEV_AUTH=true` 仅在 `NODE_ENV=development` 开启 M0 seed 用户 `dev@mirror.local`；生产构建遇到该配置会 fail-closed。
+- 新增可替换 `AuthAdapter`、HttpOnly/SameSite=Strict 开发会话 cookie、受保护路由、开发登录/退出入口；生产无真实认证时显示诚实 unavailable，不伪造身份或世界数据。
+- 未新增 production dependency，未修改 `pnpm-lock.yaml`，未修改数据库 schema/migration，PostgreSQL/Redis/MinIO 及 M0 seed 状态保持不变；新增 ADR `docs/adr/ADR-0001-m1-t02-development-auth.md`。
+- 本地 `pnpm lint`、`pnpm typecheck`、`pnpm test`、production guard/build 与真实浏览器验证已 PASS；1440×1000、390×844 无横向溢出，console Errors/Warnings=0；production runtime 未显示开发入口。
+- 当前 M1-T02 状态为 `IMPLEMENTED_UNVERIFIED`，等待 GitHub Actions 对本任务提交真实执行；在远程 PASS 前不得进入 M1-T03。
