@@ -2,8 +2,8 @@
 
 Current milestone: M2 World Kernel
 Current task: M2-T02 Action Contract
-Status: IMPLEMENTED_UNVERIFIED (local PASS; CI pending)
-Last verified implementation commit: pending CI
+Status: PASS
+Last verified implementation commit: 8b9c2eee82109c9a4b1e3e87315edcf2d0411912
 
 ## Completed
 
@@ -32,10 +32,11 @@ Last verified implementation commit: pending CI
 - M1 API/Web 回归、lint、typecheck、test、build 与官方 npm audit 已通过；GitHub Actions run `34187838878` 对实现 commit 真实 PASS。
 - M2-T02 已新增 `@mirror/contracts` Action Contract：六类基础动作的结构化 Zod schema、类型与纯解析入口；非法字段、类型、格式和参数边界由 schema 拒绝。
 - M2-T02 没有新增数据库、API、事件、事实写入、幂等执行或 Kernel validator；新增 Zod 已登记并完成官方 production audit。
+- M2-T02 本地与 GitHub Actions 均真实通过；run `34196620662` 执行 install、DB setup、lint、typecheck、unit tests、World Clock integration 与 build，结果为 PASS。
 
 ## In progress
 
-- M2-T02 已完成本地实现与验证，等待独立提交的 GitHub Actions 真实结果；在 CI 通过前不宣布 PASS。
+- 无；M2-T02 已完成并通过，当前停止在 M2-T02，不进入 M2-T03。
 
 ## Blocked
 
@@ -68,6 +69,8 @@ Last verified implementation commit: pending CI
 - M1-T02 的开发身份与生产 fail-closed 边界记录于 ADR-0001。
 - `docs/adr/ADR-0002-m2-t01-world-clock.md`
 - M2-T01 的 wall-clock anchor、生产 1x、Kernel 写边界与 migration 记录于 ADR-0002。
+- `docs/adr/ADR-0003-m2-t02-action-contract.md`
+- M2-T02 的结构化 Action Contract 字段、参数边界与后续 Kernel 分层记录于 ADR-0003。
 
 ## Verification report
 
@@ -77,9 +80,9 @@ Last verified implementation commit: pending CI
 - `docs/verification/M1-T01-report.md`
 - `docs/verification/M1-milestone-report.md`
 - `docs/verification/M2-T01-report.md`（M2-T01 = PASS）
-- `docs/verification/M2-T02-report.md`（本地 IMPLEMENTED_UNVERIFIED，CI pending）
+- `docs/verification/M2-T02-report.md`（M2-T02 = PASS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- M2-T03；M2-T02 CI 通过后才可进入下一任务，且必须重新取得任务授权。
+- M2-T03；只记录，不执行，必须重新取得任务授权。

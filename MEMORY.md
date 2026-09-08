@@ -82,4 +82,4 @@
 - 按 M2-T02 原始定义新增 `@mirror/contracts`，用固定 `zod@4.5.4` 定义 MOVE/EAT/SLEEP/WORK/TALK/BUY 六类结构化 ActionRequest schema 与 TypeScript 类型；顶层字段和 action parameters 均拒绝未知字段与非法格式。
 - Action Contract 只做结构、类型、格式与基本数值边界检查；不实现 Kernel validator、actor/位置/资源/权限/幂等执行、ActionResult、数据库 action_requests、事件账本、API、Replay 或 M2-T03+ 能力。
 - 新增 ADR-0003、契约单测 15 项，`pnpm install --frozen-lockfile`、双次 `db:setup`、lint、typecheck、test、build、World Clock 真实 PostgreSQL 回归和官方 npm audit 均 PASS；Docker 依赖 healthy，数据库已恢复 M0 paused 基线。
-- 当前本地状态为 `M2-T02 = IMPLEMENTED_UNVERIFIED`，等待独立提交后的 GitHub Actions 真实结果；CI 通过后才更新为 PASS，下一任务只记录 `M2-T03`。
+- 当前状态为 `M2-T02 = PASS`；实现与本地验证提交为 `8b9c2eee82109c9a4b1e3e87315edcf2d0411912`，GitHub Actions run `34196620662` 真实 PASS。下一任务只记录 `M2-T03`，不自动执行。

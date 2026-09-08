@@ -2,7 +2,7 @@
 
 ## 结论
 
-当前本地验证结果为 `M2-T02 = IMPLEMENTED_UNVERIFIED`；实现与本地门禁均通过，GitHub Actions 真实验证待独立提交 push 后确认。本报告只覆盖 M2-T02，不代表 M2-T03 或 M2 里程碑完成。
+`M2-T02 = PASS`。实现、本地门禁与 GitHub Actions 均真实通过。本报告只覆盖 M2-T02，不代表 M2-T03 或 M2 里程碑完成。
 
 ## Task ID
 
@@ -69,20 +69,20 @@ contract 只负责结构、类型、格式和基本数值边界检查。它不�
 
 ## 真实验证结果
 
-| 验证                                                          | 结果                                                   |
-| ------------------------------------------------------------- | ------------------------------------------------------ |
-| `pnpm install --frozen-lockfile`                              | PASS                                                   |
-| `pnpm db:setup` 第 1 次                                       | PASS                                                   |
-| `pnpm db:setup` 第 2 次                                       | PASS                                                   |
-| `pnpm lint`                                                   | PASS                                                   |
-| `pnpm typecheck`                                              | PASS                                                   |
-| `pnpm test`                                                   | PASS，contracts 15、world-kernel 6、db 1、web 3、api 6 |
-| `pnpm build`                                                  | PASS                                                   |
-| `DATABASE_URL=... pnpm --filter @mirror/api test:integration` | PASS，M2-T01 World Clock 真实 PostgreSQL 回归          |
-| `pnpm audit --prod --registry=https://registry.npmjs.org`     | PASS，HIGH=0、CRITICAL=0                               |
-| Docker PostgreSQL / Redis / MinIO                             | PASS，healthy                                          |
-| 数据库恢复检查                                                | PASS，M0 world 为 `PAUSED / 1x`，seed 基线时间恢复     |
-| GitHub Actions                                                | PENDING                                                |
+| 验证                                                          | 结果                                                                                           |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                              | PASS                                                                                           |
+| `pnpm db:setup` 第 1 次                                       | PASS                                                                                           |
+| `pnpm db:setup` 第 2 次                                       | PASS                                                                                           |
+| `pnpm lint`                                                   | PASS                                                                                           |
+| `pnpm typecheck`                                              | PASS                                                                                           |
+| `pnpm test`                                                   | PASS，contracts 15、world-kernel 6、db 1、web 3、api 6                                         |
+| `pnpm build`                                                  | PASS                                                                                           |
+| `DATABASE_URL=... pnpm --filter @mirror/api test:integration` | PASS，M2-T01 World Clock 真实 PostgreSQL 回归                                                  |
+| `pnpm audit --prod --registry=https://registry.npmjs.org`     | PASS，HIGH=0、CRITICAL=0                                                                       |
+| Docker PostgreSQL / Redis / MinIO                             | PASS，healthy                                                                                  |
+| 数据库恢复检查                                                | PASS，M0 world 为 `PAUSED / 1x`，seed 基线时间恢复                                             |
+| GitHub Actions                                                | PASS，[run 34196620662](https://github.com/zl2796195822/mirror-world/actions/runs/34196620662) |
 
 ## 依赖与许可证
 
@@ -90,13 +90,19 @@ contract 只负责结构、类型、格式和基本数值边界检查。它不�
 
 ## Definition of Done
 
-| DoD                                      | 证据                                           | 状态    |
-| ---------------------------------------- | ---------------------------------------------- | ------- |
-| 六类基础 Action Contract 已定义          | `@mirror/contracts` discriminated union schema | PASS    |
-| 非法参数被 schema 拒绝                   | 15 项契约单测                                  | PASS    |
-| ActionRequest 与 Event/Fact 保持语义分离 | 无 API、DB、事件或 Kernel 提交实现             | PASS    |
-| 不破坏 M1 与 M2-T01                      | 全量测试、build、World Clock integration       | PASS    |
-| CI 真实执行新增测试                      | push 后等待 GitHub Actions                     | PENDING |
+| DoD                                      | 证据                                                                                                | 状态 |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------- | ---- |
+| 六类基础 Action Contract 已定义          | `@mirror/contracts` discriminated union schema                                                      | PASS |
+| 非法参数被 schema 拒绝                   | 15 项契约单测                                                                                       | PASS |
+| ActionRequest 与 Event/Fact 保持语义分离 | 无 API、DB、事件或 Kernel 提交实现                                                                  | PASS |
+| 不破坏 M1 与 M2-T01                      | 全量测试、build、World Clock integration                                                            | PASS |
+| CI 真实执行新增测试                      | run 34196620662 执行 install、DB setup、lint、typecheck、unit tests、World Clock integration、build | PASS |
+
+## Commit / State
+
+- 实现与本地验证提交：`8b9c2eee82109c9a4b1e3e87315edcf2d0411912`。
+- GitHub Actions：`foundation-ci` run `34196620662`，结论 `success`。
+- `PROJECT_STATE` 与 `MEMORY` 已同步为 `M2-T02 = PASS`。
 
 ## 当前状态
 
