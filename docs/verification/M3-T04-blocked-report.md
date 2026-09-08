@@ -25,23 +25,23 @@
 
 ## Gate assessment
 
-| 项目 | 官方范围判定 |
-| --- | --- |
-| 输入 | world observation、resident state、Needs、Goals/Routines、地点/edge、工作义务、只读资源、Action Contract、seed/world time/epoch |
-| Candidate Action | 是 |
-| Constraint filtering | 是；Life Engine 只能做 advisory preflight，不能代替 Kernel |
-| Scoring | 是；必须 deterministic、版本化、稳定排序 |
-| Selected Action | 是；但不能被当作世界事实 |
-| ActionRequest | 是；正式接入现有六类 Action Contract |
-| Kernel execution | 是；Kernel 是唯一事实写入口 |
-| ActionResult/ActionOutcome | 是；30×30 需要真实执行结果、reason、事件/seq 反馈 |
-| Retry/replan | 是；拒绝、资源不足、版本冲突和长期失败需要 bounded alternative/backoff/blocked 状态 |
-| Runtime loop | 是；连续 30 天生活依赖结果驱动的下一次规划 |
-| Scheduler/driver | 是；M3 Gate 前需要真实 scheduler 或等价 deterministic driver |
-| Observation/query boundary | 是；当前尚无正式 snapshot/query port |
-| ActorRef integration | 是；Resident 不等于 Kernel Actor，需正式行动引用边界 |
-| MOVE semantics | 是；travel/activity/in-flight/completion 尚未冻结 |
-| SLEEP semantics | 是；默认时长与结果反馈尚未冻结 |
+| 项目                       | 官方范围判定                                                                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 输入                       | world observation、resident state、Needs、Goals/Routines、地点/edge、工作义务、只读资源、Action Contract、seed/world time/epoch |
+| Candidate Action           | 是                                                                                                                              |
+| Constraint filtering       | 是；Life Engine 只能做 advisory preflight，不能代替 Kernel                                                                      |
+| Scoring                    | 是；必须 deterministic、版本化、稳定排序                                                                                        |
+| Selected Action            | 是；但不能被当作世界事实                                                                                                        |
+| ActionRequest              | 是；正式接入现有六类 Action Contract                                                                                            |
+| Kernel execution           | 是；Kernel 是唯一事实写入口                                                                                                     |
+| ActionResult/ActionOutcome | 是；30×30 需要真实执行结果、reason、事件/seq 反馈                                                                               |
+| Retry/replan               | 是；拒绝、资源不足、版本冲突和长期失败需要 bounded alternative/backoff/blocked 状态                                             |
+| Runtime loop               | 是；连续 30 天生活依赖结果驱动的下一次规划                                                                                      |
+| Scheduler/driver           | 是；M3 Gate 前需要真实 scheduler 或等价 deterministic driver                                                                    |
+| Observation/query boundary | 是；当前尚无正式 snapshot/query port                                                                                            |
+| ActorRef integration       | 是；Resident 不等于 Kernel Actor，需正式行动引用边界                                                                            |
+| MOVE semantics             | 是；travel/activity/in-flight/completion 尚未冻结                                                                               |
+| SLEEP semantics            | 是；默认时长与结果反馈尚未冻结                                                                                                  |
 
 ## Blocking evidence
 
