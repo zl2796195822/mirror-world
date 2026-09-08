@@ -36,6 +36,6 @@
 - 新增可替换 `AuthAdapter`、HttpOnly/SameSite=Strict 开发会话 cookie、受保护路由、开发登录/退出入口；生产无真实认证时显示诚实 unavailable，不伪造身份或世界数据。
 - 未新增 production dependency，未修改 `pnpm-lock.yaml`，未修改数据库 schema/migration，PostgreSQL/Redis/MinIO 及 M0 seed 状态保持不变；新增 ADR `docs/adr/ADR-0001-m1-t02-development-auth.md`。
 - 本地 `pnpm lint`、`pnpm typecheck`、`pnpm test`、production guard/build 与真实浏览器验证已 PASS；1440×1000、390×844 无横向溢出，console Errors/Warnings=0；production runtime 未显示开发入口。
-- 首次 M1-T02 CI run `34174320461` 在 `Lint and format` 失败，已由本地 `pnpm lint` 复现并修复验证报告的 Prettier 格式问题；最终 run `34174530489` 对提交 `08842eb756b1c91521c2447d6745f76adcf4adaa` 真实 PASS，foundation 的 install/lint/typecheck/unit tests/build 全部成功。
+- 首次 M1-T02 CI run `34174320461` 在 `Lint and format` 失败，已由本地 `pnpm lint` 复现并修复验证报告的 Prettier 格式问题；最终 run `34176497873` 对提交 `465d7b7e5f5e8027c40e57f037295625e06f3344` 真实 PASS，foundation 的 install/lint/typecheck/unit tests/build 全部成功。
 - 官方 npm registry production audit 复核返回 `No known vulnerabilities found`，HIGH=0、CRITICAL=0；本任务没有新增依赖。
-- 当前 M1-T02 状态为 `PASS`；实现提交为 `c6f8d63ec0445c8dc83c32869830cf5f07742af0`，最终验证提交为 `085b421591a56c498b540c10d1cf039e9185a5e5`，最终 run 为 `34174708348`。下一允许任务为 M1-T03，本轮已停止，不进入 M1-T03。
+- 当前 M1-T02 状态为 `PASS`；实现提交为 `c6f8d63ec0445c8dc83c32869830cf5f07742af0`，最终验证提交为 `465d7b7e5f5e8027c40e57f037295625e06f3344`，最终 run 为 `34176497873`。下一允许任务为 M1-T03，本轮已停止，不进入 M1-T03。

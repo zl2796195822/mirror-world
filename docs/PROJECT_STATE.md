@@ -3,7 +3,7 @@
 Current milestone: M1
 Current task: M1-T02 开发身份
 Status: PASS
-Last verified implementation commit: 085b421591a56c498b540c10d1cf039e9185a5e5
+Last verified implementation commit: 465d7b7e5f5e8027c40e57f037295625e06f3344
 
 ## Completed
 
@@ -15,7 +15,7 @@ Last verified implementation commit: 085b421591a56c498b540c10d1cf039e9185a5e5
 - GitHub Actions `foundation-ci` 已对最终文档同步提交真实执行并 PASS：run `34152941758`。
 - 已实现 M1-T02 开发身份：开发环境 seed 用户、Auth Adapter 边界、HttpOnly 会话、受保护路由与生产 fail-closed 守门。
 - 本地 lint、typecheck、test、build、开发/生产浏览器验收均通过。
-- GitHub Actions `foundation-ci` 已对 M1-T02 最终验证提交真实执行并 PASS：run `34174530489`，install、lint、typecheck、unit tests、build 全部成功。
+- GitHub Actions `foundation-ci` 已对 M1-T02 最终验证提交真实执行并 PASS：run `34176497873`，install、lint、typecheck、unit tests、build 全部成功。
 
 ## In progress
 

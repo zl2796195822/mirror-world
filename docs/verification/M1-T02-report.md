@@ -136,11 +136,12 @@ M1-T02「开发身份」要求：
 
 - 首次 run `34174320461`：FAIL。公开 run 页面确认 `foundation` Job 在 `Lint and format` 步骤失败；本地重新执行 `pnpm lint` 复现为本报告未经过 Prettier 的格式错误，已修复。
 - run `34174530489`：PASS；`foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
-- 最终 run `34174708348`：PASS；文档同步后的 `foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
+- run `34174708348`：PASS；文档同步后的 `foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
+- 最终 run `34176497873`：PASS；audit 证据同步后的 `foundation` Job 及其 install、lint、typecheck、unit tests、build 步骤全部成功。
 - workflow：`foundation-ci`，真实执行 install、lint、typecheck、unit tests、build。
 - 首次失败 run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174320461>
-- 最终 PASS run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174708348>
-- commit SHA：`085b421591a56c498b540c10d1cf039e9185a5e5`。
+- 最终 PASS run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34176497873>
+- commit SHA：`465d7b7e5f5e8027c40e57f037295625e06f3344`。
 - 实现提交 SHA：`c6f8d63ec0445c8dc83c32869830cf5f07742af0`。
 - Job `foundation`：PASS；Install dependencies、Lint and format、Typecheck、Unit tests、Build：PASS。
 - 备注：GitHub 页面保留一个 action Node.js 20 runtime deprecation warning；不影响项目步骤成功。
@@ -176,5 +177,5 @@ M1-T02「开发身份」要求：
 ## Commit
 
 - M1-T02 实现 commit SHA：`c6f8d63ec0445c8dc83c32869830cf5f07742af0`。
-- GitHub Actions 最终验证提交 SHA：`085b421591a56c498b540c10d1cf039e9185a5e5`。
-- GitHub Actions run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174708348>。
+- GitHub Actions 最终验证提交 SHA：`465d7b7e5f5e8027c40e57f037295625e06f3344`。
+- GitHub Actions run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34176497873>。
