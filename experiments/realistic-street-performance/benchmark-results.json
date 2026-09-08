@@ -1,0 +1,426 @@
+{
+  "timestamp": "2026-09-08T10:27:46.111Z",
+  "browser": "Chrome/152.0.7977.77",
+  "results": [
+    {
+      "id": "desktop-day-0",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "day",
+      "actors": 0,
+      "lod": true,
+      "instancing": true,
+      "metrics": {
+        "fpsText": "60 FPS / 16.7ms",
+        "p95Text": "17.7ms",
+        "drawTrisText": "110 calls / 18,020 tris",
+        "gpuResText": "11 tex / 68 geo",
+        "memoryText": "43.7 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "0 total (L0: 0, L1: 0, L2: 0)",
+        "timingText": "179ms / 571ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-day-5",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "day",
+      "actors": 5,
+      "lod": true,
+      "instancing": true,
+      "shots": [
+        "day.png",
+        "5-vrm.png"
+      ],
+      "metrics": {
+        "fpsText": "63 FPS / 15.8ms",
+        "p95Text": "16.0ms",
+        "drawTrisText": "310 calls / 719,180 tris",
+        "gpuResText": "39 tex / 77 geo",
+        "memoryText": "83.8 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "5 total (L0: 0, L1: 1, L2: 4)",
+        "timingText": "62ms / 437ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-day-15",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "day",
+      "actors": 15,
+      "lod": true,
+      "instancing": true,
+      "shots": [
+        "15-vrm.png"
+      ],
+      "metrics": {
+        "fpsText": "67 FPS / 14.9ms",
+        "p95Text": "15.3ms",
+        "drawTrisText": "610 calls / 1,900,644 tris",
+        "gpuResText": "39 tex / 82 geo",
+        "memoryText": "88.7 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "15 total (L0: 0, L1: 3, L2: 12)",
+        "timingText": "46ms / 413ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-day-30-lod",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "day",
+      "actors": 30,
+      "lod": true,
+      "instancing": true,
+      "shots": [
+        "30-vrm.png"
+      ],
+      "metrics": {
+        "fpsText": "70 FPS / 14.2ms",
+        "p95Text": "14.4ms",
+        "drawTrisText": "986 calls / 3,300,412 tris",
+        "gpuResText": "39 tex / 81 geo",
+        "memoryText": "120.3 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "30 total (L0: 3, L1: 12, L2: 15)",
+        "timingText": "58ms / 432ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-day-30-nolod",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "day",
+      "actors": 30,
+      "lod": false,
+      "instancing": true,
+      "metrics": {
+        "fpsText": "71 FPS / 14.2ms",
+        "p95Text": "14.5ms",
+        "drawTrisText": "1062 calls / 3,404,540 tris",
+        "gpuResText": "39 tex / 81 geo",
+        "memoryText": "137.5 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "30 total (L0: 30, L1: 0, L2: 0)",
+        "timingText": "55ms / 424ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-night-5",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "night",
+      "actors": 5,
+      "lod": true,
+      "instancing": true,
+      "shots": [
+        "night.png"
+      ],
+      "metrics": {
+        "fpsText": "63 FPS / 15.8ms",
+        "p95Text": "16.1ms",
+        "drawTrisText": "310 calls / 719,180 tris",
+        "gpuResText": "39 tex / 80 geo",
+        "memoryText": "216.3 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "5 total (L0: 0, L1: 1, L2: 4)",
+        "timingText": "56ms / 423ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-night-30",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "night",
+      "actors": 30,
+      "lod": true,
+      "instancing": true,
+      "metrics": {
+        "fpsText": "69 FPS / 14.1ms",
+        "p95Text": "14.3ms",
+        "drawTrisText": "986 calls / 3,300,412 tris",
+        "gpuResText": "39 tex / 81 geo",
+        "memoryText": "219.9 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "30 total (L0: 3, L1: 12, L2: 15)",
+        "timingText": "20ms / 387ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-rain-5",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "rain",
+      "actors": 5,
+      "lod": true,
+      "instancing": true,
+      "shots": [
+        "rain.png"
+      ],
+      "metrics": {
+        "fpsText": "63 FPS / 15.9ms",
+        "p95Text": "16.0ms",
+        "drawTrisText": "311 calls / 719,180 tris",
+        "gpuResText": "39 tex / 82 geo",
+        "memoryText": "190.2 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "5 total (L0: 0, L1: 1, L2: 4)",
+        "timingText": "73ms / 446ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-rain-30",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "rain",
+      "actors": 30,
+      "lod": true,
+      "instancing": true,
+      "metrics": {
+        "fpsText": "70 FPS / 14.2ms",
+        "p95Text": "15.1ms",
+        "drawTrisText": "923 calls / 2,929,028 tris",
+        "gpuResText": "39 tex / 81 geo",
+        "memoryText": "279.0 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "30 total (L0: 3, L1: 12, L2: 15)",
+        "timingText": "69ms / 443ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "desktop-day-5-noinstancing",
+      "viewport": [
+        1440,
+        900
+      ],
+      "weather": "day",
+      "actors": 5,
+      "lod": true,
+      "instancing": false,
+      "metrics": {
+        "fpsText": "62 FPS / 15.9ms",
+        "p95Text": "16.7ms",
+        "drawTrisText": "375 calls / 707,044 tris",
+        "gpuResText": "38 tex / 136 geo",
+        "memoryText": "197.8 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "5 total (L0: 0, L1: 1, L2: 4)",
+        "timingText": "40ms / 410ms",
+        "scrollWidth": 1440,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "id": "mobile-day-5",
+      "viewport": [
+        390,
+        844
+      ],
+      "weather": "day",
+      "actors": 5,
+      "lod": true,
+      "instancing": true,
+      "shots": [
+        "mobile.png"
+      ],
+      "metrics": {
+        "fpsText": "71 FPS / 15.2ms",
+        "p95Text": "16.3ms",
+        "drawTrisText": "35 calls / 11,510 tris",
+        "gpuResText": "9 tex / 43 geo",
+        "memoryText": "252.8 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "5 total (L0: 0, L1: 1, L2: 4)",
+        "timingText": "69ms / 445ms",
+        "scrollWidth": 390,
+        "viewportWidth": 390
+      }
+    },
+    {
+      "id": "mobile-day-30-lod",
+      "viewport": [
+        390,
+        844
+      ],
+      "weather": "day",
+      "actors": 30,
+      "lod": true,
+      "instancing": true,
+      "metrics": {
+        "fpsText": "70 FPS / 13.7ms",
+        "p95Text": "14.5ms",
+        "drawTrisText": "35 calls / 11,510 tris",
+        "gpuResText": "9 tex / 46 geo",
+        "memoryText": "188.4 MB",
+        "zonesText": "zone-a, zone-c",
+        "actorsText": "30 total (L0: 3, L1: 13, L2: 14)",
+        "timingText": "37ms / 411ms",
+        "scrollWidth": 390,
+        "viewportWidth": 390
+      }
+    }
+  ],
+  "compressionSamples": [
+    {
+      "name": "Asphalt Diffuse (Raw PNG 512x512):",
+      "val": "261.0KB (0ms)"
+    },
+    {
+      "name": "Sample Texture (KTX2 UASTC):",
+      "val": "2.5KB (66ms)"
+    },
+    {
+      "name": "Sample Texture (KTX2 ETC1S):",
+      "val": "0.9KB (59ms)"
+    },
+    {
+      "name": "Stanford Bunny (Draco Compressed .drc):",
+      "val": "94.0KB (34ms)"
+    },
+    {
+      "name": "Meshopt Compression Assessment:",
+      "val": " "
+    }
+  ],
+  "console": {
+    "errorCount": 0,
+    "errors": [],
+    "warningCount": 24,
+    "warnings": [
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      },
+      {
+        "type": "warning",
+        "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      },
+      {
+        "type": "warning",
+        "text": "using deprecated parameters for the initialization function; pass a single object instead"
+      }
+    ]
+  }
+}

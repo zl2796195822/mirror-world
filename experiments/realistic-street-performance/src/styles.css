@@ -1,0 +1,333 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #e5e9ec;
+  background: #0f151c;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #0f151c;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.experiment-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #0f151c;
+}
+
+.experiment-shell canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* Ambient Top Bar */
+.ambient-header {
+  position: absolute;
+  left: clamp(16px, 3vw, 48px);
+  top: clamp(16px, 3vw, 36px);
+  color: #f1f4f6;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
+
+.location {
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 500;
+}
+
+.time-weather {
+  margin-top: 6px;
+  color: #b0bec9;
+  font-size: clamp(12px, 1.1vw, 14px);
+  letter-spacing: 0.05em;
+}
+
+/* Debug Metrics Panel */
+.metrics {
+  position: absolute;
+  top: clamp(16px, 3vw, 36px);
+  right: clamp(16px, 3vw, 40px);
+  width: min(290px, calc(100vw - 32px));
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 23, 34, 0.85);
+  color: #d1dbe3;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(12px);
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+.metric-heading {
+  margin-bottom: 8px;
+  color: #e59866;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.metric-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3.5px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metric-row strong {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.debug-controls-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+.control-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: #8fa3b3;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.btn-group button {
+  flex: 1;
+  padding: 4px 6px;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #c7d5e0;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-group button:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.btn-group button.active {
+  background: #2a6f97;
+  border-color: #468faf;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.benchmark-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px;
+  font-size: 10px;
+  background: #8b5a2b;
+  border: 1px solid #c4803d;
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.benchmark-btn:hover {
+  background: #a66d35;
+}
+
+.compression-results {
+  margin-top: 8px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  font-size: 9.5px;
+}
+
+.comp-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comp-name {
+  color: #9ab0c2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.comp-val {
+  color: #e59866;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-note {
+  margin-top: 10px;
+  color: #7b8e9d;
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+/* 3D In-World HTML Labels */
+.cafe-sign {
+  font-family: Georgia, serif;
+  font-size: 20px;
+  color: #ffe6aa;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 12px rgba(255, 170, 68, 0.9), 0 0 24px rgba(255, 140, 0, 0.6);
+  pointer-events: none;
+}
+
+.store-sign {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #2a7a42;
+  padding: 2px 8px;
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.building-label, .park-label {
+  pointer-events: none;
+  white-space: nowrap;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  background: rgba(15, 23, 34, 0.75);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 4px #000;
+}
+
+.bus-arrival-screen {
+  color: #48e588;
+  font-family: monospace;
+  font-size: 10px;
+  background: #000000;
+  padding: 1px 4px;
+  border: 1px solid #2d4536;
+  pointer-events: none;
+}
+
+.controls-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  color: rgba(220, 230, 240, 0.7);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  background: rgba(15, 23, 34, 0.6);
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* Touch Controls */
+.touch-controls {
+  display: none;
+}
+
+@media (max-width: 640px), (pointer: coarse) {
+  .ambient-header {
+    top: 14px;
+    left: 14px;
+  }
+  .location {
+    font-size: 19px;
+  }
+  .metrics {
+    top: 76px;
+    right: 14px;
+    width: 200px;
+    padding: 10px;
+    font-size: 9.5px;
+    max-height: 48vh;
+  }
+  .metric-heading {
+    font-size: 8.5px;
+  }
+  .metric-row {
+    padding: 2px 0;
+  }
+  .controls-hint {
+    display: none;
+  }
+  .touch-controls {
+    display: flex;
+    position: absolute;
+    left: 14px;
+    bottom: 18px;
+    align-items: flex-end;
+    gap: 12px;
+    touch-action: none;
+    z-index: 25;
+  }
+  .touch-pad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .touch-pad > div {
+    display: flex;
+    gap: 4px;
+  }
+  .touch-controls button {
+    width: 44px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    background: rgba(25, 36, 50, 0.85);
+    color: #ffffff;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    touch-action: none;
+    user-select: none;
+  }
+  .touch-controls .touch-run {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    color: #e59866;
+    font-size: 12px;
+    font-weight: bold;
+    background: rgba(35, 48, 65, 0.9);
+  }
+}
