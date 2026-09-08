@@ -92,15 +92,15 @@ M1-T02「开发身份」要求：
 
 ## 自动化验证
 
-| 检查 | 结果 | 证据 |
-| --- | --- | --- |
-| `pnpm lint` | PASS | `@mirror/db`、`@mirror/web` lint 与 Prettier 全部通过 |
-| `pnpm typecheck` | PASS | 两个 workspace 类型检查通过 |
-| `pnpm test` | PASS | DB 1 个测试 + Web production guard 2 个测试，共 3 个测试通过 |
-| `MIRROR_DEV_AUTH=true pnpm --filter @mirror/web build` | PASS（按预期失败） | production guard 阻断构建，退出码 1，明确报错不允许 dev auth |
-| `NODE_ENV=production MIRROR_DEV_AUTH=false pnpm build` | PASS | DB build 与 Next.js 16.3.4 production build 成功 |
-| Production dependency audit | N/A | 本任务未新增 production dependency；沿用 M1-T01 官方 registry 结果 HIGH=0、CRITICAL=0 |
-| Database migration | NO DATABASE CHANGE | 未修改 schema、migration 或数据库写入路径 |
+| 检查                                                   | 结果               | 证据                                                                                  |
+| ------------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------- |
+| `pnpm lint`                                            | PASS               | `@mirror/db`、`@mirror/web` lint 与 Prettier 全部通过                                 |
+| `pnpm typecheck`                                       | PASS               | 两个 workspace 类型检查通过                                                           |
+| `pnpm test`                                            | PASS               | DB 1 个测试 + Web production guard 2 个测试，共 3 个测试通过                          |
+| `MIRROR_DEV_AUTH=true pnpm --filter @mirror/web build` | PASS（按预期失败） | production guard 阻断构建，退出码 1，明确报错不允许 dev auth                          |
+| `NODE_ENV=production MIRROR_DEV_AUTH=false pnpm build` | PASS               | DB build 与 Next.js 16.3.4 production build 成功                                      |
+| Production dependency audit                            | N/A                | 本任务未新增 production dependency；沿用 M1-T01 官方 registry 结果 HIGH=0、CRITICAL=0 |
+| Database migration                                     | NO DATABASE CHANGE | 未修改 schema、migration 或数据库写入路径                                             |
 
 ## Docker 与数据库
 
@@ -134,10 +134,12 @@ M1-T02「开发身份」要求：
 
 ## GitHub Actions
 
-- 状态：PENDING，尚未 push 本任务提交。
+- 首次 run `34174320461`：FAIL。公开 run 页面确认 `foundation` Job 在 `Lint and format` 步骤失败；本地重新执行 `pnpm lint` 复现为本报告未经过 Prettier 的格式错误，已在本次修复中格式化报告。
+- 当前状态：已修复，待 push 本次文档修复提交后重新执行。
 - workflow：沿用 `foundation-ci`，应真实执行 install、lint、typecheck、unit tests、build。
-- run URL：待 push 后记录。
-- commit SHA：待提交后记录。
+- 首次失败 run URL：<https://github.com/zl2796195822/mirror-world/actions/runs/34174320461>
+- 最终 PASS run URL：待 push 后记录。
+- commit SHA：实现提交为 `c6f8d63ec0445c8dc83c32869830cf5f07742af0`；最终验证提交待记录。
 - Job 状态：待真实 run 后记录。
 
 ## 未完成项
