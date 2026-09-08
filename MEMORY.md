@@ -115,3 +115,9 @@
 - `packages/db` T01 tests 6 项通过；frozen install、双次 db setup、lint、typecheck、全仓 tests、build、官方 npm audit 和 disposable clean DB 上 M2 PostgreSQL integration 4/4 均通过。首次复用已有 append-only 主库的 integration 因重复验证事件链失败，未归因于 T01，随后以临时 clean DB 重跑通过。
 - GitHub Actions `foundation-ci` run `34215453306` 对 main commit `84a64d6` 真实 PASS；最终实现 commit 为 `9077be3b660f2e7ea41a5729e07d001bb68e6f07`。
 - 当前正式状态：`M3-T01 = PASS`，`M3 = IN_PROGRESS`。下一步仅记录并解决 M3-T02 前的 Needs 4/6/7 ADR/Pre-T02 Decision；本轮停止。
+
+## 2026-09-08 ADR-M3-001
+
+- `ADR-M3-001 = PASS / ACCEPTED`，正式裁决 M3 v1 不机械选择 4/6/7，而按职责收敛：独立 CORE 为 `HungerPressure`、`RestPressure`、`SocialPressure`；`EnergyLevel`、`conditionBand`、工作义务和资源快照为 derived/input boundary；`stress`、`safety`、`money_pressure`、`purpose` 为 DEFER。
+- Need authority 为 `World Facts + World Time + Resident Seed/Profile + NeedPolicyVersion → Current Need State`；统一 Core pressure 语义为 `0=satisfied, 100=critical`；采用 world-time lazy evaluation 与 scheduled wake 方向，`PAUSED/MAINTENANCE` 不推进 Needs。
+- Needs source audit 为 `docs/architecture/m3-needs-source-audit.md`，ADR 为 `docs/adr/ADR-0007-m3-life-engine-needs-model-v1.md`。本任务没有代码、schema、migration、seed、API、Event Registry 或 runtime 变更；下一允许步骤仅为 `M3-T02`，不自动执行。

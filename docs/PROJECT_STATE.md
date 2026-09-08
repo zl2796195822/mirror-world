@@ -1,9 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3-T01 Resident Seed Generator
-Status: IN_PROGRESS (M3-T01 PASS; M3 not complete)
+Current task: ADR-M3-001 Life Engine Needs Model v1
+Status: IN_PROGRESS (M3-T01 PASS; ADR-M3-001 ACCEPTED; M3 not complete)
 Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
+Last verified main/doc baseline: aa156aa56e2bc509f31bf6c8bc5234bc1c157928
 
 ## Completed
 
@@ -44,10 +45,14 @@ Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
 - M2-T05 本地 frozen install、clean database 双次 setup、lint、typecheck、unit tests、build、真实 PostgreSQL 全 M2 integration 与官方 production audit 均 PASS；GitHub Actions run `34204276572` 对实现提交 `838c6e5eede3aaf413c5a9966893444ae7cb92ad` 真实 PASS。
 - M2 Milestone Gate 已复核 M2-T01～T05 的 authority、clock、Action Contract、validator、幂等、Event Ledger、transaction、sequence、world isolation、checkpoint 与 deterministic replay；发现并修复 wall-clock rollback 下的 control anchor 回写缺陷，补齐 checkpoint 错误 world/schema/corruption 与重复 suffix replay 证据。
 - M2 Gate 本地真实验证、API/Web 回归、官方 production audit 与范围审计均 PASS；Gate 修复提交为 `7f5377f37d441c9989dd94ce2f6d97f30980603d`，最终状态为 `M2 = PASS`。
+- `ADR-M3-001` 已 ACCEPTED：完成 4/6/7 Needs source audit；M3 v1 的三个独立 CORE Need 为 `HungerPressure`、`RestPressure`、`SocialPressure`。
+- `EnergyLevel`、`conditionBand`、工作义务与资源快照明确为 derived/input boundary；`stress`、`safety`、`money_pressure`、`purpose` 延后，不创建伪事实。
+- Needs authority 已确定为 `World Facts + World Time + Resident Seed/Profile + NeedPolicyVersion → Current Need State`；采用 World-Time lazy evaluation，暂停世界不推进 Needs；没有新增 runtime、schema、migration、API 或事件。
+- Needs 来源审计记录于 `docs/architecture/m3-needs-source-audit.md`，正式 ADR 为 `docs/adr/ADR-0007-m3-life-engine-needs-model-v1.md`。
 
 ## In progress
 
-- M3-T01 Resident Seed Generator 已 PASS；M3 仍为 IN_PROGRESS。
+- M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
 - M3-T02 及后续 Life Engine、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
 
 ## Blocked
@@ -64,6 +69,7 @@ Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
 - `MIRROR-FIND-002`：`causation_id`，P2，M3/M6 前处理。
 - `MIRROR-FIND-003`：细粒度、版本化 Event payload schema，P2，具体领域事件落地前处理。
 - `MIRROR-FIND-004`：scheduler/heartbeat，P2，M3 前处理。
+- 4/6/7 Needs 范围冲突已由 `ADR-M3-001` 关闭；ActionResult、Observation、ActorRef、MOVE/SLEEP、bounded replan、scheduler/driver 与 full resident replay 等既有 M3 前置项仍开放。
 - GitHub Actions action Node.js 20 runtime deprecation warning 属于外部 action 提示，不影响项目代码门禁。
 - 文档库 `manifest_v1.2.json` 与实际文件数量/文件名存在不一致，列为 P3，沿用 M0 文档基线记录。
 - M3、Life、Memory、Relationship、Economy、AI、3D、Digital Identity、Offline Simulation 及其他后续任务均未执行。
@@ -85,6 +91,7 @@ Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
 - M2 Gate 仅新增测试证据与 rollback 修复；没有新增 Action API、ActionResult、Projection、Simulator 或 M3+ 领域事实写入口。
 - M3-T01 仅新增纯 deterministic resident seed fixture：30 个 `NATIVE` 居民、稳定住处/工作引用、5×6 profile、26/4 employment 与非负只读资源 fixture；没有新增居民表、运行时或 Kernel Actor 集成。
 - M3-T01 的 GitHub Actions `foundation-ci` run `34215453306` 对 main commit `84a64d6` 真实 PASS；实现 commit 为 `9077be3b660f2e7ea41a5729e07d001bb68e6f07`。
+- ADR-M3-001 只新增 Needs 来源审计和架构决策文档；没有新增 migration、表、API、Event Registry、seed fixture 或 runtime。
 
 ## Relevant ADRs
 
@@ -98,6 +105,8 @@ Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
 - `docs/adr/ADR-0004-m2-t03-kernel-validation-idempotency.md`：M2-T03 validator snapshot、World Clock 输入与 PostgreSQL 幂等边界。
 - `docs/adr/ADR-0005-m2-t04-event-ledger.md`：M2-T04 append-only Event Ledger、world-local seq 与 state+event 原子提交边界。
 - `docs/adr/ADR-0006-m2-t05-checkpoint-replay.md`：M2-T05 replay authority、checkpoint rebuildability、canonical hash 与版本边界。
+- `docs/adr/ADR-0007-m3-life-engine-needs-model-v1.md`：M3 Needs 的 CORE/DERIVED/DEFER、authority、lazy evaluation、pause、determinism、persistence/replay 与 T02 contract。
+- `docs/architecture/m3-needs-source-audit.md`：4/6/7 Needs 定义来源逐项审计。
 
 ## Verification report
 
@@ -113,8 +122,9 @@ Last verified implementation commit: 9077be3b660f2e7ea41a5729e07d001bb68e6f07
 - `docs/verification/M2-T05-report.md`（M2-T05 = PASS）
 - `docs/verification/M2-milestone-report.md`（M2 = PASS）
 - `docs/verification/M3-T01-report.md`（M3-T01 = PASS；M3 仍 IN_PROGRESS）
+- `docs/architecture/m3-needs-source-audit.md`（ADR-M3-001 source audit）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- 仅记录 M3-T02 前的 Needs 规格 ADR/Pre-T02 Decision；本轮不执行 M3-T02。
+- 仅执行 `M3-T02`（按 `ADR-M3-001` contract）；本轮不执行 M3-T02。
