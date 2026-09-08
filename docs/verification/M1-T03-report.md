@@ -76,7 +76,7 @@
 | `pnpm typecheck`                                          | PASS               | `@mirror/db` 与 `@mirror/web` 类型检查通过             |
 | `pnpm test`                                               | PASS               | DB 1 个测试；Web 3 个测试，共 4 个测试通过             |
 | `pnpm build`                                              | PASS               | Next.js 16.3.4 生产构建成功，`/world` 动态路由生成成功 |
-| `pnpm audit --prod --registry=https://registry.npmjs.org` | PASS               | `No known vulnerabilities found`；HIGH=0、CRITICAL=0 |
+| `pnpm audit --prod --registry=https://registry.npmjs.org` | PASS               | `No known vulnerabilities found`；HIGH=0、CRITICAL=0   |
 | Database migration                                        | NO DATABASE CHANGE | 未修改 migration 或数据库结构                          |
 
 ## 浏览器验收
