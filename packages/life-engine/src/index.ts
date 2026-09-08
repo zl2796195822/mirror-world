@@ -1,0 +1,17 @@
+export {
+  CORE_NEED_KEYS,
+  NEED_POLICY_V1,
+  NEED_POLICY_VERSION,
+  evaluateNeeds,
+  evaluateResidentsNeeds,
+  type BatchNeedEvaluationInput,
+  type ConditionBand,
+  type NeedActivity,
+  type NeedAnchor,
+  type NeedEvaluationInput,
+  type NeedPolicy,
+  type NeedPolicyVersion,
+  type NeedState,
+  type ResidentNeedEvaluationInput,
+  type ResidentNeedProfile,
+} from "./needs.js";
