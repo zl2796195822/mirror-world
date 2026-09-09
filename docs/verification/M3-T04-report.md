@@ -17,6 +17,8 @@ simulation、full resident projection replay、PRE-AL-GATE 或任何后续 M4+ �
 - Policy versions: `m3-rule-decision-v1`, `m3-action-loop-v1`
 - Starting origin/main: `2e526d3b22209ba949584abf4e1f9505a7469e37`
 - Starting branch: `main` (`HEAD == origin/main`, worktree clean)
+- Implementation commit: `c32c0c941d979c7cb25c67fd56e265865b4b6070`
+- Docs sync commit: `87b5d79c8923c894dc5b78f65a50ed24547522c3`
 - Worktree: `/Users/alin/AI项目/mirror-world-m3-t04-retry`
 - Branch: `task/m3-t04-rule-decision-maker-retry`
 - Readiness at start: `M3-T04 readiness = READY_TO_RETRY`
