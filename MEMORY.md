@@ -217,6 +217,6 @@
 - World Time 仍由 `worlds.world_time` / World Clock / Kernel authority；MOVE/SLEEP due completion 只通过 Kernel completion boundary，使用 durable runtime due state、state-version fence、Kernel Outcome 与 Event Ledger，不由 scheduler 直接写 truth。
 - Deferred wake 使用最小 `scheduled_wake_registrations` projection 和 world/dedupe unique key；内存 work list 可丢弃并从 PostgreSQL runtime/wake state 重建。没有 generic queue、worker、timer、Redis durable truth 或 production dependency。
 - 永久架构边界为 `Scheduler = WHEN`、`Life Engine = WHAT`、`World Kernel = CAN / COMMIT`；decision wake 不包含 selected action，不实现 M3-T04 或完整 Action Loop。PAUSED/MAINTENANCE 不推进或处理 due work；当前 step 上限为 30。
-- clean PostgreSQL scheduler integration、全仓 frozen install/lint/typecheck/test/build、official production audit 均通过；GitHub Actions 与最终 main/doc baseline 将在最终 push 后回填。
+- clean PostgreSQL scheduler integration、全仓 frozen install/lint/typecheck/test/build、official production audit 均通过；实现提交 `a3581a5db6500bb44282b19ccc5ada03d5c4beeb` 的 GitHub Actions `foundation-ci` run `34344722893` 完整 PASS，后续 main/doc 同步为 docs-only。
 - `RES-M3-003` 只读 compatibility review 已完成。剩余正式 blockers：driver lease/fence、typed event registry/reducers、resident projection replay、full manifest/canonical semantic hashes、full 30×30 action-loop/replay/resimulation evidence；旧 contiguous event-ref 文案与正式 interleaved seq-gap contract 冲突已记录。
 - 当前正式状态：`M3 = IN_PROGRESS`，`M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`，readiness 为 `READY_TO_RETRY`；PRE-AL-07 完成后停止，不进入 PRE-AL-GATE 或 M3-T04。

@@ -280,9 +280,11 @@ query；没有 per-resident due-scan N+1。该证据是 correctness/query-shape
 
 ## Git and CI
 
-- Implementation commit: to be recorded after final local verification.
-- Final main HEAD: to be recorded after documentation synchronization.
-- GitHub Actions: final URL to be recorded after push and complete CI success.
+- Implementation commit: `a3581a5db6500bb44282b19ccc5ada03d5c4beeb`。
+- Implementation CI: [foundation-ci run 34344722893](https://github.com/zl2796195822/mirror-world/actions/runs/34344722893)，完整 `Success`。
+- Final main/doc baseline: this report's final documentation synchronization is
+  docs-only after the verified implementation commit; the final local/remote
+  HEAD is reported by the completion check below and in the handoff response。
 - Final condition: `HEAD == origin/main` and worktree clean。
 
 ## Formal state update

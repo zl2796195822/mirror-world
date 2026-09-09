@@ -3,8 +3,8 @@
 Current milestone: M3 Life Engine v1
 Current task: PRE-AL-07 Deterministic Scheduler / Simulation Driver (completed)
 Status: PRE-AL-07 = PASS; PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: to be recorded after final push
-Last verified main/doc baseline: to be recorded after final documentation synchronization
+Last verified implementation commit: a3581a5db6500bb44282b19ccc5ada03d5c4beeb
+Last verified main/doc baseline: a3581a5db6500bb44282b19ccc5ada03d5c4beeb; subsequent state/report synchronization is docs-only
 
 ## Completed
 
@@ -197,5 +197,5 @@ Last verified main/doc baseline: to be recorded after final documentation synchr
 
 ## Next allowed task
 
-- `PRE-AL-07 = PASS`；实现提交、最终文档同步提交、GitHub Actions run 与 `HEAD == origin/main` 将在最终 push 后回填到本文件及 verification report。
+- `PRE-AL-07 = PASS`；实现提交为 `a3581a5db6500bb44282b19ccc5ada03d5c4beeb`，GitHub Actions `foundation-ci` run `34344722893` 完整 PASS；后续 state/report 同步为 docs-only。
 - `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains；`M3-T04 readiness = READY_TO_RETRY` 仅为 readiness audit 结论。下一允许工作为 `PRE-AL-GATE` 或实际发现的额外 P1 Gate；本任务完成后停止，不执行后续任务。
