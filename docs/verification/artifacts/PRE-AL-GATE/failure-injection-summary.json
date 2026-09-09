@@ -1,0 +1,21 @@
+{
+  "poisonResidentId": "08fb2f6d-d654-5b07-8f06-67f391fd4ad9",
+  "poisonStopCount": 3,
+  "unaffectedResidentsContinued": 29,
+  "pauseResume": "PASS",
+  "staleDriverRejected": "PASS",
+  "wakeSurvivedDriverRestartBeforeAck": "PASS",
+  "wakeAcknowledgedAfterRequery": true,
+  "requestIdempotency": {
+    "requestId": "1d82c7da-5ef0-4c8f-b244-cfd6cdfce4ba",
+    "firstDisposition": "EXECUTED",
+    "repeatDisposition": "REUSED",
+    "outcomeEventCount": 1
+  },
+  "completionIdempotency": {
+    "requestId": "e792efa2-a1a8-42f9-9ef9-1dd10660f7c9",
+    "repeatDisposition": "REUSED",
+    "eventCountBefore": 61,
+    "eventCountAfter": 61
+  }
+}

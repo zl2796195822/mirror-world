@@ -1,5 +1,13 @@
 # 镜界项目记忆
 
+## 2026-09-09 PRE-AL-GATE
+
+- 正式完成 `PRE-AL-GATE`，状态为 `PASS`；实现提交 `15d2b25733ba44c7dcd43dbc3e4fe60babc1b651`，GitHub Actions `foundation-ci` run `34363874063` 对该提交为 `Success`。
+- 新增 world-scoped `simulation_driver_leases` migration `0010` 与 transaction-level fencing；stale driver 无法继续推进 World Time 或提交 due completion。新增 M3 typed event registry/reducer、resident projection replay、checkpoint suffix replay 与机器证据 harness。
+- clean disposable PostgreSQL 真实运行固定 30 residents × 30 World Days = 43,200 World Minutes；最终 World Time `2026-10-07T00:00:00.000Z`、153 attempts、127 committed、26 rejected、0 conflicts、final `worldSeq=1617`。live projection == full replay == suffix replay；checkpoint 删除后 genesis rebuild 一致；A/B deterministic digest 为 `4d2b570830545df66e7314a9d1f8094646ef2b96a6f3d109bd40c2a53baa87ec`。
+- fault/recovery 证据通过 pause/resume、lease takeover/fence、wake restart/requery/ack、ActionRequest/completion idempotency、poison resident STOP=3 且其余 29 人继续；zero-LLM、world/resident isolation、exact endpoint 与 no due work 通过。报告为 `docs/verification/PRE-AL-GATE-report.md`，机器证据为 `docs/verification/artifacts/PRE-AL-GATE/`。
+- `M3` 仍保持 `IN_PROGRESS`；当前权威资料没有命名新的 M3-T05，不能把 Gate PASS 自动升级成 M3 PASS，也不能进入 M4+。EAT/BUY mutation、Economy、Memory、Relationship、AI、3D、Realtime 与规模扩展均未执行。
+
 ## 2026-09-07
 
 - 已阅读 `文档/镜界_完整开发文档库_v1.2` 的 README、v1.2 增量说明、顶层蓝图/母文档/总索引、PRD/UIUX/第一条街 MVP、World Kernel/模拟重放、Life/Memory/AI、Identity/Economy、DB/API/3D、QA/运维/安全、M0-M13 执行与治理/研究/OSS 文档。

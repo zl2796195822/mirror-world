@@ -1,0 +1,15 @@
+{
+  "liveProjectionHash": "8c506f4ce2ab9b13fc56c7b73a015d9ca8c19de276e8aa30a1d0f0b49f48a861",
+  "fullReplayProjectionHash": "8c506f4ce2ab9b13fc56c7b73a015d9ca8c19de276e8aa30a1d0f0b49f48a861",
+  "checkpoint": {
+    "prefixSeq": "808",
+    "fullHistoryHash": "0fd849607dffd7e12d0baa0c0a4585233a7166c5b51ea10b737483f842f2cd33",
+    "suffixHistoryHash": "0fd849607dffd7e12d0baa0c0a4585233a7166c5b51ea10b737483f842f2cd33",
+    "projectionHash": "8c506f4ce2ab9b13fc56c7b73a015d9ca8c19de276e8aa30a1d0f0b49f48a861",
+    "suffixProjectionHash": "8c506f4ce2ab9b13fc56c7b73a015d9ca8c19de276e8aa30a1d0f0b49f48a861",
+    "deletedAndRebuilt": true
+  },
+  "deterministicHistoryHash": "0fd849607dffd7e12d0baa0c0a4585233a7166c5b51ea10b737483f842f2cd33",
+  "suffixHistoryHash": "0fd849607dffd7e12d0baa0c0a4585233a7166c5b51ea10b737483f842f2cd33",
+  "rebuiltFromGenesis": true
+}

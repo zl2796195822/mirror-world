@@ -1,0 +1,33 @@
+{
+  "manifestVersion": "m3-simulation-manifest-v1",
+  "scenarioId": "m3-30x30-baseline",
+  "logicalWorldId": "00000000-0000-4000-8000-00000000a300",
+  "worldSeed": "mirror-pre-al-gate-world-v1",
+  "initialWorldTime": "2026-09-07T00:00:00.000Z",
+  "durationWorldMinutes": 43200,
+  "stepResolutionWorldMinutes": 1,
+  "residentCount": 30,
+  "residentSeedGeneratorVersion": "m3-t01-v1",
+  "residentSeedConfigVersion": "first-street-v1",
+  "residentFixtureHash": "f0ab06cc9870f5ba06e6de73b56baa34a1c101c020f1723c4247d69da22b2548",
+  "initialSnapshotHash": "2ae89c219dc751eac3ba8b7935970162c45293fd6d4aec2960dc60240101f5ef",
+  "policyVersions": {
+    "needs": "m3-needs-v1",
+    "goals": "m3-goals-v1",
+    "decision": "m3-rule-decision-v1",
+    "actionLoop": "m3-action-loop-v1",
+    "actionSemantics": "m3-action-semantics-v1",
+    "replan": "m3-replan-v1",
+    "scheduler": "m3-scheduler-v1",
+    "runtime": "m3-runtime-state-v1",
+    "eventRegistry": "m3-domain-event-registry-v1"
+  },
+  "resourceCapability": "M3_FIXTURE_READONLY",
+  "actionScope": ["MOVE", "SLEEP"],
+  "faultProfile": "baseline",
+  "codeCommit": "15d2b25733ba44c7dcd43dbc3e4fe60babc1b651",
+  "dbSchemaVersion": 10,
+  "driverSemantics": "due-driven-world-time-v1",
+  "checkpointSchemaVersion": "m3-resident-projection-v1",
+  "manifestHash": "4dd0000ae1528b004015f82a9cb3f2e30912ed219e2125b29b307fd5a6e289a8"
+}

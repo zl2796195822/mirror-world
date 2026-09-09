@@ -1,0 +1,9 @@
+{
+  "manifestHash": "4dd0000ae1528b004015f82a9cb3f2e30912ed219e2125b29b307fd5a6e289a8",
+  "residentFixtureHash": "f0ab06cc9870f5ba06e6de73b56baa34a1c101c020f1723c4247d69da22b2548",
+  "initialSnapshotHash": "2ae89c219dc751eac3ba8b7935970162c45293fd6d4aec2960dc60240101f5ef",
+  "liveProjectionHash": "8c506f4ce2ab9b13fc56c7b73a015d9ca8c19de276e8aa30a1d0f0b49f48a861",
+  "replayProjectionHash": "8c506f4ce2ab9b13fc56c7b73a015d9ca8c19de276e8aa30a1d0f0b49f48a861",
+  "deterministicDigest": "4d2b570830545df66e7314a9d1f8094646ef2b96a6f3d109bd40c2a53baa87ec",
+  "repeatDeterministicDigest": "4d2b570830545df66e7314a9d1f8094646ef2b96a6f3d109bd40c2a53baa87ec"
+}

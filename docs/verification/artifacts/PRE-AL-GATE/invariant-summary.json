@@ -1,0 +1,12 @@
+{
+  "worldTimeReachedExactEndpoint": true,
+  "worldSeqMonotonic": true,
+  "allResidentsPresent": true,
+  "projectionReplayMatch": true,
+  "suffixReplayMatch": true,
+  "deterministicRepeatMatch": true,
+  "noDueWorkAtEndpoint": true,
+  "noCrossWorldContamination": true,
+  "noDuplicateCommittedSideEffect": true,
+  "boundedPoisonFailure": true
+}

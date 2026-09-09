@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3-T04 Rule Decision Maker / Action Loop Closure (completed)
-Status: M3-T04 = PASS; PRE-AL-07 = PASS; PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3 remains IN_PROGRESS
-Last verified implementation commit: c32c0c941d979c7cb25c67fd56e265865b4b6070
-Last verified main/doc baseline: c32c0c941d979c7cb25c67fd56e265865b4b6070
+Current task: PRE-AL-GATE Pre-Action-Loop Final Gate (completed)
+Status: PRE-AL-GATE = PASS; M3-T04 = PASS; PRE-AL-07 = PASS; PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3 remains IN_PROGRESS
+Last verified implementation commit: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
+Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 
 ## Completed
 
@@ -91,22 +91,26 @@ Last verified main/doc baseline: c32c0c941d979c7cb25c67fd56e265865b4b6070
 - M3-T04 闭环证据覆盖 Observation → Needs → Goals → Candidate → Hard Constraints → Score → ActionRequest → Kernel → Outcome → Replan → due completion → refreshed Observation；COMMITTED/REJECTED 路径、world isolation 与 clean PostgreSQL integration 均已验证。
 - M3-T04 没有执行 30×30 autonomous simulation、full resident projection replay、typed event registry、driver lease/fence owner 或 SimulationManifest；这些继续作为 PRE-AL-GATE / M3 Gate 前置项。
 - M3-T04 新增文件仅限 life-engine rule-decision/action-loop、对应 unit tests、API integration test、workspace dependency edge 与 verification/state docs；没有新增 migration、World Event type、Action API 或 production external dependency。
+- PRE-AL-GATE 已在实现 commit `15d2b25733ba44c7dcd43dbc3e4fe60babc1b651` 上完成：加入 world-scoped simulation driver lease/fencing、M3 typed event registry/reducer、resident projection replay、checkpoint suffix replay 与机器证据 harness。
+- clean disposable PostgreSQL 上真实 30×30 运行达到 30 World Days / 43,200 World Minutes：30 residents、153 action attempts、127 committed、26 rejected、0 conflicts、final `worldSeq=1617`；live projection、full replay、suffix replay、checkpoint 删除后 genesis rebuild 与 A/B deterministic digest 均一致。
+- PRE-AL-GATE fault/recovery evidence 通过：pause/resume、stale driver rejection/takeover、wake restart/requery/ack、ActionRequest/completion idempotency、poison resident bounded STOP=3 且其余 29 人继续、world/resident isolation、zero-LLM。
+- implementation main CI `foundation-ci` run `34363874063` 对 commit `15d2b25733ba44c7dcd43dbc3e4fe60babc1b651` 为 `Success`；完整 report 为 `docs/verification/PRE-AL-GATE-report.md`，机器证据在 `docs/verification/artifacts/PRE-AL-GATE/`。
 
 ## In progress
 
 - M3-T01/T02/T03/T04 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 `IN_PROGRESS`。
 - Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
-- PRE-AL-GATE remaining items 未关闭：lease/fence、typed reducers、resident projection replay、manifest/canonical evidence、full 30×30 action-loop evidence。
+- PRE-AL-GATE 已关闭；M3 仍为 `IN_PROGRESS`，不得从本 Gate 自动进入 M4+。
 
 ## Blocked
 
-- `M3-T04 = PASS`；原 `BLOCKED_BY_PRE_ACTION_LOOP_GATE` 状态由本 RETRY 关闭。
-- M3 Gate 仍依赖 full resident/domain replay、typed reducers、manifest/canonical evidence、lease/fence 与 30×30 evidence；下一允许工作为 `PRE-AL-GATE` 或额外正式 P1。
+- `PRE-AL-GATE = PASS`；本 Gate 未发现剩余 P1 blocker。
+- `M3 = IN_PROGRESS` 保持；当前权威资料没有命名新的 M3-T05，不能据此发明后续任务或自动开始 M4+。
 
 ## P0/P1
 
 - P0：0。
-- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 M3-T04 rule decision/action loop 已关闭；lease/fence、typed event/reducer、manifest/canonical state、full resident projection replay 与 30×30 evidence 仍为后续 P1 前置项。
+- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics、bounded replan、scheduler/driver、M3-T04 rule decision/action loop、lease/fence、typed event/reducer、manifest/canonical state、resident projection replay 与 30×30 evidence 均已由对应 Gate 证据关闭。
 
 ## Known P2/P3
 
@@ -127,7 +131,8 @@ Last verified main/doc baseline: c32c0c941d979c7cb25c67fd56e265865b4b6070
 - 新增 migration `packages/db/drizzle/0004_old_ares.sql`：M2-T05 `simulation_checkpoints`、版本/序列约束与 checkpoint position trigger。
 - 新增 migrations `packages/db/drizzle/0005_previous_fabian_cortez.sql` 与 `0006_absurd_stephen_strange.sql`：Kernel Action Outcome、0/1/N event association 与 world-scoped 复合约束。
 - 新增 migration `packages/db/drizzle/0009_odd_killmonger.sql`：最小 `scheduled_wake_registrations` durable wake projection、world/dedupe unique constraint 与 due indexes；未新增 generic queue/retry/lease table。
-- 当前本地 Docker 数据库已应用 9 个 migration journal entries；由于本轮及此前 integration 使用 append-only event ledger，主机存在历史测试 world/event 数据，不能作为 clean evidence，未删除或改写历史事件。PRE-AL-07 正式 clean evidence 使用一次性 PostgreSQL，验证后已移除。
+- 新增 migration `packages/db/drizzle/0010_dizzy_falcon.sql`：world-scoped `simulation_driver_leases`、owner 与 monotonic fencing token constraints。
+- 当前本地 Docker 数据库已应用 10 个 migration journal entries；由于本轮及此前 integration 使用 append-only event ledger，主机存在历史测试 world/event 数据，不能作为 clean evidence，未删除或改写历史事件。PRE-AL-GATE 正式 clean evidence 使用一次性 PostgreSQL database，验证后保留容器但不作为主线 durable truth。
 
 ## API/Event changes
 
@@ -150,6 +155,7 @@ Last verified main/doc baseline: c32c0c941d979c7cb25c67fd56e265865b4b6070
 - PRE-AL-06 没有新增 migration、表、World Event、Action API 或 production dependency；新增 `m3-replan-v1` contracts、纯 Failure Classification/Replan Policy 与对应 tests，不写入 Life Engine、runtime、worldSeq 或 Event Ledger。
 - PRE-AL-07 新增 scheduler contracts/order、bounded due-activity read port、durable deferred-wake read/register boundary、World-Time driver 与 completion state-version fence；复用现有 Clock、Kernel Outcome、Event Ledger 与 MOVE/SLEEP events，不新增 Action API、Life Engine decision、generic queue 或 distributed worker。
 - M3-T04 新增 life-engine `m3-rule-decision-v1` / `m3-action-loop-v1` 与 clean PostgreSQL action-loop integration；没有新增 migration、World Event type、Action API 或 external production dependency。
+- PRE-AL-GATE 新增 `simulation_driver_leases` 与 fence-aware World Clock/Action Kernel boundary、M3 typed resident projection replay、Gate integration harness 与 machine-readable artifacts；没有新增 LLM、Economy、Memory、Relationship、3D 或第二套 Kernel/Scheduler。
 
 ## Relevant ADRs
 
@@ -198,10 +204,11 @@ Last verified main/doc baseline: c32c0c941d979c7cb25c67fd56e265865b4b6070
 - `docs/adr/ADR-0010-pre-al-07-deterministic-scheduler.md`（PRE-AL-07 deterministic scheduler/driver decision）
 - `docs/verification/PRE-AL-07-RES-M3-003-COMPATIBILITY.md`（RES-M3-003 compatibility matrix）
 - `docs/verification/PRE-AL-07-report.md`（PRE-AL-07 = PASS；deterministic scheduler/driver）
+- `docs/verification/PRE-AL-GATE-report.md`（PRE-AL-GATE = PASS；M3 仍 IN_PROGRESS）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `M3-T04 = PASS`；implementation on `task/m3-t04-rule-decision-maker-retry`。
-- `M3 = IN_PROGRESS` remains；30×30 autonomous simulation、full replay Gate 与 PRE-AL-GATE 未执行。
-- 下一允许工作为 `PRE-AL-GATE` 或正式 audit 发现的额外 P1；本任务完成后停止，不执行后续任务。
+- `PRE-AL-GATE = PASS`；`M3 = IN_PROGRESS` remains.
+- 当前权威资料没有命名新的 `M3-T05` 或其他后续 M3 实现任务；只允许在获得明确授权后做 M3 final-status review。
+- 不执行 M4/M5/M6/M7/M8/M9/M10，不修改冻结 research worktree，不把本 Gate 扩展为 Economy/Memory/Relationship/AI/3D 或规模验收。

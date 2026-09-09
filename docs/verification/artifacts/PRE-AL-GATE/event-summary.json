@@ -1,0 +1,9 @@
+{
+  "total": 1617,
+  "byType": {
+    "RESIDENT_SLEEP_STARTED": 127,
+    "WORLD_TIME_ADVANCED": 1364,
+    "RESIDENT_SLEEP_COMPLETED": 126
+  },
+  "finalWorldSeq": "1617"
+}
