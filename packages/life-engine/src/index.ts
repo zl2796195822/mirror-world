@@ -42,3 +42,11 @@ export {
   type GoalWorkObligation,
   type ResidentGoalEvaluationInput,
 } from "./goals.js";
+export {
+  INITIAL_DECISION_ATTEMPT_BUDGET,
+  REPLAN_POLICY_V1,
+  classifyFailure,
+  decideReplan,
+  getReconsiderationDelayWorldMinutes,
+  type FailureClassification,
+} from "./replan-policy.js";

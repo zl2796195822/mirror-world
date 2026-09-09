@@ -62,3 +62,16 @@ export {
   type WorkObligationSnapshot,
   type WorkObligationStatus,
 } from "./runtime-state-contract.js";
+export {
+  REPLAN_POLICY_VERSION,
+  actionRecoverySignalSchema,
+  decisionAttemptBudgetSchema,
+  failureClassSchema,
+  replanDecisionSchema,
+  replanPolicyInputSchema,
+  type ActionRecoverySignal,
+  type DecisionAttemptBudget,
+  type FailureClass,
+  type ReplanDecision,
+  type ReplanPolicyInput,
+} from "./replan-contract.js";
