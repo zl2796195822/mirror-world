@@ -64,6 +64,14 @@ export const residentRuntimeStates = pgTable(
     residentId: uuid("resident_id").notNull(),
     currentLocationId: uuid("current_location_id").notNull(),
     currentActivity: text("current_activity").notNull(),
+    activityInstanceId: uuid("activity_instance_id"),
+    activityTargetLocationId: uuid("activity_target_location_id"),
+    activityStartedAtWorldTime: timestamp("activity_started_at_world_time", {
+      withTimezone: true,
+    }),
+    activityDueAtWorldTime: timestamp("activity_due_at_world_time", {
+      withTimezone: true,
+    }),
     stateVersion: integer("state_version").notNull().default(0),
     sourceWorldSeq: bigint("source_world_seq", { mode: "bigint" })
       .notNull()
@@ -80,7 +88,27 @@ export const residentRuntimeStates = pgTable(
     primaryKey({ columns: [table.worldId, table.residentId] }),
     check(
       "resident_runtime_states_activity_check",
-      sql`${table.currentActivity} in ('IDLE')`,
+      sql`(
+        (${table.currentActivity} = 'IDLE'
+          and ${table.activityInstanceId} is null
+          and ${table.activityTargetLocationId} is null
+          and ${table.activityStartedAtWorldTime} is null
+          and ${table.activityDueAtWorldTime} is null)
+        or
+        (${table.currentActivity} = 'TRAVELING'
+          and ${table.activityInstanceId} is not null
+          and ${table.activityTargetLocationId} is not null
+          and ${table.activityStartedAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} >= ${table.activityStartedAtWorldTime})
+        or
+        (${table.currentActivity} = 'SLEEPING'
+          and ${table.activityInstanceId} is not null
+          and ${table.activityTargetLocationId} is null
+          and ${table.activityStartedAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} >= ${table.activityStartedAtWorldTime})
+      )`,
     ),
     check(
       "resident_runtime_states_version_check",

@@ -7,6 +7,8 @@ import {
 const worldId = "00000000-0000-4000-8000-000000000001";
 const residentId = "00000000-0000-4000-8000-000000000010";
 const homeId = "00000000-0000-4000-8000-000000000020";
+const destinationId = "00000000-0000-4000-8000-000000000021";
+const activityInstanceId = "00000000-0000-4000-8000-000000000030";
 
 describe("resident runtime state contract", () => {
   it("accepts a deterministic bootstrap state and a no-obligation result", () => {
@@ -39,5 +41,95 @@ describe("resident runtime state contract", () => {
     expect(Object.isFrozen(observation)).toBe(true);
     expect(observation.runtimeState.activity.kind).toBe("IDLE");
     expect(observation.workObligation.status).toBe("NO_CURRENT_OBLIGATION");
+  });
+
+  it("accepts only the minimum metadata for traveling and sleeping", () => {
+    const traveling = parseResidentRuntimeObservation({
+      runtimeState: {
+        policyVersion: RUNTIME_STATE_POLICY_VERSION,
+        worldId,
+        residentId,
+        currentLocation: {
+          worldId,
+          locationId: homeId,
+          key: "home-unit-01",
+          kind: "HOME",
+        },
+        activity: {
+          kind: "TRAVELING",
+          activityInstanceId,
+          targetLocationId: destinationId,
+          startedAtWorldTime: "2026-09-09T00:00:00.000Z",
+          dueAtWorldTime: "2026-09-09T00:10:00.000Z",
+        },
+        stateVersion: 1,
+        sourceWorldSeq: "1",
+      },
+      workObligation: {
+        policyVersion: RUNTIME_STATE_POLICY_VERSION,
+        worldId,
+        residentId,
+        status: "NO_CURRENT_OBLIGATION",
+        workplaceId: null,
+        startsAtWorldTime: null,
+        endsAtWorldTime: null,
+      },
+    });
+    const sleeping = parseResidentRuntimeObservation({
+      ...traveling,
+      runtimeState: {
+        ...traveling.runtimeState,
+        activity: {
+          kind: "SLEEPING",
+          activityInstanceId,
+          startedAtWorldTime: "2026-09-09T00:00:00.000Z",
+          dueAtWorldTime: "2026-09-09T08:00:00.000Z",
+        },
+      },
+    });
+
+    expect(traveling.runtimeState.activity.kind).toBe("TRAVELING");
+    if (traveling.runtimeState.activity.kind === "TRAVELING") {
+      expect(traveling.runtimeState.activity.targetLocationId).toBe(
+        destinationId,
+      );
+    }
+    expect(sleeping.runtimeState.activity.kind).toBe("SLEEPING");
+    expect("targetLocationId" in sleeping.runtimeState.activity).toBe(false);
+  });
+
+  it("rejects inconsistent activity metadata", () => {
+    expect(() =>
+      parseResidentRuntimeObservation({
+        runtimeState: {
+          policyVersion: RUNTIME_STATE_POLICY_VERSION,
+          worldId,
+          residentId,
+          currentLocation: {
+            worldId,
+            locationId: homeId,
+            key: "home-unit-01",
+            kind: "HOME",
+          },
+          activity: {
+            kind: "SLEEPING",
+            activityInstanceId,
+            startedAtWorldTime: "2026-09-09T08:00:00.000Z",
+            dueAtWorldTime: "2026-09-09T07:00:00.000Z",
+          },
+          stateVersion: 1,
+          sourceWorldSeq: "1",
+        },
+        workObligation: {
+          policyVersion: RUNTIME_STATE_POLICY_VERSION,
+          worldId,
+          residentId,
+          status: "NO_CURRENT_OBLIGATION",
+          workplaceId: null,
+          startsAtWorldTime: null,
+          endsAtWorldTime: null,
+        },
+      }),
+    ).toThrow();
   });
 });

@@ -188,6 +188,79 @@ function assertEventShape(event: ReplayEvent, worldId: string): void {
   }
 }
 
+function assertActionLifecycleEvent(event: ReplayEvent): void {
+  const payload = event.payload;
+  const actionType = payload.actionType;
+  const phase = payload.phase;
+  const actionRequestId = payload.actionRequestId;
+  const activityInstanceId = payload.activityInstanceId;
+  const sourceLocationId = payload.sourceLocationId;
+  const startedAt = new Date(String(payload.startedAtWorldTime));
+  const dueAt = new Date(String(payload.dueAtWorldTime));
+  if (
+    (actionType !== "MOVE" && actionType !== "SLEEP") ||
+    (phase !== "STARTED" && phase !== "COMPLETED") ||
+    typeof actionRequestId !== "string" ||
+    typeof activityInstanceId !== "string" ||
+    typeof sourceLocationId !== "string" ||
+    payload.policyVersion !== "m3-action-semantics-v1" ||
+    Number.isNaN(startedAt.getTime()) ||
+    Number.isNaN(dueAt.getTime()) ||
+    dueAt.getTime() < startedAt.getTime() ||
+    typeof payload.durationWorldMinutes !== "number" ||
+    !Number.isInteger(payload.durationWorldMinutes) ||
+    payload.durationWorldMinutes < 1
+  ) {
+    throw new WorldReplayError(
+      "REPLAY_INVALID_EVENT",
+      "Resident action lifecycle event payload is invalid",
+    );
+  }
+  if (phase === "STARTED") {
+    if (actionType === "MOVE" && typeof payload.destinationId !== "string") {
+      throw new WorldReplayError(
+        "REPLAY_INVALID_EVENT",
+        "MOVE start event is missing its destination",
+      );
+    }
+    if (event.occurredAt.getTime() !== startedAt.getTime()) {
+      throw new WorldReplayError(
+        "REPLAY_INVALID_EVENT",
+        "Resident action start event time is inconsistent",
+      );
+    }
+    return;
+  }
+
+  const completedAt = new Date(String(payload.completedAtWorldTime));
+  if (
+    Number.isNaN(completedAt.getTime()) ||
+    event.occurredAt.getTime() !== completedAt.getTime() ||
+    (actionType === "MOVE" && typeof payload.destinationId !== "string")
+  ) {
+    throw new WorldReplayError(
+      "REPLAY_INVALID_EVENT",
+      "Resident action completion event payload is invalid",
+    );
+  }
+  if (actionType === "SLEEP") {
+    const transition = payload.restAnchorTransition;
+    if (
+      !transition ||
+      typeof transition !== "object" ||
+      (transition as Record<string, unknown>).fromActivity !== "RESTING" ||
+      (transition as Record<string, unknown>).toActivity !== "AWAKE" ||
+      (transition as Record<string, unknown>).worldTime !==
+        completedAt.toISOString()
+    ) {
+      throw new WorldReplayError(
+        "REPLAY_INVALID_EVENT",
+        "SLEEP completion event is missing its rest anchor transition",
+      );
+    }
+  }
+}
+
 function applyEvent(state: ReplayState, event: ReplayEvent): ReplayState {
   switch (event.type) {
     case "WORLD_TIME_ADVANCED": {
@@ -207,6 +280,12 @@ function applyEvent(state: ReplayState, event: ReplayEvent): ReplayState {
       }
       return { ...state, worldTime: to };
     }
+    case "RESIDENT_MOVE_STARTED":
+    case "RESIDENT_MOVE_COMPLETED":
+    case "RESIDENT_SLEEP_STARTED":
+    case "RESIDENT_SLEEP_COMPLETED":
+      assertActionLifecycleEvent(event);
+      return state;
     case "RESIDENT_MOVED":
     case "NEED_CHANGED":
     case "WORK_SHIFT_COMPLETED":

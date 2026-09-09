@@ -2,6 +2,7 @@ export {
   CORE_NEED_KEYS,
   NEED_POLICY_V1,
   NEED_POLICY_VERSION,
+  applySleepCompletionToNeedAnchor,
   evaluateNeeds,
   evaluateResidentsNeeds,
   type BatchNeedEvaluationInput,
@@ -14,6 +15,7 @@ export {
   type NeedState,
   type ResidentNeedEvaluationInput,
   type ResidentNeedProfile,
+  type SleepCompletionNeedAnchorInput,
 } from "./needs.js";
 export {
   type ObservationBatchQueryInput,

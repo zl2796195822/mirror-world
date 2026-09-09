@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-04 Resident Runtime State Authority (completed)
-Status: PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: bbdd4b0
-Last verified main/doc baseline: bbdd4b0; final documentation sync is docs-only
+Current task: PRE-AL-05 MOVE / SLEEP Action Semantics (implemented; CI pending)
+Status: PRE-AL-05 = IMPLEMENTED_UNVERIFIED; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: pending commit/push
+Last verified main/doc baseline: 93a817cf26812a6f0e48b0cb08401a632ad3fef8
 
 ## Completed
 
@@ -75,22 +75,27 @@ Last verified main/doc baseline: bbdd4b0; final documentation sync is docs-only
 - PRE-AL-04 Life Engine 仍只读 Observation；没有 MOVE/SLEEP executor、ActionRequest submission、World Event、scheduler、replan 或事实写入路径。新增 migration 为 `packages/db/drizzle/0007_flawless_mach_iv.sql`。
 - PRE-AL-04 本地 frozen install、lint、typecheck、test、build、官方 audit、双次 db:setup 与 clean PostgreSQL 7/7 integration 均通过；GitHub Actions run `34248913024`/`34249840037` 暴露 clean runner 未先构建 contracts 的 seed 边界，已由 `@mirror/db db:seed` 显式构建 contracts 修复。
 - PRE-AL-04 最终实现验证 run `34250817438` 的 migration、seed、lint、typecheck、unit tests、integration tests、build 全部 PASS；当前正式状态为 `PRE-AL-04 = PASS`，M3 仍 `IN_PROGRESS`。
+- PRE-AL-05 已建立正式 MOVE/SLEEP 两阶段 Kernel lifecycle：`STARTED → COMPLETED`；MOVE 在完成时才切换 location，SLEEP 仅允许 HOME 且固定 480 World Minutes。
+- PRE-AL-05 新增 `TRAVELING`/`SLEEPING` 最小 activity metadata、集中式 `m3-action-semantics-v1` duration policy、显式 completion command、四类 lifecycle events 与同一 KernelActionOutcome 的 0/1/N association。
+- PRE-AL-05 复用既有 Action Contract（MOVE `{ destinationId }`、SLEEP `{}`），没有新增 production dependency、Action API、scheduler、replan 或 autonomous loop；Life Engine/Observation 仍无 runtime 写入口。
+- PRE-AL-05 本地 frozen install、lint、typecheck、test、build、官方 production audit、双次 clean db:setup、clean PostgreSQL 8-stage integration、并发/回滚/30+30 event-boundary tests 均通过；GitHub Actions 尚待 push 后验证。
 
 ## In progress
 
 - M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
 - M3-T02 Needs Engine 已 PASS；M3-T03 Goal Engine 已 PASS；M3-T04 被 Pre-Action-Loop Gate 阻断；Candidate Action runtime、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
+- PRE-AL-05 implementation 已完成，正式 PASS 仍等待包含新增 integration script 的 GitHub Actions 完整 GREEN；不得在本任务进入 PRE-AL-06。
 
 ## Blocked
 
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：MOVE/SLEEP semantics、authoritative location/activity/obligation、bounded replan、scheduler/driver 与 full resident/domain replay 必须先关闭；PRE-AL-01 已关闭 ActionOutcome feedback blocker。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：bounded replan、scheduler/driver 与 full resident/domain replay 仍需关闭；PRE-AL-01 已关闭 ActionOutcome feedback，PRE-AL-02/03/04/05 已依次关闭 Observation、ActorRef/resource read、runtime authority、MOVE/SLEEP semantics blockers。
 - PRE-AL-02 已关闭 Observation / Query Boundary blocker；PRE-AL-03 已关闭 ActorRef 与 read-only Resource Bridge blocker。
-- PRE-AL-04 完成后，M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`；下一允许任务仅记录为 `PRE-AL-05 · MOVE / SLEEP Action Semantics`，不得在本轮执行。
+- PRE-AL-05 完成后，M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`；下一允许任务仅记录为 `PRE-AL-06 · Bounded Replan / Failure Policy`，本轮不执行。
 
 ## P0/P1
 
 - P0：0。
-- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 full resident/domain replay 仍为后续 P1 前置项。
+- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics 已由 PRE-AL-02～05 关闭；bounded replan、scheduler/driver 与 full resident/domain replay 仍为后续 P1 前置项。
 
 ## Known P2/P3
 
@@ -110,7 +115,7 @@ Last verified main/doc baseline: bbdd4b0; final documentation sync is docs-only
 - 新增 migration `packages/db/drizzle/0003_cold_viper.sql`：M2-T04 `world_events`、`world_seq`、append-only 与 sequence consistency triggers。
 - 新增 migration `packages/db/drizzle/0004_old_ares.sql`：M2-T05 `simulation_checkpoints`、版本/序列约束与 checkpoint position trigger。
 - 新增 migrations `packages/db/drizzle/0005_previous_fabian_cortez.sql` 与 `0006_absurd_stephen_strange.sql`：Kernel Action Outcome、0/1/N event association 与 world-scoped 复合约束。
-- 当前本地数据库为 `migrations=7`、`users=1`、`worlds=1`、`action_requests=0`、`kernel_action_outcomes=0`、`kernel_action_outcome_events=0`；`world_events` 保留真实 integration 追加的 20 条账本事件，world 已恢复 `PAUSED/1x`，checkpoint 表为空，world fact 与 event ledger 均由 PostgreSQL 保存。
+- 当前本地 Docker 数据库已应用 9 个 migration journal entries；由于本轮及此前 integration 使用 append-only event ledger，主机存在历史测试 world/event 数据，不能作为 clean evidence，未删除或改写历史事件。正式 clean evidence 使用一次性 PostgreSQL，验证后已移除。
 
 ## API/Event changes
 
@@ -129,6 +134,7 @@ Last verified main/doc baseline: bbdd4b0; final documentation sync is docs-only
 - PRE-AL-01 新增 `kernel_action_outcomes`、`kernel_action_outcome_events`、Kernel Action Outcome contract/store、多事件事务提交与 PostgreSQL integration；没有新增 production dependency、Action API、Observation、Action Loop、replan 或 scheduler。
 - PRE-AL-03 新增 shared ActorRef/resource contracts、M3 seed resolver/resource bridge 与 Observation capability wiring；没有新增 migration、table、Action API、World Event、ActionRequest、KernelActionOutcome 或 Action Loop。
 - PRE-AL-04 新增 `resident_runtime_states` 与 migration `0007_flawless_mach_iv.sql`，并新增 runtime-state contract/read port、Kernel read authority、bootstrap 与 Observation wiring；没有新增 Action API、ActionRequest、KernelActionOutcome、runtime event、scheduler 或 Action Loop。
+- PRE-AL-05 新增 migration `0008_curvy_tony_stark.sql` 扩展 active runtime metadata；新增 `m3-action-semantics-v1`、MOVE/SLEEP executor/completion、四类 lifecycle event 与 replay-ready payload validation；没有新增 production dependency、Action API、scheduler、replan、自动 loop 或资源写入。
 
 ## Relevant ADRs
 
@@ -169,9 +175,11 @@ Last verified main/doc baseline: bbdd4b0; final documentation sync is docs-only
 - `docs/verification/PRE-AL-01-report.md`（PRE-AL-01 = PASS；Kernel Action Outcome feedback loop）
 - `docs/verification/PRE-AL-03-report.md`（PRE-AL-03 = PASS；Resident ActorRef + Resource Read Bridge）
 - `docs/verification/PRE-AL-04-report.md`（PRE-AL-04 = PASS；Resident Runtime State Authority）
+- `docs/adr/ADR-0009-pre-al-05-action-semantics.md`（PRE-AL-05 MOVE/SLEEP lifecycle decision）
+- `docs/verification/PRE-AL-05-report.md`（PRE-AL-05 implementation；CI pending）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `PRE-AL-04 = PASS`，最终实现验证为 GitHub Actions run `34250817438`；最终 docs-only sync 仍需保持同一完整 CI 门禁。
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. The next task is only `PRE-AL-05 · MOVE / SLEEP Action Semantics`; do not execute it in this turn.
+- `PRE-AL-05 = IMPLEMENTED_UNVERIFIED`，本地与 clean PostgreSQL 证据已通过，待 push 后 GitHub Actions 完整 PASS 才可升级为 `PASS`。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. The next task is only `PRE-AL-06 · Bounded Replan / Failure Policy`; do not execute it in this turn.

@@ -36,13 +36,31 @@ export {
 } from "./action-request-store.js";
 export {
   executeKernelActionRequest,
+  appendKernelActionOutcomeEventsInTransaction,
   findKernelActionOutcome,
+  findKernelActionOutcomeInTransaction,
   KernelActionOutcomeStoreError,
   type ActionOutcomeDatabase,
   type ExecuteKernelActionRequestInput,
   type KernelActionExecution,
   type KernelActionRequestExecutionResult,
 } from "./action-outcome-store.js";
+export {
+  ACTION_SEMANTICS_POLICY,
+  ACTION_SEMANTICS_POLICY_VERSION,
+  addWorldMinutes,
+  getSleepDurationWorldMinutes,
+  getTravelDurationWorldMinutes,
+} from "./action-semantics.js";
+export {
+  completeResidentAction,
+  executeResidentActionRequest,
+  ResidentActionExecutorError,
+  type CompleteResidentActionInput,
+  type ExecuteResidentActionInput,
+  type ResidentActionCompletionResult,
+  type ResidentActionDatabase,
+} from "./resident-action-executor.js";
 export {
   appendWorldEvent,
   commitWorldStateWithEvent,

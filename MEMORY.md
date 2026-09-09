@@ -194,3 +194,12 @@
 - 没有实现 MOVE/SLEEP、Action executor、ActionRequest submission、World Event、replan、scheduler、driver 或 30×30；剩余 blocker 为 action semantics、bounded replan、scheduler/driver 与 full resident/domain replay。
 - Local full regression、clean PostgreSQL 7/7 integration、official audit 与 GitHub Actions run `34250817438` 均通过。Clean runner 暴露的 contracts 未构建 seed 边界已通过 `@mirror/db db:seed` 显式构建 contracts 修复。
 - 下一允许任务仅记录 `PRE-AL-05 · MOVE / SLEEP Action Semantics`，完成 PRE-AL-04 后立即停止。
+
+## 2026-09-09 PRE-AL-05
+
+- PRE-AL-05 implementation completed from main baseline `93a817cf26812a6f0e48b0cb08401a632ad3fef8`; formal status remains `IMPLEMENTED_UNVERIFIED` until the pushed main commit receives a complete green CI run.
+- MOVE keeps `{ destinationId }`; SLEEP keeps `{}`. `m3-action-semantics-v1` establishes deterministic travel durations and fixed 480 World Minutes sleep; SLEEP is HOME-only.
+- MOVE/SLEEP use Kernel-controlled `STARTED → COMPLETED` lifecycle with `TRAVELING`/`SLEEPING`; MOVE keeps source location until completion, then commits destination and `IDLE`. `state_version`, request identity, busy rejection, idempotency, conflict, pause/maintenance and rollback are covered.
+- Added four transition event types, same `KernelActionOutcome` 0/1/N association, replay-ready lifecycle payload validation, and migration `0008_curvy_tony_stark.sql`. Life Engine only gets a pure accepted SLEEP result → NeedAnchor adapter; no direct Need/resource/runtime write.
+- Local frozen install, lint, typecheck, tests, build, official pnpm production audit, double clean db setup, complete disposable PostgreSQL integration, concurrency/rollback, and 30-resident MOVE/SLEEP transition checks passed. No scheduler, replan, automatic Life Engine loop, or 30×30 autonomous simulation was run.
+- Remaining formal blockers: PRE-AL-06 bounded replan/failure policy, PRE-AL-07 scheduler/driver, and full resident/domain replay / 30×30 readiness. `M3 = IN_PROGRESS`; `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains unchanged.

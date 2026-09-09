@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { M0_FIXTURE_IDS, generateResidentSeed } from "@mirror/db";
 import {
   NEED_POLICY_V1,
+  applySleepCompletionToNeedAnchor,
   evaluateNeeds,
   evaluateResidentsNeeds,
   type NeedAnchor,
@@ -128,6 +129,55 @@ describe("M3-T02 needs evaluator", () => {
     });
 
     expect(afterAcceptedRelief.hungerPressure).toBe(2);
+  });
+
+  it("reanchors from RESTING to AWAKE at explicit sleep completion time", () => {
+    const sleepStartedAt = new Date("2026-09-08T00:00:00.000Z");
+    const sleepCompletedAt = new Date("2026-09-08T08:00:00.000Z");
+    const afterSleep = evaluateNeeds({
+      worldId,
+      currentWorldTime: sleepCompletedAt,
+      status: "RUNNING",
+      resident,
+      anchor: { ...anchor, worldTime: sleepStartedAt, activity: "RESTING" },
+    });
+    const awakeAnchor: NeedAnchor = {
+      worldTime: sleepCompletedAt,
+      activity: "AWAKE",
+      hungerPressure: afterSleep.hungerPressure,
+      restPressure: afterSleep.restPressure,
+      socialPressure: afterSleep.socialPressure,
+    };
+    const afterWake = evaluateNeeds({
+      worldId,
+      currentWorldTime: new Date("2026-09-08T09:00:00.000Z"),
+      status: "RUNNING",
+      resident,
+      anchor: awakeAnchor,
+    });
+
+    expect(afterSleep.restPressure).toBeLessThan(anchor.restPressure);
+    expect(afterWake.restPressure).toBeGreaterThan(afterSleep.restPressure);
+    expect(afterWake.hungerPressure).toBeGreaterThan(afterSleep.hungerPressure);
+    expect(afterWake.socialPressure).toBeGreaterThan(afterSleep.socialPressure);
+  });
+
+  it("adapts a completed SLEEP result into the existing NeedAnchor", () => {
+    const nextAnchor = applySleepCompletionToNeedAnchor({
+      worldId,
+      resident,
+      anchor,
+      sleepStartedAtWorldTime: new Date("2026-09-08T00:00:00.000Z"),
+      sleepCompletedAtWorldTime: new Date("2026-09-08T08:00:00.000Z"),
+    });
+
+    expect(nextAnchor).toMatchObject({
+      activity: "AWAKE",
+      worldTime: new Date("2026-09-08T08:00:00.000Z"),
+    });
+    expect(nextAnchor.restPressure).toBeLessThan(anchor.restPressure);
+    expect(nextAnchor.hungerPressure).toBeGreaterThan(anchor.hungerPressure);
+    expect(nextAnchor.socialPressure).toBeGreaterThan(anchor.socialPressure);
   });
 
   it("exposes the policy version instead of hiding calibration changes", () => {

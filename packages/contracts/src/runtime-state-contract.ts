@@ -20,11 +20,42 @@ export const residentLocationRefSchema = z
   })
   .strict();
 
+const activityTransitionFields = {
+  activityInstanceId: z.uuid(),
+  startedAtWorldTime: z.iso.datetime({ offset: true }),
+  dueAtWorldTime: z.iso.datetime({ offset: true }),
+};
+
 export const residentActivitySchema = z
-  .object({
-    kind: z.literal("IDLE"),
-  })
-  .strict();
+  .discriminatedUnion("kind", [
+    z.object({ kind: z.literal("IDLE") }).strict(),
+    z
+      .object({
+        kind: z.literal("TRAVELING"),
+        ...activityTransitionFields,
+        targetLocationId: z.uuid(),
+      })
+      .strict(),
+    z
+      .object({
+        kind: z.literal("SLEEPING"),
+        ...activityTransitionFields,
+      })
+      .strict(),
+  ])
+  .superRefine((activity, context) => {
+    if (activity.kind === "IDLE") return;
+    if (
+      new Date(activity.dueAtWorldTime).getTime() <
+      new Date(activity.startedAtWorldTime).getTime()
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "activity dueAtWorldTime must not precede startedAtWorldTime",
+        path: ["dueAtWorldTime"],
+      });
+    }
+  });
 
 const residentRuntimeStateSchema = z
   .object({

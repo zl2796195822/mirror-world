@@ -113,6 +113,15 @@ export type NeedState = Readonly<{
   conditionBand: ConditionBand;
 }>;
 
+export type SleepCompletionNeedAnchorInput = Readonly<{
+  worldId: string;
+  resident: ResidentNeedProfile;
+  anchor: NeedAnchor;
+  sleepStartedAtWorldTime: Date;
+  sleepCompletedAtWorldTime: Date;
+  policy?: NeedPolicy;
+}>;
+
 export type ResidentNeedEvaluationInput = Readonly<{
   resident: ResidentNeedProfile;
   anchor: NeedAnchor;
@@ -336,6 +345,50 @@ export function evaluateNeeds(input: NeedEvaluationInput): NeedState {
       input.previousConditionBand,
       policy,
     ),
+  };
+}
+
+export function applySleepCompletionToNeedAnchor(
+  input: SleepCompletionNeedAnchorInput,
+): NeedAnchor {
+  assertValidDate(input.sleepStartedAtWorldTime, "sleepStartedAtWorldTime");
+  assertValidDate(input.sleepCompletedAtWorldTime, "sleepCompletedAtWorldTime");
+  if (
+    input.sleepCompletedAtWorldTime.getTime() <
+    input.sleepStartedAtWorldTime.getTime()
+  ) {
+    throw new Error("sleep completion cannot precede sleep start");
+  }
+
+  const policy = input.policy ?? NEED_POLICY_V1;
+  const awakeAtSleepStart = evaluateNeeds({
+    worldId: input.worldId,
+    currentWorldTime: input.sleepStartedAtWorldTime,
+    status: "RUNNING",
+    resident: input.resident,
+    anchor: input.anchor,
+    policy,
+  });
+  const restingAtCompletion = evaluateNeeds({
+    worldId: input.worldId,
+    currentWorldTime: input.sleepCompletedAtWorldTime,
+    status: "RUNNING",
+    resident: input.resident,
+    anchor: {
+      worldTime: input.sleepStartedAtWorldTime,
+      activity: "RESTING",
+      hungerPressure: awakeAtSleepStart.hungerPressure,
+      restPressure: awakeAtSleepStart.restPressure,
+      socialPressure: awakeAtSleepStart.socialPressure,
+    },
+    policy,
+  });
+  return {
+    worldTime: input.sleepCompletedAtWorldTime,
+    activity: "AWAKE",
+    hungerPressure: restingAtCompletion.hungerPressure,
+    restPressure: restingAtCompletion.restPressure,
+    socialPressure: restingAtCompletion.socialPressure,
   };
 }
 

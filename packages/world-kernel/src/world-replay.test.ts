@@ -92,6 +92,56 @@ describe("world replay", () => {
     expect(resumed.state.appliedSeq).toBe(full.state.appliedSeq);
   });
 
+  it("accepts replay-ready MOVE and SLEEP lifecycle events", () => {
+    const moveStarted = event(
+      1n,
+      "RESIDENT_MOVE_STARTED",
+      {
+        schemaVersion: 1,
+        actionType: "MOVE",
+        phase: "STARTED",
+        actionRequestId: "00000000-0000-4000-8000-000000000020",
+        activityInstanceId: "00000000-0000-4000-8000-000000000020",
+        sourceLocationId: "00000000-0000-4000-8000-000000000010",
+        destinationId: "00000000-0000-4000-8000-000000000011",
+        startedAtWorldTime: "2026-09-06T22:00:00.000Z",
+        dueAtWorldTime: "2026-09-06T22:00:10.000Z",
+        durationWorldMinutes: 10,
+        policyVersion: "m3-action-semantics-v1",
+      },
+      "2026-09-06T22:00:00.000Z",
+    );
+    const sleepCompleted = event(
+      2n,
+      "RESIDENT_SLEEP_COMPLETED",
+      {
+        schemaVersion: 1,
+        actionType: "SLEEP",
+        phase: "COMPLETED",
+        actionRequestId: "00000000-0000-4000-8000-000000000021",
+        activityInstanceId: "00000000-0000-4000-8000-000000000021",
+        sourceLocationId: "00000000-0000-4000-8000-000000000010",
+        startedAtWorldTime: "2026-09-06T22:00:10.000Z",
+        dueAtWorldTime: "2026-09-07T06:00:10.000Z",
+        completedAtWorldTime: "2026-09-07T06:00:10.000Z",
+        durationWorldMinutes: 480,
+        policyVersion: "m3-action-semantics-v1",
+        restAnchorTransition: {
+          fromActivity: "RESTING",
+          toActivity: "AWAKE",
+          worldTime: "2026-09-07T06:00:10.000Z",
+        },
+      },
+      "2026-09-07T06:00:10.000Z",
+    );
+
+    const result = replayWorldEvents({
+      seed,
+      events: [moveStarted, sleepCompleted],
+    });
+    expect(result.state.appliedSeq).toBe(2n);
+  });
+
   it.each([
     ["sequence gap", [{ ...events[1], seq: 3n }]],
     [

@@ -7,6 +7,7 @@ import {
   parseResidentRuntimeObservation,
   RUNTIME_STATE_POLICY_VERSION,
   type ResidentRuntimeObservation,
+  type ResidentActivity,
   type ResidentRuntimeStateReadPort,
   type WorkObligationSnapshot,
 } from "@mirror/contracts";
@@ -49,6 +50,76 @@ function assertInput(input: {
   if (input.resident.worldId !== input.worldId) {
     throw new Error("Resident runtime resident belongs to another world");
   }
+}
+
+function activityFromRow(row: {
+  currentActivity: string;
+  activityInstanceId: string | null;
+  activityTargetLocationId: string | null;
+  activityStartedAtWorldTime: Date | null;
+  activityDueAtWorldTime: Date | null;
+}): ResidentActivity {
+  if (row.currentActivity === "IDLE") {
+    if (
+      row.activityInstanceId !== null ||
+      row.activityTargetLocationId !== null ||
+      row.activityStartedAtWorldTime !== null ||
+      row.activityDueAtWorldTime !== null
+    ) {
+      throw new ResidentRuntimeAuthorityError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        "Idle runtime state contains active activity metadata",
+      );
+    }
+    return { kind: "IDLE" };
+  }
+
+  if (
+    row.activityInstanceId === null ||
+    row.activityStartedAtWorldTime === null ||
+    row.activityDueAtWorldTime === null
+  ) {
+    throw new ResidentRuntimeAuthorityError(
+      "RUNTIME_STATE_UNAVAILABLE",
+      "Active runtime state is missing activity metadata",
+    );
+  }
+
+  if (row.currentActivity === "TRAVELING") {
+    if (row.activityTargetLocationId === null) {
+      throw new ResidentRuntimeAuthorityError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        "Traveling runtime state is missing its target location",
+      );
+    }
+    return {
+      kind: "TRAVELING",
+      activityInstanceId: row.activityInstanceId,
+      targetLocationId: row.activityTargetLocationId,
+      startedAtWorldTime: row.activityStartedAtWorldTime.toISOString(),
+      dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
+    };
+  }
+
+  if (row.currentActivity === "SLEEPING") {
+    if (row.activityTargetLocationId !== null) {
+      throw new ResidentRuntimeAuthorityError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        "Sleeping runtime state cannot contain a target location",
+      );
+    }
+    return {
+      kind: "SLEEPING",
+      activityInstanceId: row.activityInstanceId,
+      startedAtWorldTime: row.activityStartedAtWorldTime.toISOString(),
+      dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
+    };
+  }
+
+  throw new ResidentRuntimeAuthorityError(
+    "RUNTIME_STATE_UNAVAILABLE",
+    `Unsupported resident runtime activity: ${row.currentActivity}`,
+  );
 }
 
 function currentShift(input: {
@@ -269,7 +340,7 @@ export function createPostgresResidentRuntimeStateReadPort(
               key: location.key,
               kind: location.kind,
             },
-            activity: { kind: row.currentActivity },
+            activity: activityFromRow(row),
             stateVersion: row.stateVersion,
             sourceWorldSeq: row.sourceWorldSeq.toString(),
           },

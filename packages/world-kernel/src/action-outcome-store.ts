@@ -19,10 +19,12 @@ import {
 import {
   validateActionRequest,
   type ActionValidationContext,
+  type ActionValidationResult,
   type KernelReasonCode,
 } from "./action-validator.js";
 import {
   commitWorldStateWithEventsInTransaction,
+  type WorldEventCommitResult,
   type WorldEventInput,
   type WorldKernelTransaction,
   type WorldStatePatch,
@@ -35,6 +37,10 @@ export type KernelActionExecution =
       status: "COMMITTED";
       state: WorldStatePatch;
       events: readonly WorldEventInput[];
+      afterEvents?: (
+        transaction: WorldKernelTransaction,
+        committed: WorldEventCommitResult,
+      ) => void | Promise<void>;
     }
   | {
       status: "REJECTED";
@@ -45,6 +51,9 @@ export type KernelActionExecution =
 export type ExecuteKernelActionRequestInput = {
   request: ActionRequest;
   validationContext: ActionValidationContext;
+  validateInTransaction?: (
+    transaction: WorldKernelTransaction,
+  ) => ActionValidationResult | Promise<ActionValidationResult>;
   execute: (
     transaction: WorldKernelTransaction,
   ) => KernelActionExecution | Promise<KernelActionExecution>;
@@ -130,7 +139,7 @@ function outcomeInput(
   };
 }
 
-async function findKernelActionOutcomeInTransaction(
+export async function findKernelActionOutcomeInTransaction(
   transaction: WorldKernelTransaction,
   input: { requestId: string; worldId: string },
 ): Promise<KernelActionOutcome | null> {
@@ -189,6 +198,9 @@ async function persistOutcomeInTransaction(
       },
     );
     persistedEvents = committed.events;
+    if (input.execution.afterEvents) {
+      await input.execution.afterEvents(transaction, committed);
+    }
   }
 
   const reasonCode =
@@ -283,10 +295,9 @@ export async function executeKernelActionRequest(
   database: ActionOutcomeDatabase,
   input: ExecuteKernelActionRequestInput,
 ): Promise<KernelActionRequestExecutionResult> {
-  const validation = validateActionRequest(
-    input.request,
-    input.validationContext,
-  );
+  const validation = input.validateInTransaction
+    ? null
+    : validateActionRequest(input.request, input.validationContext);
 
   return database.transaction(async (transaction) => {
     const requestState = await ensureActionRequestInTransaction(
@@ -302,9 +313,18 @@ export async function executeKernelActionRequest(
       return resultForRequestState(requestState, existingOutcome);
     }
 
-    const execution = validation.accepted
+    const resolvedValidation = input.validateInTransaction
+      ? await input.validateInTransaction(transaction)
+      : validation;
+    if (!resolvedValidation) {
+      throw new KernelActionOutcomeStoreError(
+        "OUTCOME_INVALID",
+        "Kernel action validation did not produce a result",
+      );
+    }
+    const execution = resolvedValidation.accepted
       ? await input.execute(transaction)
-      : outcomeForValidationFailure(validation.reasonCode);
+      : outcomeForValidationFailure(resolvedValidation.reasonCode);
     const outcome = await persistOutcomeInTransaction(transaction, {
       requestId: requestState.requestId,
       worldId: input.request.worldId,
@@ -317,6 +337,100 @@ export async function executeKernelActionRequest(
       outcome,
     };
   });
+}
+
+export async function appendKernelActionOutcomeEventsInTransaction(
+  transaction: WorldKernelTransaction,
+  input: {
+    requestId: string;
+    worldId: string;
+    state: WorldStatePatch;
+    events: readonly WorldEventInput[];
+  },
+): Promise<KernelActionOutcome> {
+  if (input.events.length === 0) {
+    throw new KernelActionOutcomeStoreError(
+      "OUTCOME_INVALID",
+      "At least one completion event is required",
+    );
+  }
+
+  const [existingOutcome] = await transaction
+    .select()
+    .from(kernelActionOutcomes)
+    .where(
+      and(
+        eq(kernelActionOutcomes.actionRequestId, input.requestId),
+        eq(kernelActionOutcomes.worldId, input.worldId),
+      ),
+    );
+  if (!existingOutcome) {
+    throw new KernelActionOutcomeStoreError(
+      "OUTCOME_NOT_FOUND",
+      "A resident activity has no durable kernel action outcome",
+    );
+  }
+  if (existingOutcome.status !== "COMMITTED") {
+    throw new KernelActionOutcomeStoreError(
+      "OUTCOME_INVALID",
+      "Only a committed action can receive completion events",
+    );
+  }
+
+  const committed = await commitWorldStateWithEventsInTransaction(transaction, {
+    worldId: input.worldId,
+    state: input.state,
+    events: input.events,
+  });
+  const [lockedOutcome] = await transaction
+    .select()
+    .from(kernelActionOutcomes)
+    .where(eq(kernelActionOutcomes.id, existingOutcome.id))
+    .for("update");
+  if (!lockedOutcome) {
+    throw new KernelActionOutcomeStoreError(
+      "OUTCOME_NOT_FOUND",
+      "Kernel action outcome disappeared during completion",
+    );
+  }
+
+  const startIndex = lockedOutcome.eventCount;
+  await transaction.insert(kernelActionOutcomeEvents).values(
+    committed.events.map((event, eventIndex) => ({
+      outcomeId: lockedOutcome.id,
+      worldId: input.worldId,
+      eventId: event.id,
+      eventIndex: startIndex + eventIndex,
+      eventSeq: event.seq,
+    })),
+  );
+  const [updatedOutcome] = await transaction
+    .update(kernelActionOutcomes)
+    .set({
+      eventCount: startIndex + committed.events.length,
+      worldSeqStart: lockedOutcome.worldSeqStart ?? committed.events[0].seq,
+      worldSeqEnd: committed.events.at(-1)?.seq,
+    })
+    .where(eq(kernelActionOutcomes.id, lockedOutcome.id))
+    .returning();
+  if (!updatedOutcome) {
+    throw new KernelActionOutcomeStoreError(
+      "OUTCOME_INVALID",
+      "Completed kernel action outcome could not be updated",
+    );
+  }
+
+  const outcome = await findKernelActionOutcomeInTransaction(transaction, {
+    requestId: input.requestId,
+    worldId: input.worldId,
+  });
+  if (!outcome) {
+    throw new KernelActionOutcomeStoreError(
+      "OUTCOME_NOT_FOUND",
+      "Completed kernel action outcome could not be read",
+    );
+  }
+  return outcome;
 }
 
 export async function findKernelActionOutcome(
