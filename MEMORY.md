@@ -203,3 +203,10 @@
 - Added four transition event types, same `KernelActionOutcome` 0/1/N association, replay-ready lifecycle payload validation, and migration `0008_curvy_tony_stark.sql`. Life Engine only gets a pure accepted SLEEP result → NeedAnchor adapter; no direct Need/resource/runtime write.
 - Local frozen install, lint, typecheck, tests, build, official pnpm production audit, double clean db setup, complete disposable PostgreSQL integration, concurrency/rollback, and 30-resident MOVE/SLEEP transition checks passed. No scheduler, replan, automatic Life Engine loop, or 30×30 autonomous simulation was run.
 - Remaining formal blockers: PRE-AL-06 bounded replan/failure policy, PRE-AL-07 scheduler/driver, and full resident/domain replay / 30×30 readiness. `M3 = IN_PROGRESS`; `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains unchanged.
+
+## 2026-09-09 PRE-AL-06
+
+- `PRE-AL-06 = PASS`；实现提交为 `d8160ed78d2371d272bd59e37720a5ab1513dca8`，原始 main baseline 为 `1359cd91317352ac8268cd7220a3abc9aa8e832f`，GitHub Actions `foundation-ci` run `34337678714` 完整通过。
+- 已建立正式 `m3-replan-v1` Bounded Replan / Failure Policy：Failure classes、retry/reobserve/replan 分离，所有 recovery 均严格有界；`TIMED_OUT` 只允许先按原 request/idempotency key reconciliation，再进行有限同请求重试。
+- 已建立确定性 World-Time defer；成功、停止、重观察、重规划、同请求重试和延后均为 orchestration decision，不写 Life Engine、runtime、World Event、worldSeq 或 authoritative Replay；没有新增 migration、production dependency、scheduler 或自动 resident loop。
+- `M3 = IN_PROGRESS`；`M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`。剩余 blocker 为 `PRE-AL-07` scheduler/driver、full resident/domain replay / 30×30 readiness，以及重新核验完整 action-loop readiness；下一允许任务仅记录 `PRE-AL-07`，不执行。

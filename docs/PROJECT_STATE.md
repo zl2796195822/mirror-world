@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-05 MOVE / SLEEP Action Semantics (completed)
-Status: PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad
-Last verified main/doc baseline: ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad; final documentation sync is docs-only
+Current task: PRE-AL-06 Bounded Replan / Failure Policy (completed)
+Status: PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: d8160ed78d2371d272bd59e37720a5ab1513dca8
+Last verified main/doc baseline: d8160ed78d2371d272bd59e37720a5ab1513dca8; final documentation sync is docs-only
 
 ## Completed
 
@@ -79,23 +79,26 @@ Last verified main/doc baseline: ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad; final
 - PRE-AL-05 新增 `TRAVELING`/`SLEEPING` 最小 activity metadata、集中式 `m3-action-semantics-v1` duration policy、显式 completion command、四类 lifecycle events 与同一 KernelActionOutcome 的 0/1/N association。
 - PRE-AL-05 复用既有 Action Contract（MOVE `{ destinationId }`、SLEEP `{}`），没有新增 production dependency、Action API、scheduler、replan 或 autonomous loop；Life Engine/Observation 仍无 runtime 写入口。
 - PRE-AL-05 本地 frozen install、lint、typecheck、test、build、官方 production audit、双次 clean db:setup、clean PostgreSQL 8-stage integration、并发/回滚/30+30 event-boundary tests 均通过；GitHub Actions `foundation-ci` run `34325594982` 对实现提交真实完整 PASS。
+- PRE-AL-06 已建立 `m3-replan-v1` bounded replan/failure policy：Failure Classification、SUCCESS/STOP/REOBSERVE_NOW/REPLAN_NOW/RETRY_SAME_REQUEST/DEFER_UNTIL_WORLD_TIME 分离，timeout reconciliation 仅允许原 request/key 的有界重试。
+- PRE-AL-06 已将 submission、conflict recovery、replan 三类预算分别有界；未知、内部、授权、世界未运行、幂等冲突与无可行替代均 fail-closed，World-Time defer 使用确定性延迟；没有新增 migration、World Event、worldSeq、scheduler、worker 或自动 resident loop。
+- PRE-AL-06 本地完整回归、clean PostgreSQL integration、官方 production audit 与 GitHub Actions `foundation-ci` run `34337678714` 均完整 PASS；实现提交为 `d8160ed78d2371d272bd59e37720a5ab1513dca8`。
 
 ## In progress
 
 - M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
 - M3-T02 Needs Engine 已 PASS；M3-T03 Goal Engine 已 PASS；M3-T04 被 Pre-Action-Loop Gate 阻断；Candidate Action runtime、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
-- PRE-AL-05 已完成并正式 PASS；`M3` 仍为 `IN_PROGRESS`，不得在本任务进入 PRE-AL-06。
+- PRE-AL-06 已完成并正式 PASS；`M3` 仍为 `IN_PROGRESS`，不得在本任务进入 PRE-AL-07 或 M3-T04。
 
 ## Blocked
 
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：bounded replan、scheduler/driver 与 full resident/domain replay 仍需关闭；PRE-AL-01 已关闭 ActionOutcome feedback，PRE-AL-02/03/04/05 已依次关闭 Observation、ActorRef/resource read、runtime authority、MOVE/SLEEP semantics blockers。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：scheduler/driver 与 full resident/domain replay 仍需关闭，并需重新核验完整 action-loop readiness；PRE-AL-01 已关闭 ActionOutcome feedback，PRE-AL-02/03/04/05/06 已依次关闭 Observation、ActorRef/resource read、runtime authority、MOVE/SLEEP semantics、bounded replan blockers。
 - PRE-AL-02 已关闭 Observation / Query Boundary blocker；PRE-AL-03 已关闭 ActorRef 与 read-only Resource Bridge blocker。
-- PRE-AL-05 完成后，M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`；下一允许任务仅记录为 `PRE-AL-06 · Bounded Replan / Failure Policy`，本轮不执行。
+- PRE-AL-06 完成后，M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`；下一允许任务仅记录为 `PRE-AL-07 · Scheduler / Simulation Driver`，本轮不执行。
 
 ## P0/P1
 
 - P0：0。
-- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics 已由 PRE-AL-02～05 关闭；bounded replan、scheduler/driver 与 full resident/domain replay 仍为后续 P1 前置项。
+- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics 与 bounded replan 已由 PRE-AL-02～06 关闭；scheduler/driver 与 full resident/domain replay 仍为后续 P1 前置项。
 
 ## Known P2/P3
 
@@ -135,6 +138,7 @@ Last verified main/doc baseline: ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad; final
 - PRE-AL-03 新增 shared ActorRef/resource contracts、M3 seed resolver/resource bridge 与 Observation capability wiring；没有新增 migration、table、Action API、World Event、ActionRequest、KernelActionOutcome 或 Action Loop。
 - PRE-AL-04 新增 `resident_runtime_states` 与 migration `0007_flawless_mach_iv.sql`，并新增 runtime-state contract/read port、Kernel read authority、bootstrap 与 Observation wiring；没有新增 Action API、ActionRequest、KernelActionOutcome、runtime event、scheduler 或 Action Loop。
 - PRE-AL-05 新增 migration `0008_curvy_tony_stark.sql` 扩展 active runtime metadata；新增 `m3-action-semantics-v1`、MOVE/SLEEP executor/completion、四类 lifecycle event 与 replay-ready payload validation；没有新增 production dependency、Action API、scheduler、replan、自动 loop 或资源写入。
+- PRE-AL-06 没有新增 migration、表、World Event、Action API 或 production dependency；新增 `m3-replan-v1` contracts、纯 Failure Classification/Replan Policy 与对应 tests，不写入 Life Engine、runtime、worldSeq 或 Event Ledger。
 
 ## Relevant ADRs
 
@@ -177,9 +181,11 @@ Last verified main/doc baseline: ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad; final
 - `docs/verification/PRE-AL-04-report.md`（PRE-AL-04 = PASS；Resident Runtime State Authority）
 - `docs/adr/ADR-0009-pre-al-05-action-semantics.md`（PRE-AL-05 MOVE/SLEEP lifecycle decision）
 - `docs/verification/PRE-AL-05-report.md`（PRE-AL-05 = PASS；MOVE/SLEEP lifecycle）
+- `docs/adr/ADR-0010-pre-al-06-bounded-replan.md`（PRE-AL-06 bounded replan/failure policy）
+- `docs/verification/PRE-AL-06-report.md`（PRE-AL-06 = PASS；bounded replan/failure policy）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `PRE-AL-05 = PASS`，实现提交为 `ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad`，GitHub Actions `foundation-ci` run `34325594982` 完整通过；最终文档同步为 docs-only。
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. The next task is only `PRE-AL-06 · Bounded Replan / Failure Policy`; do not execute it in this turn.
+- `PRE-AL-06 = PASS`，实现提交为 `d8160ed78d2371d272bd59e37720a5ab1513dca8`，GitHub Actions `foundation-ci` run `34337678714` 完整通过；最终文档同步为 docs-only。
+- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. The next task is only `PRE-AL-07 · Scheduler / Simulation Driver`（或 blocker audit 确认的额外必要 Gate）；do not execute it in this turn.
