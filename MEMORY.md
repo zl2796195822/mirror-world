@@ -1,5 +1,12 @@
 # 镜界项目记忆
 
+## 2026-09-09 M3 FINAL STATUS REVIEW
+
+- 已完成正式只读 `M3 Final Status Review`，基线为 latest `origin/main = 669e14f558ad62a6fbc4a746186cd697e355436d`；没有修改生产代码、schema、migration、ADR 或 research。
+- `PRE-AL-GATE = PASS` 仅证明声明的 fixture-only `MOVE/SLEEP` profile；`M3 = IN_PROGRESS` 不变。审查矩阵为 10 项：6 PASS、2 PARTIAL、2 FAIL。
+- 两个 P1 仍阻塞 M3 close：正式 M3 行为域尚未覆盖 EAT/WORK/TALK/BUY lifecycle；正式任务书中的 `M3-T05 Story sanity report` 未完成，且当前 `PROJECT_STATE` 的“无 M3-T05”与任务书冲突。
+- 正式审查报告：`docs/verification/M3-FINAL-STATUS-REVIEW.md`。下一允许工作是 M3-T05/正式任务定义 reconciliation；不进入 M4，不开始新的 PRE-AL 实现。
+
 ## 2026-09-09 PRE-AL-GATE
 
 - 正式完成 `PRE-AL-GATE`，状态为 `PASS`；实现提交 `15d2b25733ba44c7dcd43dbc3e4fe60babc1b651`，GitHub Actions `foundation-ci` run `34363874063` 对该提交为 `Success`。
