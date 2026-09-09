@@ -50,3 +50,29 @@ export {
   getReconsiderationDelayWorldMinutes,
   type FailureClassification,
 } from "./replan-policy.js";
+export {
+  RULE_DECISION_POLICY_V1,
+  RULE_DECISION_POLICY_VERSION,
+  evaluateRuleDecision,
+  type ActionRequestDraft,
+  type CandidateAction,
+  type DecisionLocationKind,
+  type DecisionLocationRef,
+  type NoActionReasonCode,
+  type RuleDecision,
+  type RuleDecisionInput,
+  type RuleDecisionPolicy,
+} from "./rule-decision.js";
+export {
+  ACTION_LOOP_POLICY_VERSION,
+  applyCompletedSleepToAnchors,
+  createResidentNeedAnchorStore,
+  runResidentActionLoopStep,
+  type ActionLoopObservation,
+  type ActionLoopStepInput,
+  type ActionLoopStepResult,
+  type ActionLoopWorldState,
+  type ActionSubmissionPort,
+  type ActionSubmissionResult,
+  type NeedAnchorStore,
+} from "./action-loop.js";

@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-07 Deterministic Scheduler / Simulation Driver (completed)
-Status: PRE-AL-07 = PASS; PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: a3581a5db6500bb44282b19ccc5ada03d5c4beeb
-Last verified main/doc baseline: a3581a5db6500bb44282b19ccc5ada03d5c4beeb; subsequent state/report synchronization is docs-only
+Current task: M3-T04 Rule Decision Maker / Action Loop Closure (completed)
+Status: M3-T04 = PASS; PRE-AL-07 = PASS; PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3 remains IN_PROGRESS
+Last verified implementation commit: pending-final-sha
+Last verified main/doc baseline: pending-final-sha
 
 ## Completed
 
@@ -87,23 +87,26 @@ Last verified main/doc baseline: a3581a5db6500bb44282b19ccc5ada03d5c4beeb; subse
 - PRE-AL-07 新增最小 `scheduled_wake_registrations` durable projection 与 runtime due index；deferred wake 可按 world/dedupe key 重建，scheduler/step/wake 不成为 World Truth；没有 generic queue、worker、timer 或新 production dependency。
 - PRE-AL-07 明确永久边界 `Scheduler = WHEN`、`Life Engine = WHAT`、`World Kernel = CAN / COMMIT`；decision wake 不携带 selected action，也不执行 M3-T04。
 - PRE-AL-07 compatibility review 已完成：RES-M3-003 研究 branch 只读且未合并；lease/fence、full manifest/semantic hash、typed event registry/reducers、resident projection replay 与 30×30 full evidence 保持后续 blocker；旧 contiguous event-ref 文字与正式 main contract 的交错 seq-gap 语义冲突已记录。
+- M3-T04 RETRY 已正式实现并 PASS：新增 `m3-rule-decision-v1` 纯 Rule Decision Maker 与 `m3-action-loop-v1` bounded Action Loop，复用 Needs/Goals/Observation/ActorRef/Resource/Runtime/MOVE-SLEEP/Kernel Outcome/Replan/Scheduler，不重写任何已 PASS authority。
+- M3-T04 闭环证据覆盖 Observation → Needs → Goals → Candidate → Hard Constraints → Score → ActionRequest → Kernel → Outcome → Replan → due completion → refreshed Observation；COMMITTED/REJECTED 路径、world isolation 与 clean PostgreSQL integration 均已验证。
+- M3-T04 没有执行 30×30 autonomous simulation、full resident projection replay、typed event registry、driver lease/fence owner 或 SimulationManifest；这些继续作为 PRE-AL-GATE / M3 Gate 前置项。
+- M3-T04 新增文件仅限 life-engine rule-decision/action-loop、对应 unit tests、API integration test、workspace dependency edge 与 verification/state docs；没有新增 migration、World Event type、Action API 或 production external dependency。
 
 ## In progress
 
-- M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
-- M3-T02 Needs Engine 已 PASS；M3-T03 Goal Engine 已 PASS；M3-T04 被 Pre-Action-Loop Gate 阻断；Candidate Action runtime、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
-- PRE-AL-07 已完成并正式 PASS；`M3` 仍为 `IN_PROGRESS`，`M3-T04` 仍为 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`；本任务完成后停止，不进入 PRE-AL-GATE 或 M3-T04。
+- M3-T01/T02/T03/T04 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 `IN_PROGRESS`。
+- Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
+- PRE-AL-GATE remaining items 未关闭：lease/fence、typed reducers、resident projection replay、manifest/canonical evidence、full 30×30 action-loop evidence。
 
 ## Blocked
 
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`：scheduler/driver 当前边界已由 PRE-AL-07 关闭，但 full resident/domain replay、typed reducers、manifest/canonical evidence 与 lease/fence 仍需关闭，并需重新核验完整 action-loop readiness；PRE-AL-01～07 已依次关闭 outcome、Observation、ActorRef/resource read、runtime authority、MOVE/SLEEP semantics、bounded replan 与 scheduler blockers。
-- PRE-AL-02 已关闭 Observation / Query Boundary blocker；PRE-AL-03 已关闭 ActorRef 与 read-only Resource Bridge blocker。
-- PRE-AL-07 完成后，M3-T04 仍 `BLOCKED_BY_PRE_ACTION_LOOP_GATE`；`M3-T04 readiness = READY_TO_RETRY` 仅表示可重新进入正式设计/实现审查，不表示已 PASS；下一允许工作为 PRE-AL-GATE 或额外 P1 audit，本任务不执行。
+- `M3-T04 = PASS`；原 `BLOCKED_BY_PRE_ACTION_LOOP_GATE` 状态由本 RETRY 关闭。
+- M3 Gate 仍依赖 full resident/domain replay、typed reducers、manifest/canonical evidence、lease/fence 与 30×30 evidence；下一允许工作为 `PRE-AL-GATE` 或额外正式 P1。
 
 ## P0/P1
 
 - P0：0。
-- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics、bounded replan 与 current scheduler/driver boundary 已由 PRE-AL-02～07 关闭；lease/fence、typed event/reducer、manifest/canonical state、full resident projection replay 与 30×30 evidence 仍为后续 P1 前置项。
+- `MIRROR-FIND-001` 的 Action execution result / committed event feedback 已由 PRE-AL-01 关闭；Observation/query boundary、ActorRef、Resource Bridge、MOVE/SLEEP semantics、bounded replan、scheduler/driver 与 M3-T04 rule decision/action loop 已关闭；lease/fence、typed event/reducer、manifest/canonical state、full resident projection replay 与 30×30 evidence 仍为后续 P1 前置项。
 
 ## Known P2/P3
 
@@ -146,6 +149,7 @@ Last verified main/doc baseline: a3581a5db6500bb44282b19ccc5ada03d5c4beeb; subse
 - PRE-AL-05 新增 migration `0008_curvy_tony_stark.sql` 扩展 active runtime metadata；新增 `m3-action-semantics-v1`、MOVE/SLEEP executor/completion、四类 lifecycle event 与 replay-ready payload validation；没有新增 production dependency、Action API、scheduler、replan、自动 loop 或资源写入。
 - PRE-AL-06 没有新增 migration、表、World Event、Action API 或 production dependency；新增 `m3-replan-v1` contracts、纯 Failure Classification/Replan Policy 与对应 tests，不写入 Life Engine、runtime、worldSeq 或 Event Ledger。
 - PRE-AL-07 新增 scheduler contracts/order、bounded due-activity read port、durable deferred-wake read/register boundary、World-Time driver 与 completion state-version fence；复用现有 Clock、Kernel Outcome、Event Ledger 与 MOVE/SLEEP events，不新增 Action API、Life Engine decision、generic queue 或 distributed worker。
+- M3-T04 新增 life-engine `m3-rule-decision-v1` / `m3-action-loop-v1` 与 clean PostgreSQL action-loop integration；没有新增 migration、World Event type、Action API 或 external production dependency。
 
 ## Relevant ADRs
 
@@ -180,7 +184,8 @@ Last verified main/doc baseline: a3581a5db6500bb44282b19ccc5ada03d5c4beeb; subse
 - `docs/architecture/m3-needs-source-audit.md`（ADR-M3-001 source audit）
 - `docs/verification/M3-T02-report.md`（M3-T02 = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-T03-report.md`（M3-T03 = PASS；M3 仍 IN_PROGRESS）
-- `docs/verification/M3-T04-blocked-report.md`（M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE；M3 仍 IN_PROGRESS）
+- `docs/verification/M3-T04-blocked-report.md`（历史：M3-T04 曾 = BLOCKED_BY_PRE_ACTION_LOOP_GATE）
+- `docs/verification/M3-T04-report.md`（M3-T04 = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/PRE-AL-00-diagnostic.md`（CI failure evidence）
 - `docs/verification/PRE-AL-00-report.md`（PRE-AL-00 = PASS；Main CI Baseline = GREEN）
 - `docs/verification/PRE-AL-01-report.md`（PRE-AL-01 = PASS；Kernel Action Outcome feedback loop）
@@ -197,5 +202,6 @@ Last verified main/doc baseline: a3581a5db6500bb44282b19ccc5ada03d5c4beeb; subse
 
 ## Next allowed task
 
-- `PRE-AL-07 = PASS`；实现提交为 `a3581a5db6500bb44282b19ccc5ada03d5c4beeb`，GitHub Actions `foundation-ci` run `34344722893` 完整 PASS；后续 state/report 同步为 docs-only。
-- `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains；`M3-T04 readiness = READY_TO_RETRY` 仅为 readiness audit 结论。下一允许工作为 `PRE-AL-GATE` 或实际发现的额外 P1 Gate；本任务完成后停止，不执行后续任务。
+- `M3-T04 = PASS`；implementation on `task/m3-t04-rule-decision-maker-retry`。
+- `M3 = IN_PROGRESS` remains；30×30 autonomous simulation、full replay Gate 与 PRE-AL-GATE 未执行。
+- 下一允许工作为 `PRE-AL-GATE` 或正式 audit 发现的额外 P1；本任务完成后停止，不执行后续任务。

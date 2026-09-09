@@ -220,3 +220,13 @@
 - clean PostgreSQL scheduler integration、全仓 frozen install/lint/typecheck/test/build、official production audit 均通过；实现提交 `a3581a5db6500bb44282b19ccc5ada03d5c4beeb` 的 GitHub Actions `foundation-ci` run `34344722893` 完整 PASS，后续 main/doc 同步为 docs-only。
 - `RES-M3-003` 只读 compatibility review 已完成。剩余正式 blockers：driver lease/fence、typed event registry/reducers、resident projection replay、full manifest/canonical semantic hashes、full 30×30 action-loop/replay/resimulation evidence；旧 contiguous event-ref 文案与正式 interleaved seq-gap contract 冲突已记录。
 - 当前正式状态：`M3 = IN_PROGRESS`，`M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE`，readiness 为 `READY_TO_RETRY`；PRE-AL-07 完成后停止，不进入 PRE-AL-GATE 或 M3-T04。
+
+## 2026-09-09 M3-T04 RETRY
+
+- Retry Readiness Review：origin/main `2e526d3`；`M3 = IN_PROGRESS`；`M3-T04` 原为 `BLOCKED_BY_PRE_ACTION_LOOP_GATE` 且 readiness=`READY_TO_RETRY`；PRE-AL-01～07 已关闭实现前置 blocker。
+- 在独立 worktree `task/m3-t04-rule-decision-maker-retry` 实现正式 Rule Decision Maker 与 Action Loop，没有重写 Kernel/Scheduler/Life authority，没有引入 LLM 或新 production dependency。
+- 新增 `m3-rule-decision-v1`：bounded Candidate（仅当前可执行 MOVE/SLEEP）、hard constraints、deterministic score、stable ActionRequest draft。
+- 新增 `m3-action-loop-v1`：Observation → Needs → Goals → Decision → ActionRequest → Kernel Outcome → PRE-AL-06 replan；idle/no-feasible 使用 world-time defer。
+- unit：life-engine 56/56；clean PostgreSQL integration 3/3（MOVE 闭环、away-from-home REST 映射、world isolation）；全仓 lint/typecheck/test/build 与官方 audit HIGH=0/CRITICAL=0 均 PASS。
+- 边界：未宣称 Full Replay PASS、30×30 PASS 或 M3 PASS。Need anchors 为 loop 内存状态，未新增 migration。
+- 当前正式状态：`M3-T04 = PASS`，`M3 = IN_PROGRESS`。下一允许工作：`PRE-AL-GATE` 或额外 P1。本轮停止。
