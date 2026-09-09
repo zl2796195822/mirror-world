@@ -1,0 +1,31 @@
+# 02 Evidence Registry
+
+## Authority order used
+
+Accepted project invariants/formal ADR > milestone DoD > current source/schema > completed verification > frozen research > older research/experiment > proposal/model. 研究文档不覆盖当前 main 的正式事实。
+
+| Evidence ID | Class                          | Source / ref                                                                  | What it proves                                                                                | Boundary                                             |
+| ----------- | ------------------------------ | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| E-001       | CURRENT_MAIN_FACT              | `origin/main@2e526d3`, `docs/PROJECT_STATE.md`                                | M3 IN_PROGRESS；PRE-AL-07 PASS；M3-T04 blocked；本次只读取 committed main                     | 不含主 worktree 未提交内容                           |
+| E-002       | FORMAL_ADR                     | `docs/adr/ADR-0002`                                                           | World Time/status/pause/production 1x boundary                                                | 不定义 offline policy                                |
+| E-003       | FORMAL_ADR                     | `ADR-0005`, `ADR-0006`                                                        | append-only world events、world-local seq、checkpoint/replay boundary                         | 非时间领域 reducer 仍有限                            |
+| E-004       | FORMAL_ADR                     | `ADR-0007`                                                                    | Needs scope、lazy World-Time derivation、Life Engine no fact authority                        | 不定义 scheduler                                     |
+| E-005       | FORMAL_ADR                     | `ADR-0008`, `ADR-0009`, `ADR-0010`                                            | outcome taxonomy、MOVE/SLEEP lifecycle、bounded replan                                        | 不等于完整 resident loop                             |
+| E-006       | FORMAL_VERIFICATION            | `docs/verification/PRE-AL-01..06-report.md`                                   | Outcome、Observation、ActorRef/resource read、runtime、MOVE/SLEEP、replan 已提交验证          | 不证明 PRE-AL-07 或 30×30                            |
+| E-007       | CURRENT_MAIN_FACT              | `packages/db`, `packages/contracts`, `packages/world-kernel` at `origin/main` | migrations 0000–0009；world/runtime/event/action/outcome 与 `m3-scheduler-v1` contract/driver | 不读取主 worktree 未提交内容                         |
+| E-008       | FROZEN_RESEARCH                | RES-M7-002 commit `2cb7c842…`                                                 | Projection/Realtime/AOI/Visual LOD/Avatar/afterSeq boundary                                   | READY_WITH_PENDING_CONTRACTS                         |
+| E-009       | FROZEN_RESEARCH                | RES-M8-001 commit `f54bd878…`                                                 | W0/W1/W2、event-jump、wake index、offline/freshness、S0                                       | scheduler/defer details pending                      |
+| E-010       | FROZEN_RESEARCH                | RES-M9-001 commit `bd7ba955…`                                                 | identity/origin/control/cognition/embodiment/proxy/continuity/privacy                         | formal runtime absent                                |
+| E-011       | FROZEN_RESEARCH                | RES-M10-001 commit `dfed3b4…`                                                 | I0–I3、budget、wake、fairness、degradation、envelope/replay                                   | M5 numbering conflict explicit                       |
+| E-012       | OLDER_RESEARCH                 | RES-M3-001 branch `7cc36a3…`                                                  | Life→ActionRequest→Kernel、resources not Life-owned                                           | earlier baseline                                     |
+| E-013       | OLDER_RESEARCH                 | RES-M3-003 branch `46511b7…`                                                  | 30×30/replay taxonomy/serial driver input                                                     | baseline 93a817, pending states stale                |
+| E-014       | OLDER_RESEARCH                 | RES-M4-001 branch `d84b42c…`                                                  | Event→Observation→Memory；relationship facts→projection                                       | formal M4 absent                                     |
+| E-015       | OLDER_RESEARCH                 | RES-M5-001 branch `2f49840…`                                                  | Agent boundary、Provider、lanes、old I-LOD、zero fact authority                               | baseline aa156aa；status/terms drift                 |
+| E-016       | OLDER_RESEARCH                 | RES-M6-002 branch `a1de19d…`                                                  | economy/resource bridge、due payroll、journal/replay boundary                                 | baseline 1cc5a26                                     |
+| E-017       | EXPERIMENT                     | `EXP-REALTIME-001`, `EXP-3D-*`, `EXP-AVATAR-*`, `EXP-M7-*`                    | bounded presentation/realtime/asset feasibility                                               | not formal M7 gate                                   |
+| E-018       | UNVERIFIED                     | M10 cost/scale numbers; physical mobile claims                                | design model only                                                                             | cannot support acceptance                            |
+| E-019       | WORK_IN_PROGRESS_NOT_AUTHORITY | 主 worktree 曾存在的未提交 PRE-AL-07-looking files                            | 仅说明未提交候选工作存在；不作为事实                                                          | 本包排除其内容；已提交 `origin/main` 另按 E-001 读取 |
+
+## Inventory integrity
+
+四份冻结目录已验证存在：M7 38 markdown files/3242 lines，M8 41/3820，M9 42/1213，M10 28/2491。四份研究的 common baseline 为 `b3229aef5b820fc261443c7f6d8a50f9c3b473c6`；本包另记录当前 `origin/main@2e526d3b22209ba949584abf4e1f9505a7469e37`（PRE-AL-07 implementation commit 为 `a3581a5db6500bb44282b19ccc5ada03d5c4beeb`）。RES-X-001 只新增本目录，不复制或修改这些输入。
