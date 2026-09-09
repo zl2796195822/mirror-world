@@ -79,13 +79,14 @@ const committedOutcome = z
         return (
           index > 0 &&
           previous !== undefined &&
-          BigInt(event.seq) !== BigInt(previous.seq) + 1n
+          BigInt(event.seq) <= BigInt(previous.seq)
         );
       })
     ) {
       context.addIssue({
         code: "custom",
-        message: "eventRefs must belong to the outcome world and be contiguous",
+        message:
+          "eventRefs must belong to the outcome world and have increasing sequences",
         path: ["eventRefs"],
       });
     }

@@ -10,7 +10,7 @@
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "pnpm run build && node --test scripts/api-contract.test.mjs",
-    "test:integration": "node --test scripts/world-clock.integration.test.mjs && node --test scripts/event-ledger.integration.test.mjs && node --test scripts/replay-checkpoint.integration.test.mjs && node --test scripts/action-request.integration.test.mjs && node --test scripts/action-outcome.integration.test.mjs && node --test scripts/observation.integration.test.mjs && node --test scripts/resident-runtime.integration.test.mjs && node --test scripts/resident-action.integration.test.mjs"
+    "test:integration": "node --test scripts/world-clock.integration.test.mjs && node --test scripts/event-ledger.integration.test.mjs && node --test scripts/replay-checkpoint.integration.test.mjs && node --test scripts/action-request.integration.test.mjs && node --test scripts/action-outcome.integration.test.mjs && node --test scripts/observation.integration.test.mjs && node --test scripts/resident-runtime.integration.test.mjs && node --test scripts/resident-action.integration.test.mjs && node --test scripts/simulation-driver.integration.test.mjs"
   },
   "dependencies": {
     "@fastify/swagger": "9.8.1",

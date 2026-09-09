@@ -15,13 +15,21 @@ export type WorldClockDatabase = ReturnType<typeof createDb>["db"];
 
 export class WorldClockStoreError extends Error {
   constructor(
-    public readonly code: "WORLD_NOT_FOUND" | "WORLD_CLOCK_INVALID",
+    public readonly code:
+      | "WORLD_NOT_FOUND"
+      | "WORLD_CLOCK_INVALID"
+      | "WORLD_TIME_REWIND",
     message: string,
   ) {
     super(message);
     this.name = "WorldClockStoreError";
   }
 }
+
+export type WorldTimeAdvanceResult = {
+  disposition: "ADVANCED" | "NO_OP" | "BLOCKED";
+  world: typeof worlds.$inferSelect;
+};
 
 type WorldClockControl = {
   status?: WorldClockStatus;
@@ -122,4 +130,67 @@ export function updateWorldClockControl(
   return updateLockedWorld(database, worldId, now, (world) =>
     applyWorldClockControl(toClockInput(world), control, now, environment),
   );
+}
+
+export async function advanceWorldTimeTo(
+  database: WorldClockDatabase,
+  worldId: string,
+  targetWorldTime: Date,
+): Promise<WorldTimeAdvanceResult> {
+  if (Number.isNaN(targetWorldTime.getTime())) {
+    throw new WorldClockStoreError(
+      "WORLD_CLOCK_INVALID",
+      "Target world time must be a valid date",
+    );
+  }
+
+  return database.transaction(async (transaction) => {
+    const [world] = await transaction
+      .select()
+      .from(worlds)
+      .where(eq(worlds.id, worldId))
+      .for("update");
+    if (!world) {
+      throw new WorldClockStoreError("WORLD_NOT_FOUND", "World was not found");
+    }
+
+    const targetMilliseconds = targetWorldTime.getTime();
+    if (targetMilliseconds < world.worldTime.getTime()) {
+      throw new WorldClockStoreError(
+        "WORLD_TIME_REWIND",
+        "World time cannot move backward",
+      );
+    }
+    if (targetMilliseconds === world.worldTime.getTime()) {
+      return { disposition: "NO_OP", world };
+    }
+    if (world.status !== "RUNNING") {
+      return { disposition: "BLOCKED", world };
+    }
+
+    const committed = await commitWorldStateWithEventInTransaction(
+      transaction,
+      {
+        worldId,
+        state: {
+          worldTime: new Date(targetMilliseconds),
+          updatedAt: targetWorldTime,
+        },
+        event: {
+          id: randomUUID(),
+          worldId,
+          type: "WORLD_TIME_ADVANCED",
+          payload: {
+            schemaVersion: 1,
+            worldId,
+            from: world.worldTime.toISOString(),
+            to: targetWorldTime.toISOString(),
+          },
+          occurredAt: targetWorldTime,
+          correlationId: randomUUID(),
+        },
+      },
+    );
+    return { disposition: "ADVANCED", world: committed.world };
+  });
 }

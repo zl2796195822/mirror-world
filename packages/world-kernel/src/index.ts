@@ -9,9 +9,11 @@ export {
 } from "./world-clock.js";
 export {
   syncWorldClock,
+  advanceWorldTimeTo,
   updateWorldClockControl,
   WorldClockStoreError,
   type WorldClockDatabase,
+  type WorldTimeAdvanceResult,
 } from "./world-clock-store.js";
 export {
   validateActionRequest,
@@ -114,6 +116,19 @@ export {
   type WorldCheckpointPersistenceResult,
   type WorldCheckpointRecord,
 } from "./world-checkpoint-store.js";
+export {
+  SCHEDULER_POLICY,
+  compareSchedulerWorkItems,
+  orderSchedulerWorkItems,
+} from "./scheduler-order.js";
+export {
+  createDeterministicSimulationDriver,
+  DeterministicSimulationDriver,
+  SimulationDriverError,
+  type ProcessDueWorkOptions,
+  type SimulationDriverDatabase,
+  type SimulationDriverOptions,
+} from "./simulation-driver.js";
 export {
   replayFromCheckpoint,
   replaySummaryHash,

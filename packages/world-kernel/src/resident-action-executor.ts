@@ -46,6 +46,7 @@ export type ExecuteResidentActionInput = Readonly<{
 export type CompleteResidentActionInput = Readonly<{
   worldId: string;
   actionRequestId: string;
+  expectedStateVersion?: number;
 }>;
 
 export type ResidentActionCompletionResult =
@@ -541,6 +542,15 @@ export async function completeResidentAction(
       throw new ResidentActionExecutorError(
         "INVALID_COMPLETION",
         "Runtime activity does not belong to this action request",
+      );
+    }
+    if (
+      input.expectedStateVersion !== undefined &&
+      resolved.runtime.stateVersion !== input.expectedStateVersion
+    ) {
+      throw new ResidentActionExecutorError(
+        "INVALID_COMPLETION",
+        "Resident runtime state changed after the due work item was read",
       );
     }
     if (world.status !== "RUNNING") {

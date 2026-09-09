@@ -3,6 +3,7 @@ import {
   bigint,
   check,
   foreignKey,
+  index,
   integer,
   jsonb,
   pgTable,
@@ -113,6 +114,57 @@ export const residentRuntimeStates = pgTable(
     check(
       "resident_runtime_states_version_check",
       sql`${table.stateVersion} >= 0 and ${table.sourceWorldSeq} >= 0`,
+    ),
+    index("resident_runtime_states_due_activity_idx").on(
+      table.worldId,
+      table.currentActivity,
+      table.activityDueAtWorldTime,
+    ),
+  ],
+);
+
+export const scheduledWakeRegistrations = pgTable(
+  "scheduled_wake_registrations",
+  {
+    wakeId: uuid("wake_id").primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    residentId: uuid("resident_id").notNull(),
+    wakeReason: text("wake_reason").notNull(),
+    dueWorldTime: timestamp("due_world_time", {
+      withTimezone: true,
+    }).notNull(),
+    sourceStateVersion: integer("source_state_version").notNull(),
+    sourceWorldSeq: bigint("source_world_seq", { mode: "bigint" }).notNull(),
+    decisionEpoch: integer("decision_epoch").notNull(),
+    dedupeKey: text("dedupe_key").notNull(),
+    policyVersion: text("policy_version").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("scheduled_wake_registrations_world_dedupe_unique").on(
+      table.worldId,
+      table.dedupeKey,
+    ),
+    index("scheduled_wake_registrations_due_idx").on(
+      table.worldId,
+      table.dueWorldTime,
+      table.residentId,
+    ),
+    check(
+      "scheduled_wake_registrations_reason_check",
+      sql`${table.wakeReason} in ('DEFERRED_REPLAN', 'INITIAL_DECISION', 'WORK_BOUNDARY')`,
+    ),
+    check(
+      "scheduled_wake_registrations_version_check",
+      sql`${table.sourceStateVersion} >= 0 and ${table.sourceWorldSeq} >= 0 and ${table.decisionEpoch} >= 0`,
+    ),
+    check(
+      "scheduled_wake_registrations_dedupe_key_check",
+      sql`length(trim(${table.dedupeKey})) between 1 and 255`,
     ),
   ],
 );

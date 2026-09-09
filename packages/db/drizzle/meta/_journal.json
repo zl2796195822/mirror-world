@@ -64,6 +64,13 @@
       "when": 1788920751641,
       "tag": "0008_curvy_tony_stark",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788950038706,
+      "tag": "0009_odd_killmonger",
+      "breakpoints": true
     }
   ]
 }

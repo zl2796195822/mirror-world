@@ -7,6 +7,21 @@ export {
   type ResidentRuntimeStateDatabase,
   type ResidentRuntimeStateRow,
 } from "./resident-runtime-state.js";
+export {
+  readDueScheduledWakes,
+  readNextScheduledWakeWorldTime,
+  registerScheduledWake,
+  ScheduledWakeStoreError,
+  type ScheduledWakeDatabase,
+  type ScheduledWakeRow,
+} from "./scheduled-wake.js";
+export {
+  DUE_ACTIVITY_MAX_BATCH_SIZE,
+  readDueActivities,
+  readNextActivityDueWorldTime,
+  DueActivityStoreError,
+  type DueActivityDatabase,
+} from "./due-activity.js";
 export { M0_FIXTURE, M0_FIXTURE_IDS } from "./fixture.js";
 export {
   EMPLOYED_RESIDENT_COUNT,
@@ -36,4 +51,5 @@ export {
   worldEvents,
   worlds,
   residentRuntimeStates,
+  scheduledWakeRegistrations,
 } from "./schema.js";

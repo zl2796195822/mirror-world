@@ -112,7 +112,7 @@ describe("KernelActionOutcome contract", () => {
     expect(outcome).toEqual(before);
   });
 
-  it("rejects event references from another world or a sequence gap", () => {
+  it("rejects event references from another world or non-increasing sequences", () => {
     const result = safeParseKernelActionOutcome({
       ...ids,
       status: "COMMITTED",
@@ -131,5 +131,32 @@ describe("KernelActionOutcome contract", () => {
     });
 
     expect(result.success).toBe(false);
+
+    const nonIncreasing = safeParseKernelActionOutcome({
+      ...ids,
+      status: "COMMITTED",
+      reasonCode: null,
+      eventCount: 2,
+      eventRefs: [event(firstEventId, 0, "21"), event(secondEventId, 1, "21")],
+      worldSeqStart: "21",
+      worldSeqEnd: "21",
+      recordedAt,
+    });
+    expect(nonIncreasing.success).toBe(false);
+  });
+
+  it("accepts a sequence gap caused by another action's committed event", () => {
+    const result = safeParseKernelActionOutcome({
+      ...ids,
+      status: "COMMITTED",
+      reasonCode: null,
+      eventCount: 2,
+      eventRefs: [event(firstEventId, 0, "21"), event(secondEventId, 1, "23")],
+      worldSeqStart: "21",
+      worldSeqEnd: "23",
+      recordedAt,
+    });
+
+    expect(result.success).toBe(true);
   });
 });
