@@ -5,6 +5,8 @@ import {
   readNextScheduledWakeWorldTime,
   registerScheduledWake,
   createDb,
+  type SimulationDriverLease,
+  assertSimulationDriverFence,
   worlds,
 } from "@mirror/db";
 import {
@@ -35,6 +37,7 @@ export type SimulationDriverDatabase = ReturnType<typeof createDb>["db"];
 
 export type SimulationDriverOptions = Readonly<{
   maxWorkItemsPerStep?: number;
+  lease?: SimulationDriverLease;
 }>;
 
 export type ProcessDueWorkOptions = Readonly<{
@@ -196,6 +199,7 @@ export class DeterministicSimulationDriver
   implements DueActivityReadPort, ScheduledWakeReadPort
 {
   private readonly maxWorkItemsPerStep: number;
+  private readonly lease?: SimulationDriverLease;
 
   constructor(
     private readonly database: SimulationDriverDatabase,
@@ -204,6 +208,21 @@ export class DeterministicSimulationDriver
     this.maxWorkItemsPerStep = validateWorkLimit(
       options.maxWorkItemsPerStep ?? SCHEDULER_POLICY.maxWorkItemsPerStep,
     );
+    this.lease = options.lease;
+  }
+
+  private async assertLease(worldId: string): Promise<void> {
+    if (!this.lease) return;
+    if (this.lease.worldId !== worldId) {
+      throw new SimulationDriverError(
+        "WORLD_NOT_FOUND",
+        "Simulation driver lease belongs to another world",
+      );
+    }
+    await assertSimulationDriverFence(this.database, {
+      worldId,
+      fenceToken: this.lease.fenceToken,
+    });
   }
 
   async listDueActivities(input: {
@@ -272,6 +291,7 @@ export class DeterministicSimulationDriver
     worldId: string,
     options: ProcessDueWorkOptions = {},
   ): Promise<SchedulerStepResult> {
+    await this.assertLease(worldId);
     const world = await this.readWorld(worldId);
     const maxWorkItems = validateWorkLimit(
       options.maxWorkItems ?? this.maxWorkItemsPerStep,
@@ -316,6 +336,7 @@ export class DeterministicSimulationDriver
           worldId,
           actionRequestId: workItem.activityInstanceId,
           expectedStateVersion: workItem.sourceStateVersion,
+          fenceToken: this.lease?.fenceToken,
         });
         completionOutcomes.push(completion.outcome);
         if (completion.disposition === "EXECUTED") {
@@ -386,12 +407,14 @@ export class DeterministicSimulationDriver
     worldId: string,
     targetWorldTime: Date,
   ): Promise<SchedulerStepResult> {
+    await this.assertLease(worldId);
     assertValidDate(targetWorldTime, "targetWorldTime");
     const initialWorld = await this.readWorld(worldId);
     const advance = await advanceWorldTimeTo(
       this.database,
       worldId,
       targetWorldTime,
+      this.lease?.fenceToken,
     );
     if (advance.disposition === "BLOCKED") {
       return this.buildStepResult({

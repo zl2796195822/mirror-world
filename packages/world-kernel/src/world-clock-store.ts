@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
-import { createDb, worlds } from "@mirror/db";
+import {
+  assertSimulationDriverFenceInTransaction,
+  createDb,
+  worlds,
+} from "@mirror/db";
 import {
   advanceWorldClock,
   applyWorldClockControl,
@@ -136,6 +140,7 @@ export async function advanceWorldTimeTo(
   database: WorldClockDatabase,
   worldId: string,
   targetWorldTime: Date,
+  fenceToken?: bigint,
 ): Promise<WorldTimeAdvanceResult> {
   if (Number.isNaN(targetWorldTime.getTime())) {
     throw new WorldClockStoreError(
@@ -145,6 +150,12 @@ export async function advanceWorldTimeTo(
   }
 
   return database.transaction(async (transaction) => {
+    if (fenceToken !== undefined) {
+      await assertSimulationDriverFenceInTransaction(transaction, {
+        worldId,
+        fenceToken,
+      });
+    }
     const [world] = await transaction
       .select()
       .from(worlds)

@@ -130,6 +130,21 @@ export {
   type SimulationDriverOptions,
 } from "./simulation-driver.js";
 export {
+  canonicalResidentProjectionFromRows,
+  M3_DOMAIN_EVENT_REGISTRY_VERSION,
+  M3_DOMAIN_REPLAY_SCHEMA_VERSION,
+  M3DomainReplayError,
+  M3_TYPED_EVENT_TYPES,
+  projectionHash,
+  replayM3ResidentProjection,
+  type M3ReplayEvent,
+  type M3ResidentProjection,
+  type M3ResidentProjectionCheckpoint,
+  type M3ResidentProjectionSnapshot,
+  type M3TypedEventType,
+  replayM3ResidentProjectionFromCheckpoint,
+} from "./m3-domain-replay.js";
+export {
   replayFromCheckpoint,
   replaySummaryHash,
   replayWorldEvents,

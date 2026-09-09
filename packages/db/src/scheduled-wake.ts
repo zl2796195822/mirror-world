@@ -20,6 +20,22 @@ export class ScheduledWakeStoreError extends Error {
   }
 }
 
+export async function acknowledgeScheduledWake(
+  database: ScheduledWakeDatabase,
+  input: Readonly<{ worldId: string; wakeId: string }>,
+): Promise<boolean> {
+  const deleted = await database
+    .delete(scheduledWakeRegistrations)
+    .where(
+      and(
+        eq(scheduledWakeRegistrations.worldId, input.worldId),
+        eq(scheduledWakeRegistrations.wakeId, input.wakeId),
+      ),
+    )
+    .returning({ wakeId: scheduledWakeRegistrations.wakeId });
+  return deleted.length === 1;
+}
+
 function toRegistration(row: ScheduledWakeRow): ScheduledWakeRegistration {
   return parseScheduledWakeRegistration({
     policyVersion: row.policyVersion,

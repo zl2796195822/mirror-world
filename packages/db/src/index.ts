@@ -8,6 +8,7 @@ export {
   type ResidentRuntimeStateRow,
 } from "./resident-runtime-state.js";
 export {
+  acknowledgeScheduledWake,
   readDueScheduledWakes,
   readNextScheduledWakeWorldTime,
   registerScheduledWake,
@@ -52,4 +53,14 @@ export {
   worlds,
   residentRuntimeStates,
   scheduledWakeRegistrations,
+  simulationDriverLeases,
 } from "./schema.js";
+export {
+  acquireSimulationDriverLease,
+  assertSimulationDriverFence,
+  assertSimulationDriverFenceInTransaction,
+  SimulationDriverLeaseError,
+  type SimulationDriverLease,
+  type SimulationDriverLeaseDatabase,
+  type SimulationDriverLeaseTransaction,
+} from "./simulation-driver-lease.js";

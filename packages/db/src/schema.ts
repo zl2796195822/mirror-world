@@ -169,6 +169,33 @@ export const scheduledWakeRegistrations = pgTable(
   ],
 );
 
+export const simulationDriverLeases = pgTable(
+  "simulation_driver_leases",
+  {
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id)
+      .primaryKey(),
+    ownerId: text("owner_id").notNull(),
+    fenceToken: bigint("fence_token", { mode: "bigint" })
+      .notNull()
+      .default(sql`1`),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    check(
+      "simulation_driver_leases_owner_check",
+      sql`length(trim(${table.ownerId})) between 1 and 255`,
+    ),
+    check(
+      "simulation_driver_leases_fence_check",
+      sql`${table.fenceToken} >= 1`,
+    ),
+  ],
+);
+
 export const actionRequests = pgTable(
   "action_requests",
   {

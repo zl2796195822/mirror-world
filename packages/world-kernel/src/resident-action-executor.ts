@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import {
+  assertSimulationDriverFenceInTransaction,
   actionRequests,
   createDb,
   generateResidentSeed,
@@ -41,12 +42,14 @@ export type ResidentActionDatabase = ReturnType<typeof createDb>["db"];
 export type ExecuteResidentActionInput = Readonly<{
   request: ActionRequest;
   validationContext: ActionValidationContext;
+  fenceToken?: bigint;
 }>;
 
 export type CompleteResidentActionInput = Readonly<{
   worldId: string;
   actionRequestId: string;
   expectedStateVersion?: number;
+  fenceToken?: bigint;
 }>;
 
 export type ResidentActionCompletionResult =
@@ -211,6 +214,12 @@ async function validateResidentActionInTransaction(
   transaction: WorldKernelTransaction,
   input: ExecuteResidentActionInput,
 ): Promise<ActionValidationResult> {
+  if (input.fenceToken !== undefined) {
+    await assertSimulationDriverFenceInTransaction(transaction, {
+      worldId: input.request.worldId,
+      fenceToken: input.fenceToken,
+    });
+  }
   const [world] = await transaction
     .select()
     .from(worlds)
@@ -462,6 +471,12 @@ export async function completeResidentAction(
   input: CompleteResidentActionInput,
 ): Promise<ResidentActionCompletionResult> {
   return database.transaction(async (transaction) => {
+    if (input.fenceToken !== undefined) {
+      await assertSimulationDriverFenceInTransaction(transaction, {
+        worldId: input.worldId,
+        fenceToken: input.fenceToken,
+      });
+    }
     const [world] = await transaction
       .select()
       .from(worlds)
