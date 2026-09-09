@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-05 MOVE / SLEEP Action Semantics (implemented; CI pending)
-Status: PRE-AL-05 = IMPLEMENTED_UNVERIFIED; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
-Last verified implementation commit: pending commit/push
-Last verified main/doc baseline: 93a817cf26812a6f0e48b0cb08401a632ad3fef8
+Current task: PRE-AL-05 MOVE / SLEEP Action Semantics (completed)
+Status: PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3-T04 remains BLOCKED_BY_PRE_ACTION_LOOP_GATE; M3 remains IN_PROGRESS
+Last verified implementation commit: ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad
+Last verified main/doc baseline: ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad; final documentation sync is docs-only
 
 ## Completed
 
@@ -78,13 +78,13 @@ Last verified main/doc baseline: 93a817cf26812a6f0e48b0cb08401a632ad3fef8
 - PRE-AL-05 已建立正式 MOVE/SLEEP 两阶段 Kernel lifecycle：`STARTED → COMPLETED`；MOVE 在完成时才切换 location，SLEEP 仅允许 HOME 且固定 480 World Minutes。
 - PRE-AL-05 新增 `TRAVELING`/`SLEEPING` 最小 activity metadata、集中式 `m3-action-semantics-v1` duration policy、显式 completion command、四类 lifecycle events 与同一 KernelActionOutcome 的 0/1/N association。
 - PRE-AL-05 复用既有 Action Contract（MOVE `{ destinationId }`、SLEEP `{}`），没有新增 production dependency、Action API、scheduler、replan 或 autonomous loop；Life Engine/Observation 仍无 runtime 写入口。
-- PRE-AL-05 本地 frozen install、lint、typecheck、test、build、官方 production audit、双次 clean db:setup、clean PostgreSQL 8-stage integration、并发/回滚/30+30 event-boundary tests 均通过；GitHub Actions 尚待 push 后验证。
+- PRE-AL-05 本地 frozen install、lint、typecheck、test、build、官方 production audit、双次 clean db:setup、clean PostgreSQL 8-stage integration、并发/回滚/30+30 event-boundary tests 均通过；GitHub Actions `foundation-ci` run `34325594982` 对实现提交真实完整 PASS。
 
 ## In progress
 
 - M3-T01 Resident Seed Generator 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 IN_PROGRESS。
 - M3-T02 Needs Engine 已 PASS；M3-T03 Goal Engine 已 PASS；M3-T04 被 Pre-Action-Loop Gate 阻断；Candidate Action runtime、Action Loop、ActionResult、scheduler、Memory、Relationship、Economy、AI、3D、Digital Identity 与 Offline Simulation 均未执行。
-- PRE-AL-05 implementation 已完成，正式 PASS 仍等待包含新增 integration script 的 GitHub Actions 完整 GREEN；不得在本任务进入 PRE-AL-06。
+- PRE-AL-05 已完成并正式 PASS；`M3` 仍为 `IN_PROGRESS`，不得在本任务进入 PRE-AL-06。
 
 ## Blocked
 
@@ -176,10 +176,10 @@ Last verified main/doc baseline: 93a817cf26812a6f0e48b0cb08401a632ad3fef8
 - `docs/verification/PRE-AL-03-report.md`（PRE-AL-03 = PASS；Resident ActorRef + Resource Read Bridge）
 - `docs/verification/PRE-AL-04-report.md`（PRE-AL-04 = PASS；Resident Runtime State Authority）
 - `docs/adr/ADR-0009-pre-al-05-action-semantics.md`（PRE-AL-05 MOVE/SLEEP lifecycle decision）
-- `docs/verification/PRE-AL-05-report.md`（PRE-AL-05 implementation；CI pending）
+- `docs/verification/PRE-AL-05-report.md`（PRE-AL-05 = PASS；MOVE/SLEEP lifecycle）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `PRE-AL-05 = IMPLEMENTED_UNVERIFIED`，本地与 clean PostgreSQL 证据已通过，待 push 后 GitHub Actions 完整 PASS 才可升级为 `PASS`。
+- `PRE-AL-05 = PASS`，实现提交为 `ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad`，GitHub Actions `foundation-ci` run `34325594982` 完整通过；最终文档同步为 docs-only。
 - `M3-T04 = BLOCKED_BY_PRE_ACTION_LOOP_GATE` remains. The next task is only `PRE-AL-06 · Bounded Replan / Failure Policy`; do not execute it in this turn.

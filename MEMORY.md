@@ -197,7 +197,7 @@
 
 ## 2026-09-09 PRE-AL-05
 
-- PRE-AL-05 implementation completed from main baseline `93a817cf26812a6f0e48b0cb08401a632ad3fef8`; formal status remains `IMPLEMENTED_UNVERIFIED` until the pushed main commit receives a complete green CI run.
+- PRE-AL-05 = PASS；实现提交为 `ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad`，main baseline 为 `93a817cf26812a6f0e48b0cb08401a632ad3fef8`，GitHub Actions `foundation-ci` run `34325594982` 对实现提交完整通过。
 - MOVE keeps `{ destinationId }`; SLEEP keeps `{}`. `m3-action-semantics-v1` establishes deterministic travel durations and fixed 480 World Minutes sleep; SLEEP is HOME-only.
 - MOVE/SLEEP use Kernel-controlled `STARTED → COMPLETED` lifecycle with `TRAVELING`/`SLEEPING`; MOVE keeps source location until completion, then commits destination and `IDLE`. `state_version`, request identity, busy rejection, idempotency, conflict, pause/maintenance and rollback are covered.
 - Added four transition event types, same `KernelActionOutcome` 0/1/N association, replay-ready lifecycle payload validation, and migration `0008_curvy_tony_stark.sql`. Life Engine only gets a pure accepted SLEEP result → NeedAnchor adapter; no direct Need/resource/runtime write.

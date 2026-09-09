@@ -2,10 +2,10 @@
 
 ## Result
 
-`PRE-AL-05 = IMPLEMENTED_UNVERIFIED` until the pushed main commit receives a
-complete green GitHub Actions run. Local and disposable-clean evidence is
-complete; CI is the remaining release gate at the time this report is first
-written.
+`PRE-AL-05 = PASS`。Local, disposable-clean, and complete GitHub Actions
+verification passed. The task establishes deterministic MOVE/SLEEP lifecycle
+semantics and the Kernel-controlled completion boundary only; it does not
+implement an autonomous Action Loop.
 
 ## Task and baseline
 
@@ -360,13 +360,14 @@ executed.
 
 ## Git and CI
 
-- Implementation commit: pending commit/push.
-- Final main HEAD: pending commit/push.
-- `HEAD == origin/main`: true at task start; must be rechecked after push.
-- Worktree clean: true at task start; must be rechecked after commit.
-- GitHub Actions URL: pending push; final status must be a complete green
-  `foundation-ci` run that includes the new integration script in the checked
-  source and repository gates.
+- Implementation commit: `ae2fbc3fe5eab944e636cbdb6bc3d886ffc497ad`.
+- Current report status: `PASS`.
+- `HEAD == origin/main`: true for the implementation commit; the documentation
+  synchronization commit is docs-only.
+- Final implementation verification: [foundation-ci run 34325594982](https://github.com/zl2796195822/mirror-world/actions/runs/34325594982),
+  complete success on the implementation commit including the new integration
+  script and repository gates. The documentation synchronization commit is
+  docs-only and its own CI run is the final mainline gate.
 - Report path: `docs/verification/PRE-AL-05-report.md`.
 - ADR path: `docs/adr/ADR-0009-pre-al-05-action-semantics.md`.
 
