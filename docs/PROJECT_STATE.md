@@ -3,8 +3,8 @@
 Current milestone: M3 Life Engine v1
 Current task: M3-T04 Rule Decision Maker / Action Loop Closure (completed)
 Status: M3-T04 = PASS; PRE-AL-07 = PASS; PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3 remains IN_PROGRESS
-Last verified implementation commit: pending-final-sha
-Last verified main/doc baseline: pending-final-sha
+Last verified implementation commit: c32c0c941d979c7cb25c67fd56e265865b4b6070
+Last verified main/doc baseline: c32c0c941d979c7cb25c67fd56e265865b4b6070
 
 ## Completed
 
