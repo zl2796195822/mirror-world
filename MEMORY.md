@@ -245,3 +245,10 @@
 - unit：life-engine 56/56；clean PostgreSQL integration 3/3（MOVE 闭环、away-from-home REST 映射、world isolation）；全仓 lint/typecheck/test/build 与官方 audit HIGH=0/CRITICAL=0 均 PASS。
 - 边界：未宣称 Full Replay PASS、30×30 PASS 或 M3 PASS。Need anchors 为 loop 内存状态，未新增 migration。
 - 当前正式状态：`M3-T04 = PASS`，`M3 = IN_PROGRESS`。下一允许工作：`PRE-AL-GATE` 或额外 P1。本轮停止。
+
+## 2026-09-10 M3 Lifecycle & Story Sanity Spec Reconciliation
+
+- 完成正式规格对账并冻结：`SPEC_RECONCILIATION_COMPLETE`、`SPEC_READY_FOR_FORMAL_IMPLEMENTATION`、`SPEC FREEZE = ON`；规格包位于 `docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/`。
+- 冻结 EAT/WORK/TALK 的 Kernel-backed `STARTED → COMPLETED` 生命周期、M3-T04 candidate/action-loop 扩展、scheduler/due-wake、typed events、replay/checkpoint 与机器化 Story Sanity gate；未实现生产代码、schema、migration 或 M3-T05。
+- BUY 明确保持 M3 declared-but-non-executable，完整 settlement 属于 M6；M3 仍为 `IN_PROGRESS`，剩余 P1 为 lifecycle implementation + extended gate 与 M3-T05 execution。
+- 两项实现前 ADR 注册/接受仍是前置门：EAT consumable capability 与 TALK paired runtime lock。下一正式任务为 `M3 Behavioral Lifecycle Extension`（`TASK_ID_PENDING_FORMAL_REGISTRATION`）。
