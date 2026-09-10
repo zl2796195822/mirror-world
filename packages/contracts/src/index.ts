@@ -39,6 +39,7 @@ export {
   worldObservationSnapshotSchema,
   type ObservationResidentRecord,
   type ObservationBatchQueryInput,
+  type ObservationLocalContext,
   type ObservationQueryInput,
   type ObservationQueryPort,
   type ObservationUnavailableReasonCode,
@@ -76,6 +77,8 @@ export {
   type ReplanPolicyInput,
 } from "./replan-contract.js";
 export {
+  SCHEDULER_POLICY_V1_VERSION,
+  SCHEDULER_POLICY_V2_VERSION,
   SCHEDULER_POLICY_VERSION,
   scheduledWakeRegistrationSchema,
   parseScheduledWakeRegistration,

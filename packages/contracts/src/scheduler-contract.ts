@@ -1,7 +1,9 @@
 import { z } from "zod";
 import { kernelActionOutcomeSchema } from "./action-outcome-contract.js";
 
-export const SCHEDULER_POLICY_VERSION = "m3-scheduler-v1" as const;
+export const SCHEDULER_POLICY_V1_VERSION = "m3-scheduler-v1" as const;
+export const SCHEDULER_POLICY_V2_VERSION = "m3-scheduler-v2" as const;
+export const SCHEDULER_POLICY_VERSION = SCHEDULER_POLICY_V2_VERSION;
 
 const identifier = z.uuid();
 const worldTime = z.iso.datetime({ offset: true });
@@ -20,7 +22,10 @@ export const schedulerWakeReasonSchema = z.enum([
 ]);
 
 const schedulerWorkItemBase = {
-  policyVersion: z.literal(SCHEDULER_POLICY_VERSION),
+  policyVersion: z.enum([
+    SCHEDULER_POLICY_V1_VERSION,
+    SCHEDULER_POLICY_V2_VERSION,
+  ]),
   worldId: identifier,
   residentId: identifier,
   wakeReason: schedulerWakeReasonSchema,
@@ -51,7 +56,10 @@ export const schedulerWorkItemSchema = z.discriminatedUnion("workType", [
 
 export const scheduledWakeRegistrationSchema = z
   .object({
-    policyVersion: z.literal(SCHEDULER_POLICY_VERSION),
+    policyVersion: z.enum([
+      SCHEDULER_POLICY_V1_VERSION,
+      SCHEDULER_POLICY_V2_VERSION,
+    ]),
     wakeId: identifier,
     worldId: identifier,
     residentId: identifier,
@@ -70,7 +78,10 @@ export const scheduledWakeRegistrationSchema = z
 
 export const schedulerFailureItemSchema = z
   .object({
-    policyVersion: z.literal(SCHEDULER_POLICY_VERSION),
+    policyVersion: z.enum([
+      SCHEDULER_POLICY_V1_VERSION,
+      SCHEDULER_POLICY_V2_VERSION,
+    ]),
     workType: schedulerWorkTypeSchema,
     worldId: identifier,
     residentId: identifier,
@@ -143,7 +154,7 @@ export type DueActivity = Readonly<{
   worldId: string;
   residentId: string;
   activityInstanceId: string;
-  activityKind: "TRAVELING" | "SLEEPING";
+  activityKind: "TRAVELING" | "SLEEPING" | "EATING" | "WORKING" | "TALKING";
   dueWorldTime: Date;
   stateVersion: number;
   sourceWorldSeq: string;

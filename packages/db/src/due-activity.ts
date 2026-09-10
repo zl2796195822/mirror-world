@@ -1,7 +1,8 @@
 import { and, asc, eq, inArray, isNotNull, lte } from "drizzle-orm";
 import { type DueActivity, type DueActivityReadInput } from "@mirror/contracts";
 import { createDb } from "./client.js";
-import { residentRuntimeStates } from "./schema.js";
+import { generateResidentSeed } from "./resident-seed.js";
+import { actionRequests, residentRuntimeStates, worlds } from "./schema.js";
 
 export const DUE_ACTIVITY_MAX_BATCH_SIZE = 30 as const;
 export type DueActivityDatabase = ReturnType<typeof createDb>["db"];
@@ -14,6 +15,107 @@ export class DueActivityStoreError extends Error {
     super(message);
     this.name = "DueActivityStoreError";
   }
+}
+
+type DueActivityQueryRow = {
+  worldId: string;
+  residentId: string;
+  activityInstanceId: string | null;
+  activityKind: string;
+  dueWorldTime: Date | null;
+  stateVersion: number;
+  sourceWorldSeq: bigint;
+  requestActorId: string | null;
+  worldSeed: string;
+};
+
+const DUE_ACTIVITY_KINDS = [
+  "TRAVELING",
+  "SLEEPING",
+  "EATING",
+  "WORKING",
+  "TALKING",
+] as const;
+
+function isDueActivityKind(
+  value: string,
+): value is DueActivity["activityKind"] {
+  return DUE_ACTIVITY_KINDS.includes(value as DueActivity["activityKind"]);
+}
+
+function uuidSort(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function requestOwnerResidentId(row: DueActivityQueryRow): string | null {
+  if (row.requestActorId === null) return null;
+  return (
+    generateResidentSeed({
+      worldId: row.worldId,
+      seed: row.worldSeed,
+    }).residents.find(({ actorRef }) => actorRef.actorId === row.requestActorId)
+      ?.residentId ?? null
+  );
+}
+
+function toDueActivity(row: DueActivityQueryRow): DueActivity {
+  if (
+    !isDueActivityKind(row.activityKind) ||
+    row.activityInstanceId === null ||
+    row.dueWorldTime === null
+  ) {
+    throw new DueActivityStoreError(
+      "INVALID_QUERY",
+      "Due activity query returned an invalid runtime state",
+    );
+  }
+  return {
+    worldId: row.worldId,
+    residentId: row.residentId,
+    activityInstanceId: row.activityInstanceId,
+    activityKind: row.activityKind,
+    dueWorldTime: new Date(row.dueWorldTime.getTime()),
+    stateVersion: row.stateVersion,
+    sourceWorldSeq: row.sourceWorldSeq.toString(),
+  };
+}
+
+function coalesceTalkRows(rows: readonly DueActivityQueryRow[]): DueActivity {
+  const first = rows[0];
+  if (!first) {
+    throw new DueActivityStoreError(
+      "INVALID_QUERY",
+      "TALK due activity group is empty",
+    );
+  }
+  if (
+    first.activityKind !== "TALKING" ||
+    first.activityInstanceId === null ||
+    first.dueWorldTime === null ||
+    rows.length !== 2 ||
+    new Set(rows.map(({ residentId }) => residentId)).size !== 2 ||
+    rows.some(
+      (row) =>
+        row.activityKind !== "TALKING" ||
+        row.activityInstanceId !== first.activityInstanceId ||
+        row.dueWorldTime?.getTime() !== first.dueWorldTime?.getTime(),
+    )
+  ) {
+    throw new DueActivityStoreError(
+      "INVALID_QUERY",
+      "TALK due activity rows do not describe one shared activity",
+    );
+  }
+
+  const ownerResidentId = rows
+    .map(requestOwnerResidentId)
+    .find((residentId): residentId is string => residentId !== null);
+  const owner =
+    rows.find(({ residentId }) => residentId === ownerResidentId) ??
+    [...rows].sort((left, right) =>
+      uuidSort(left.residentId, right.residentId),
+    )[0];
+  return toDueActivity(owner);
 }
 
 export async function readDueActivities(
@@ -33,7 +135,7 @@ export async function readDueActivities(
     );
   }
 
-  const rows = await database
+  const rows: DueActivityQueryRow[] = await database
     .select({
       worldId: residentRuntimeStates.worldId,
       residentId: residentRuntimeStates.residentId,
@@ -42,15 +144,22 @@ export async function readDueActivities(
       dueWorldTime: residentRuntimeStates.activityDueAtWorldTime,
       stateVersion: residentRuntimeStates.stateVersion,
       sourceWorldSeq: residentRuntimeStates.sourceWorldSeq,
+      requestActorId: actionRequests.actorId,
+      worldSeed: worlds.seed,
     })
     .from(residentRuntimeStates)
+    .innerJoin(worlds, eq(worlds.id, residentRuntimeStates.worldId))
+    .leftJoin(
+      actionRequests,
+      and(
+        eq(actionRequests.id, residentRuntimeStates.activityInstanceId),
+        eq(actionRequests.worldId, residentRuntimeStates.worldId),
+      ),
+    )
     .where(
       and(
         eq(residentRuntimeStates.worldId, input.worldId),
-        inArray(residentRuntimeStates.currentActivity, [
-          "TRAVELING",
-          "SLEEPING",
-        ]),
+        inArray(residentRuntimeStates.currentActivity, DUE_ACTIVITY_KINDS),
         isNotNull(residentRuntimeStates.activityInstanceId),
         isNotNull(residentRuntimeStates.activityDueAtWorldTime),
         lte(
@@ -64,29 +173,37 @@ export async function readDueActivities(
       asc(residentRuntimeStates.residentId),
       asc(residentRuntimeStates.activityInstanceId),
     )
-    .limit(input.limit);
+    // TALK contributes two runtime rows to one scheduler work item.
+    .limit(input.limit * 2);
 
-  return rows.map((row) => {
-    if (
-      (row.activityKind !== "TRAVELING" && row.activityKind !== "SLEEPING") ||
-      row.activityInstanceId === null ||
-      row.dueWorldTime === null
-    ) {
-      throw new DueActivityStoreError(
-        "INVALID_QUERY",
-        "Due activity query returned an invalid runtime state",
-      );
+  const activities: DueActivity[] = [];
+  const talkRows = new Map<string, DueActivityQueryRow[]>();
+  for (const row of rows) {
+    if (row.activityKind === "TALKING") {
+      if (row.activityInstanceId === null) {
+        throw new DueActivityStoreError(
+          "INVALID_QUERY",
+          "Due TALK activity is missing its activity instance",
+        );
+      }
+      const group = talkRows.get(row.activityInstanceId) ?? [];
+      group.push(row);
+      talkRows.set(row.activityInstanceId, group);
+    } else {
+      activities.push(toDueActivity(row));
     }
-    return {
-      worldId: row.worldId,
-      residentId: row.residentId,
-      activityInstanceId: row.activityInstanceId,
-      activityKind: row.activityKind,
-      dueWorldTime: new Date(row.dueWorldTime.getTime()),
-      stateVersion: row.stateVersion,
-      sourceWorldSeq: row.sourceWorldSeq.toString(),
-    };
-  });
+  }
+  for (const group of talkRows.values()) {
+    activities.push(coalesceTalkRows(group));
+  }
+  return activities
+    .sort(
+      (left, right) =>
+        left.dueWorldTime.getTime() - right.dueWorldTime.getTime() ||
+        uuidSort(left.residentId, right.residentId) ||
+        uuidSort(left.activityInstanceId, right.activityInstanceId),
+    )
+    .slice(0, input.limit);
 }
 
 export async function readNextActivityDueWorldTime(
@@ -99,10 +216,7 @@ export async function readNextActivityDueWorldTime(
     .where(
       and(
         eq(residentRuntimeStates.worldId, input.worldId),
-        inArray(residentRuntimeStates.currentActivity, [
-          "TRAVELING",
-          "SLEEPING",
-        ]),
+        inArray(residentRuntimeStates.currentActivity, DUE_ACTIVITY_KINDS),
         isNotNull(residentRuntimeStates.activityDueAtWorldTime),
       ),
     )

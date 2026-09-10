@@ -9,6 +9,7 @@ const residentId = "00000000-0000-4000-8000-000000000010";
 const homeId = "00000000-0000-4000-8000-000000000020";
 const destinationId = "00000000-0000-4000-8000-000000000021";
 const activityInstanceId = "00000000-0000-4000-8000-000000000030";
+const participantId = "00000000-0000-4000-8000-000000000040";
 
 describe("resident runtime state contract", () => {
   it("accepts a deterministic bootstrap state and a no-obligation result", () => {
@@ -96,6 +97,45 @@ describe("resident runtime state contract", () => {
     }
     expect(sleeping.runtimeState.activity.kind).toBe("SLEEPING");
     expect("targetLocationId" in sleeping.runtimeState.activity).toBe(false);
+  });
+
+  it("accepts the v2 paired TALK activity", () => {
+    const observation = parseResidentRuntimeObservation({
+      runtimeState: {
+        policyVersion: RUNTIME_STATE_POLICY_VERSION,
+        worldId,
+        residentId,
+        currentLocation: {
+          worldId,
+          locationId: homeId,
+          key: "home-unit-01",
+          kind: "HOME",
+        },
+        activity: {
+          kind: "TALKING",
+          activityInstanceId,
+          targetResidentId: participantId,
+          startedAtWorldTime: "2026-09-09T10:00:00.000Z",
+          dueAtWorldTime: "2026-09-09T10:15:00.000Z",
+        },
+        stateVersion: 1,
+        sourceWorldSeq: "2",
+      },
+      workObligation: {
+        policyVersion: RUNTIME_STATE_POLICY_VERSION,
+        worldId,
+        residentId,
+        status: "NO_CURRENT_OBLIGATION",
+        workplaceId: null,
+        startsAtWorldTime: null,
+        endsAtWorldTime: null,
+      },
+    });
+
+    expect(observation.runtimeState.activity).toMatchObject({
+      kind: "TALKING",
+      targetResidentId: participantId,
+    });
   });
 
   it("rejects inconsistent activity metadata", () => {

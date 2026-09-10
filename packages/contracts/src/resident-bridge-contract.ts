@@ -16,6 +16,8 @@ export const residentResourceSnapshotSchema = z
     cashCents: z.int().nonnegative(),
     foodUnits: z.int().nonnegative(),
     version: z.int().nonnegative(),
+    itemId: z.uuid().optional(),
+    locationId: z.uuid().optional(),
   })
   .strict();
 

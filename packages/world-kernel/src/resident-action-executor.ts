@@ -6,6 +6,9 @@ import {
   createDb,
   generateResidentSeed,
   getFirstStreetLocationFixtures,
+  getResidentFoodItemId,
+  registerNextWorkBoundaryWakeInTransaction,
+  residentResourceStates,
   residentRuntimeStates,
   worlds,
 } from "@mirror/db";
@@ -22,6 +25,7 @@ import {
 } from "./action-outcome-store.js";
 import {
   validateActionRequest,
+  type KernelLocationSnapshot,
   type ActionValidationContext,
   type ActionValidationResult,
 } from "./action-validator.js";
@@ -31,6 +35,16 @@ import {
   getSleepDurationWorldMinutes,
   getTravelDurationWorldMinutes,
 } from "./action-semantics.js";
+import {
+  EAT_DURATION_WORLD_MINUTES,
+  LIFECYCLE_SEMANTICS_POLICY_VERSION,
+  NEED_EFFECTS_POLICY_VERSION,
+  TALK_DURATION_WORLD_MINUTES,
+  WORK_ATTENDANCE_MINUTES,
+  getWorkShift,
+  lifecycleDueAt,
+  workObligationKey,
+} from "./lifecycle-semantics.js";
 import type {
   WorldEventInput,
   WorldKernelTransaction,
@@ -43,6 +57,7 @@ export type ExecuteResidentActionInput = Readonly<{
   request: ActionRequest;
   validationContext: ActionValidationContext;
   fenceToken?: bigint;
+  expectedResourceVersion?: number;
 }>;
 
 export type CompleteResidentActionInput = Readonly<{
@@ -79,10 +94,33 @@ export class ResidentActionExecutorError extends Error {
   }
 }
 
-function isResidentAction(
+function isLegacyResidentAction(
   request: ActionRequest,
 ): request is Extract<ActionRequest, { actionType: "MOVE" | "SLEEP" }> {
   return request.actionType === "MOVE" || request.actionType === "SLEEP";
+}
+
+function isLifecycleAction(
+  request: ActionRequest,
+): request is Extract<ActionRequest, { actionType: "EAT" | "WORK" | "TALK" }> {
+  return (
+    request.actionType === "EAT" ||
+    request.actionType === "WORK" ||
+    request.actionType === "TALK"
+  );
+}
+
+function isExecutableResidentAction(request: ActionRequest): boolean {
+  return isLegacyResidentAction(request) || isLifecycleAction(request);
+}
+
+function isResidentAction(
+  request: ActionRequest,
+): request is Extract<
+  ActionRequest,
+  { actionType: "MOVE" | "SLEEP" | "EAT" | "WORK" | "TALK" }
+> {
+  return isExecutableResidentAction(request);
 }
 
 function residentIdForActor(
@@ -104,6 +142,47 @@ function fixtureById(
       location,
     ]),
   );
+}
+
+function kernelLocationsForWorld(
+  worldId: string,
+): readonly KernelLocationSnapshot[] {
+  const fixtures = getFirstStreetLocationFixtures(worldId);
+  return fixtures.map((location) => ({
+    id: location.id,
+    worldId,
+    reachableFrom: fixtures
+      .filter(({ id }) => id !== location.id)
+      .map(({ id }) => id),
+    capabilities:
+      location.kind === "HOME"
+        ? ["SLEEP", "EAT"]
+        : location.kind === "CAFE"
+          ? ["EAT", "WORK"]
+          : ["OFFICE", "STORE"].includes(location.kind)
+            ? ["WORK"]
+            : [],
+  }));
+}
+
+function residentSeedByActor(
+  world: typeof worlds.$inferSelect,
+  actorId: string,
+) {
+  return generateResidentSeed({
+    worldId: world.id,
+    seed: world.seed,
+  }).residents.find(({ actorRef }) => actorRef.actorId === actorId);
+}
+
+function completedWorkShiftKeys(
+  row: typeof residentRuntimeStates.$inferSelect,
+): string[] {
+  return Array.isArray(row.completedWorkShiftKeys)
+    ? row.completedWorkShiftKeys.filter(
+        (value): value is string => typeof value === "string",
+      )
+    : [];
 }
 
 function runtimeActivity(
@@ -149,6 +228,41 @@ function runtimeActivity(
       dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
     };
   }
+  if (row.currentActivity === "EATING" || row.currentActivity === "WORKING") {
+    if (
+      row.activityTargetLocationId !== null ||
+      row.activityTargetResidentId !== null
+    ) {
+      throw new ResidentActionExecutorError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        `${row.currentActivity} runtime state cannot contain a target`,
+      );
+    }
+    return {
+      kind: row.currentActivity,
+      activityInstanceId: row.activityInstanceId,
+      startedAtWorldTime: row.activityStartedAtWorldTime.toISOString(),
+      dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
+    };
+  }
+  if (row.currentActivity === "TALKING") {
+    if (
+      row.activityTargetLocationId !== null ||
+      row.activityTargetResidentId === null
+    ) {
+      throw new ResidentActionExecutorError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        "Talking runtime state must contain a resident target",
+      );
+    }
+    return {
+      kind: "TALKING",
+      activityInstanceId: row.activityInstanceId,
+      targetResidentId: row.activityTargetResidentId,
+      startedAtWorldTime: row.activityStartedAtWorldTime.toISOString(),
+      dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
+    };
+  }
   throw new ResidentActionExecutorError(
     "RUNTIME_STATE_UNAVAILABLE",
     `Unsupported runtime activity ${row.currentActivity}`,
@@ -174,6 +288,48 @@ async function readResidentRuntimeForActor(
     );
   const [runtime] = lock ? await query.for("update") : await query;
   return runtime ? { residentId, runtime } : null;
+}
+
+async function readResidentRuntimeById(
+  transaction: WorldKernelTransaction,
+  world: typeof worlds.$inferSelect,
+  residentId: string,
+  lock: boolean,
+) {
+  const query = transaction
+    .select()
+    .from(residentRuntimeStates)
+    .where(
+      and(
+        eq(residentRuntimeStates.worldId, world.id),
+        eq(residentRuntimeStates.residentId, residentId),
+      ),
+    );
+  const [runtime] = lock ? await query.for("update") : await query;
+  return runtime ?? null;
+}
+
+async function lockResidentRuntimePair(
+  transaction: WorldKernelTransaction,
+  world: typeof worlds.$inferSelect,
+  residentIds: readonly [string, string],
+) {
+  const sortedIds = [...residentIds].sort((left, right) =>
+    Buffer.from(left.replaceAll("-", ""), "hex").compare(
+      Buffer.from(right.replaceAll("-", ""), "hex"),
+    ),
+  );
+  const rows = new Map<string, typeof residentRuntimeStates.$inferSelect>();
+  for (const residentId of sortedIds) {
+    const runtime = await readResidentRuntimeById(
+      transaction,
+      world,
+      residentId,
+      true,
+    );
+    if (runtime) rows.set(residentId, runtime);
+  }
+  return rows;
 }
 
 function validationContextAtRuntime(
@@ -229,12 +385,42 @@ async function validateResidentActionInTransaction(
     return { accepted: false, reasonCode: "KERNEL_INVALID_ACTION" };
   }
 
-  const resolved = await readResidentRuntimeForActor(
-    transaction,
-    world,
-    input.request.actorId,
-    true,
-  );
+  const actorSeed = residentSeedByActor(world, input.request.actorId);
+  if (!actorSeed) {
+    return { accepted: false, reasonCode: "KERNEL_ACTOR_NOT_FOUND" };
+  }
+  let runtimeRows = new Map<
+    string,
+    typeof residentRuntimeStates.$inferSelect
+  >();
+  if (input.request.actionType === "TALK") {
+    const participantSeed = residentSeedByActor(
+      world,
+      input.request.parameters.participantId,
+    );
+    if (
+      !participantSeed ||
+      participantSeed.residentId === actorSeed.residentId
+    ) {
+      return { accepted: false, reasonCode: "KERNEL_ACTOR_NOT_FOUND" };
+    }
+    runtimeRows = await lockResidentRuntimePair(transaction, world, [
+      actorSeed.residentId,
+      participantSeed.residentId,
+    ]);
+  } else {
+    const runtime = await readResidentRuntimeById(
+      transaction,
+      world,
+      actorSeed.residentId,
+      true,
+    );
+    if (runtime) runtimeRows.set(actorSeed.residentId, runtime);
+  }
+  const resolvedRuntime = runtimeRows.get(actorSeed.residentId);
+  const resolved = resolvedRuntime
+    ? { residentId: actorSeed.residentId, runtime: resolvedRuntime }
+    : null;
   if (!resolved) {
     return { accepted: false, reasonCode: "KERNEL_ACTOR_NOT_FOUND" };
   }
@@ -244,15 +430,94 @@ async function validateResidentActionInTransaction(
   if (!currentLocation) {
     return { accepted: false, reasonCode: "KERNEL_INVALID_LOCATION" };
   }
+  const resource =
+    input.request.actionType === "EAT"
+      ? (
+          await transaction
+            .select()
+            .from(residentResourceStates)
+            .where(
+              and(
+                eq(residentResourceStates.worldId, world.id),
+                eq(residentResourceStates.residentId, resolved.residentId),
+                eq(
+                  residentResourceStates.itemId,
+                  input.request.parameters.itemId,
+                ),
+              ),
+            )
+            .for("update")
+        )[0]
+      : undefined;
+  const participantSeed =
+    input.request.actionType === "TALK"
+      ? residentSeedByActor(world, input.request.parameters.participantId)
+      : undefined;
+  const participantRuntime = participantSeed
+    ? runtimeRows.get(participantSeed.residentId)
+    : undefined;
+  const actors = [
+    {
+      id: actorSeed.actorRef.actorId,
+      worldId: world.id,
+      status: "ACTIVE" as const,
+      version: resolved.runtime.stateVersion,
+      locationId: resolved.runtime.currentLocationId,
+      allowedRequesters: ["RULE"] as const,
+      inventory: resource ? { [resource.itemId]: resource.foodUnits } : {},
+      balanceCents: actorSeed.resources.cashCents,
+      ...(actorSeed.employment.workplaceId
+        ? { employmentWorkplaceId: actorSeed.employment.workplaceId }
+        : {}),
+    },
+  ];
+  if (participantSeed && participantRuntime) {
+    actors.push({
+      id: participantSeed.actorRef.actorId,
+      worldId: world.id,
+      status: "ACTIVE" as const,
+      version: participantRuntime.stateVersion,
+      locationId: participantRuntime.currentLocationId,
+      allowedRequesters: ["RULE"] as const,
+      inventory: {},
+      balanceCents: participantSeed.resources.cashCents,
+      ...(participantSeed.employment.workplaceId
+        ? { employmentWorkplaceId: participantSeed.employment.workplaceId }
+        : {}),
+    });
+  }
+  const items = resource
+    ? [
+        ...input.validationContext.items.filter(
+          (item) => item.id !== resource.itemId,
+        ),
+        {
+          id: resource.itemId,
+          worldId: world.id,
+          locationId: resource.locationId,
+          isFood: true,
+          priceCents: 0,
+          stockQuantity: resource.foodUnits,
+        },
+      ]
+    : [];
   const context = replaceActorRuntimeSnapshot(
-    input.validationContext,
+    {
+      ...input.validationContext,
+      actors,
+      items,
+      locations: kernelLocationsForWorld(world.id),
+    },
     input.request,
     world,
     resolved.runtime,
   );
   const validation = validateActionRequest(input.request, context);
   if (!validation.accepted) return validation;
-  if (resolved.runtime.currentActivity !== "IDLE") {
+  if (
+    resolved.runtime.currentActivity !== "IDLE" ||
+    (participantSeed && participantRuntime?.currentActivity !== "IDLE")
+  ) {
     return { accepted: false, reasonCode: "KERNEL_INVALID_ACTION" };
   }
 
@@ -260,6 +525,61 @@ async function validateResidentActionInTransaction(
     const destination = locations.get(input.request.parameters.destinationId);
     if (!destination) {
       return { accepted: false, reasonCode: "KERNEL_INVALID_LOCATION" };
+    }
+  } else if (input.request.actionType === "SLEEP") {
+    if (
+      !getFirstStreetLocationFixtures(world.id).some(
+        ({ id, kind }) => id === currentLocation.id && kind === "HOME",
+      )
+    ) {
+      return { accepted: false, reasonCode: "KERNEL_INVALID_LOCATION" };
+    }
+  } else if (input.request.actionType === "EAT") {
+    if (
+      !resource ||
+      resource.itemId !== input.request.parameters.itemId ||
+      resource.locationId !== currentLocation.id ||
+      resource.foodUnits < input.request.parameters.quantity
+    ) {
+      return { accepted: false, reasonCode: "KERNEL_INSUFFICIENT_RESOURCE" };
+    }
+    if (
+      resource.itemId !== getResidentFoodItemId(world.id, resolved.residentId)
+    ) {
+      return { accepted: false, reasonCode: "KERNEL_INVALID_LOCATION" };
+    }
+    if (
+      input.expectedResourceVersion !== undefined &&
+      resource.resourceVersion !== input.expectedResourceVersion
+    ) {
+      return { accepted: false, reasonCode: "KERNEL_CONFLICT" };
+    }
+  } else if (input.request.actionType === "WORK") {
+    const shift = getWorkShift(world.worldTime);
+    if (
+      actorSeed.employment.status !== "EMPLOYED" ||
+      actorSeed.employment.workplaceId !==
+        input.request.parameters.workplaceId ||
+      resolved.runtime.currentLocationId !==
+        input.request.parameters.workplaceId ||
+      shift.status !== "DUE" ||
+      world.worldTime.toISOString() !== shift.start ||
+      completedWorkShiftKeys(resolved.runtime).includes(
+        workObligationKey(actorSeed.residentId, shift.start),
+      )
+    ) {
+      return { accepted: false, reasonCode: "KERNEL_INVALID_ACTION" };
+    }
+  } else if (input.request.actionType === "TALK") {
+    if (
+      !participantSeed ||
+      !participantRuntime ||
+      participantSeed.residentId === resolved.residentId ||
+      participantRuntime.currentLocationId !==
+        resolved.runtime.currentLocationId ||
+      participantRuntime.currentActivity !== "IDLE"
+    ) {
+      return { accepted: false, reasonCode: "KERNEL_INVALID_ACTION" };
     }
   } else if (
     !getFirstStreetLocationFixtures(world.id).some(
@@ -339,66 +659,293 @@ async function buildStartExecution(
   if (!source) {
     return { status: "REJECTED", reasonCode: "KERNEL_INVALID_LOCATION" };
   }
-  const isMove = input.request.actionType === "MOVE";
-  const destination = isMove
-    ? fixtures.get(input.request.parameters.destinationId)
-    : undefined;
-  const durationWorldMinutes = isMove
-    ? getTravelDurationWorldMinutes(source.kind, destination?.kind ?? "HOME")
-    : getSleepDurationWorldMinutes();
-  const dueAtWorldTime = addWorldMinutes(world.worldTime, durationWorldMinutes);
-  const activity = isMove
-    ? {
-        currentActivity: "TRAVELING",
-        activityTargetLocationId: destination?.id ?? null,
+  let dueAtWorldTime: Date;
+  let activity: {
+    currentActivity:
+      | "TRAVELING"
+      | "SLEEPING"
+      | "EATING"
+      | "WORKING"
+      | "TALKING";
+    activityTargetLocationId: string | null;
+    activityTargetResidentId: string | null;
+  };
+  let event: WorldEventInput;
+
+  if (
+    input.request.actionType === "MOVE" ||
+    input.request.actionType === "SLEEP"
+  ) {
+    const isMove = input.request.actionType === "MOVE";
+    const destination = isMove
+      ? fixtures.get(input.request.parameters.destinationId)
+      : undefined;
+    const durationWorldMinutes = isMove
+      ? getTravelDurationWorldMinutes(source.kind, destination?.kind ?? "HOME")
+      : getSleepDurationWorldMinutes();
+    dueAtWorldTime = addWorldMinutes(world.worldTime, durationWorldMinutes);
+    activity = {
+      currentActivity: isMove ? "TRAVELING" : "SLEEPING",
+      activityTargetLocationId: destination?.id ?? null,
+      activityTargetResidentId: null,
+    };
+    event = startEvent({
+      request: input.request,
+      world,
+      runtime: resolved.runtime,
+      sourceKind: source.kind,
+      ...(destination ? { destinationId: destination.id } : {}),
+      dueAtWorldTime,
+      durationWorldMinutes,
+    });
+  } else if (input.request.actionType === "EAT") {
+    const [resource] = await transaction
+      .select()
+      .from(residentResourceStates)
+      .where(
+        and(
+          eq(residentResourceStates.worldId, world.id),
+          eq(residentResourceStates.residentId, resolved.residentId),
+          eq(residentResourceStates.itemId, input.request.parameters.itemId),
+        ),
+      )
+      .for("update");
+    const expectedVersion =
+      input.expectedResourceVersion ?? resource?.resourceVersion;
+    if (
+      !resource ||
+      resource.itemId !== input.request.parameters.itemId ||
+      resource.locationId !== resolved.runtime.currentLocationId ||
+      resource.foodUnits < input.request.parameters.quantity ||
+      expectedVersion !== resource.resourceVersion
+    ) {
+      if (expectedVersion !== resource?.resourceVersion) {
+        return { status: "CONFLICT", reasonCode: "KERNEL_CONFLICT" };
       }
-    : {
-        currentActivity: "SLEEPING",
-        activityTargetLocationId: null,
-      };
-  const event = startEvent({
-    request: input.request,
-    world,
-    runtime: resolved.runtime,
-    sourceKind: source.kind,
-    ...(destination ? { destinationId: destination.id } : {}),
-    dueAtWorldTime,
-    durationWorldMinutes,
-  });
+      return { status: "REJECTED", reasonCode: "KERNEL_INSUFFICIENT_RESOURCE" };
+    }
+    const quantity = input.request.parameters.quantity;
+    const [consumed] = await transaction
+      .update(residentResourceStates)
+      .set({
+        foodUnits: resource.foodUnits - quantity,
+        resourceVersion: resource.resourceVersion + 1,
+        updatedAt: world.worldTime,
+      })
+      .where(
+        and(
+          eq(residentResourceStates.worldId, world.id),
+          eq(residentResourceStates.residentId, resolved.residentId),
+          eq(residentResourceStates.itemId, resource.itemId),
+          eq(residentResourceStates.foodUnits, resource.foodUnits),
+          eq(residentResourceStates.resourceVersion, resource.resourceVersion),
+        ),
+      )
+      .returning();
+    if (!consumed) {
+      return { status: "CONFLICT", reasonCode: "KERNEL_CONFLICT" };
+    }
+    dueAtWorldTime = lifecycleDueAt(
+      world.worldTime,
+      EAT_DURATION_WORLD_MINUTES,
+    );
+    activity = {
+      currentActivity: "EATING",
+      activityTargetLocationId: null,
+      activityTargetResidentId: null,
+    };
+    event = {
+      id: randomUUID(),
+      worldId: world.id,
+      type: "RESIDENT_EAT_STARTED",
+      actorId: input.request.actorId,
+      targetId: resource.itemId,
+      payload: {
+        schemaVersion: 1,
+        actionType: "EAT",
+        phase: "STARTED",
+        actionRequestId: input.request.id,
+        activityInstanceId: input.request.id,
+        sourceLocationId: resolved.runtime.currentLocationId,
+        itemId: resource.itemId,
+        quantity,
+        resourceEffect: {
+          kind: "FOOD_UNITS_CONSUMED",
+          beforeUnits: resource.foodUnits,
+          afterUnits: consumed.foodUnits,
+          beforeVersion: resource.resourceVersion,
+          afterVersion: consumed.resourceVersion,
+        },
+        startedAtWorldTime: world.worldTime.toISOString(),
+        dueAtWorldTime: dueAtWorldTime.toISOString(),
+        durationWorldMinutes: EAT_DURATION_WORLD_MINUTES,
+        policyVersion: LIFECYCLE_SEMANTICS_POLICY_VERSION,
+      },
+      occurredAt: world.worldTime,
+      correlationId: input.request.id,
+    };
+  } else if (input.request.actionType === "WORK") {
+    const resident = residentSeedByActor(world, input.request.actorId);
+    const shift = getWorkShift(world.worldTime);
+    if (
+      !resident ||
+      resident.employment.status !== "EMPLOYED" ||
+      resident.employment.workplaceId !==
+        input.request.parameters.workplaceId ||
+      shift.status !== "DUE" ||
+      world.worldTime.toISOString() !== shift.start
+    ) {
+      return { status: "REJECTED", reasonCode: "KERNEL_INVALID_ACTION" };
+    }
+    dueAtWorldTime = new Date(shift.end);
+    const obligationKey = workObligationKey(resolved.residentId, shift.start);
+    activity = {
+      currentActivity: "WORKING",
+      activityTargetLocationId: null,
+      activityTargetResidentId: null,
+    };
+    event = {
+      id: randomUUID(),
+      worldId: world.id,
+      type: "RESIDENT_WORK_STARTED",
+      actorId: input.request.actorId,
+      targetId: input.request.parameters.workplaceId,
+      payload: {
+        schemaVersion: 1,
+        actionType: "WORK",
+        phase: "STARTED",
+        actionRequestId: input.request.id,
+        activityInstanceId: input.request.id,
+        sourceLocationId: resolved.runtime.currentLocationId,
+        workplaceId: input.request.parameters.workplaceId,
+        workObligationKey: obligationKey,
+        shiftStartsAtWorldTime: shift.start,
+        shiftEndsAtWorldTime: shift.end,
+        startedAtWorldTime: world.worldTime.toISOString(),
+        dueAtWorldTime: dueAtWorldTime.toISOString(),
+        durationWorldMinutes: WORK_ATTENDANCE_MINUTES,
+        policyVersion: LIFECYCLE_SEMANTICS_POLICY_VERSION,
+      },
+      occurredAt: world.worldTime,
+      correlationId: input.request.id,
+    };
+  } else {
+    const participant = residentSeedByActor(
+      world,
+      input.request.parameters.participantId,
+    );
+    if (!participant || participant.residentId === resolved.residentId) {
+      return { status: "REJECTED", reasonCode: "KERNEL_ACTOR_NOT_FOUND" };
+    }
+    const participantRuntime = await readResidentRuntimeById(
+      transaction,
+      world,
+      participant.residentId,
+      false,
+    );
+    if (
+      !participantRuntime ||
+      participantRuntime.currentActivity !== "IDLE" ||
+      participantRuntime.currentLocationId !==
+        resolved.runtime.currentLocationId
+    ) {
+      return { status: "CONFLICT", reasonCode: "KERNEL_CONFLICT" };
+    }
+    dueAtWorldTime = lifecycleDueAt(
+      world.worldTime,
+      TALK_DURATION_WORLD_MINUTES,
+    );
+    activity = {
+      currentActivity: "TALKING",
+      activityTargetLocationId: null,
+      activityTargetResidentId: participant.residentId,
+    };
+    event = {
+      id: randomUUID(),
+      worldId: world.id,
+      type: "RESIDENT_TALK_STARTED",
+      actorId: input.request.actorId,
+      targetId: input.request.parameters.participantId,
+      payload: {
+        schemaVersion: 1,
+        actionType: "TALK",
+        phase: "STARTED",
+        actionRequestId: input.request.id,
+        activityInstanceId: input.request.id,
+        participantId: participant.actorRef.actorId,
+        participantActorId: participant.actorRef.actorId,
+        sourceLocationId: resolved.runtime.currentLocationId,
+        startedAtWorldTime: world.worldTime.toISOString(),
+        dueAtWorldTime: dueAtWorldTime.toISOString(),
+        durationWorldMinutes: TALK_DURATION_WORLD_MINUTES,
+        policyVersion: LIFECYCLE_SEMANTICS_POLICY_VERSION,
+      },
+      occurredAt: world.worldTime,
+      correlationId: input.request.id,
+    };
+  }
 
   return {
     status: "COMMITTED",
     state: {},
     events: [event],
     afterEvents: async (tx, committed) => {
-      const [updated] = await tx
-        .update(residentRuntimeStates)
-        .set({
-          ...activity,
-          activityInstanceId: input.request.id,
-          activityStartedAtWorldTime: world.worldTime,
-          activityDueAtWorldTime: dueAtWorldTime,
-          stateVersion: resolved.runtime.stateVersion + 1,
-          sourceWorldSeq: committed.world.worldSeq,
-          updatedAt: world.worldTime,
-        })
-        .where(
-          and(
-            eq(residentRuntimeStates.worldId, world.id),
-            eq(residentRuntimeStates.residentId, resolved.residentId),
-            eq(residentRuntimeStates.currentActivity, "IDLE"),
-            eq(
-              residentRuntimeStates.stateVersion,
-              resolved.runtime.stateVersion,
+      const targetResidents =
+        input.request.actionType === "TALK"
+          ? (() => {
+              const participant = residentSeedByActor(
+                world,
+                input.request.parameters.participantId,
+              );
+              return participant ? [participant.residentId] : [];
+            })()
+          : [];
+      const updates = [resolved.residentId, ...targetResidents];
+      for (const residentId of updates) {
+        const current =
+          residentId === resolved.residentId
+            ? resolved.runtime
+            : await readResidentRuntimeById(tx, world, residentId, false);
+        if (!current) {
+          throw new ResidentActionExecutorError(
+            "RUNTIME_STATE_UNAVAILABLE",
+            "Resident runtime changed before action start could commit",
+          );
+        }
+        const targetResidentId =
+          input.request.actionType === "TALK"
+            ? residentId === resolved.residentId
+              ? (activity.activityTargetResidentId as string)
+              : resolved.residentId
+            : null;
+        const [updated] = await tx
+          .update(residentRuntimeStates)
+          .set({
+            currentActivity: activity.currentActivity,
+            activityTargetLocationId: activity.activityTargetLocationId,
+            activityTargetResidentId: targetResidentId,
+            activityInstanceId: input.request.id,
+            activityStartedAtWorldTime: world.worldTime,
+            activityDueAtWorldTime: dueAtWorldTime,
+            stateVersion: current.stateVersion + 1,
+            sourceWorldSeq: committed.world.worldSeq,
+            updatedAt: world.worldTime,
+          })
+          .where(
+            and(
+              eq(residentRuntimeStates.worldId, world.id),
+              eq(residentRuntimeStates.residentId, residentId),
+              eq(residentRuntimeStates.currentActivity, "IDLE"),
+              eq(residentRuntimeStates.stateVersion, current.stateVersion),
             ),
-          ),
-        )
-        .returning();
-      if (!updated) {
-        throw new ResidentActionExecutorError(
-          "RUNTIME_STATE_UNAVAILABLE",
-          "Resident runtime changed before action start could commit",
-        );
+          )
+          .returning();
+        if (!updated) {
+          throw new ResidentActionExecutorError(
+            "RUNTIME_STATE_UNAVAILABLE",
+            "Resident runtime changed before action start could commit",
+          );
+        }
       }
     },
   };
@@ -411,7 +958,7 @@ export function executeResidentActionRequest(
   if (!isResidentAction(input.request)) {
     throw new ResidentActionExecutorError(
       "ACTION_NOT_SUPPORTED",
-      "PRE-AL-05 only executes MOVE and SLEEP",
+      "Resident lifecycle executor does not execute BUY",
     );
   }
   return executeKernelActionRequest(database, {
@@ -423,7 +970,7 @@ export function executeResidentActionRequest(
   });
 }
 
-function completionEvent(input: {
+function legacyCompletionEvent(input: {
   request: Extract<ActionRequest, { actionType: "MOVE" | "SLEEP" }>;
   world: typeof worlds.$inferSelect;
   runtime: typeof residentRuntimeStates.$inferSelect;
@@ -466,6 +1013,94 @@ function completionEvent(input: {
   };
 }
 
+function lifecycleCompletionEvent(input: {
+  request: Extract<ActionRequest, { actionType: "EAT" | "WORK" | "TALK" }>;
+  world: typeof worlds.$inferSelect;
+  runtime: typeof residentRuntimeStates.$inferSelect;
+  participant?: ReturnType<typeof residentSeedByActor>;
+}): WorldEventInput {
+  const isEat = input.request.actionType === "EAT";
+  const isWork = input.request.actionType === "WORK";
+  const participant = input.participant;
+  const eatParameters =
+    input.request.actionType === "EAT" ? input.request.parameters : undefined;
+  const workParameters =
+    input.request.actionType === "WORK" ? input.request.parameters : undefined;
+  const type = isEat
+    ? "RESIDENT_EAT_COMPLETED"
+    : isWork
+      ? "RESIDENT_WORK_COMPLETED"
+      : "RESIDENT_TALK_COMPLETED";
+  const payload = {
+    schemaVersion: 1,
+    actionType: input.request.actionType,
+    phase: "COMPLETED",
+    actionRequestId: input.request.id,
+    activityInstanceId: input.request.id,
+    sourceLocationId: input.runtime.currentLocationId,
+    startedAtWorldTime: input.runtime.activityStartedAtWorldTime?.toISOString(),
+    dueAtWorldTime: input.runtime.activityDueAtWorldTime?.toISOString(),
+    completedAtWorldTime: input.world.worldTime.toISOString(),
+    durationWorldMinutes: isEat
+      ? EAT_DURATION_WORLD_MINUTES
+      : isWork
+        ? WORK_ATTENDANCE_MINUTES
+        : TALK_DURATION_WORLD_MINUTES,
+    policyVersion: LIFECYCLE_SEMANTICS_POLICY_VERSION,
+    ...(isEat
+      ? {
+          itemId: eatParameters!.itemId,
+          quantity: eatParameters!.quantity,
+          needEffect: {
+            policyVersion: NEED_EFFECTS_POLICY_VERSION,
+            kind: "HUNGER_PRESSURE_RELIEF",
+            quantity: eatParameters!.quantity,
+            reliefPoints: 55 * eatParameters!.quantity,
+          },
+        }
+      : {}),
+    ...(isWork
+      ? {
+          workplaceId: workParameters!.workplaceId,
+          workObligationKey: workObligationKey(
+            residentSeedByActor(input.world, input.request.actorId)
+              ?.residentId ?? "",
+            input.runtime.activityStartedAtWorldTime?.toISOString() ?? "",
+          ),
+          shiftStartsAtWorldTime:
+            input.runtime.activityStartedAtWorldTime?.toISOString(),
+          shiftEndsAtWorldTime:
+            input.runtime.activityDueAtWorldTime?.toISOString(),
+          attendanceMinutes: WORK_ATTENDANCE_MINUTES,
+        }
+      : {}),
+    ...(participant
+      ? {
+          participantActorId: participant.actorRef.actorId,
+          participantId: participant.actorRef.actorId,
+          needEffect: {
+            kind: "SOCIAL_PRESSURE_RELIEF",
+            policyVersion: NEED_EFFECTS_POLICY_VERSION,
+            reliefPoints: 35,
+          },
+        }
+      : {}),
+  };
+  const targetId = isWork
+    ? workParameters!.workplaceId
+    : participant?.actorRef.actorId;
+  return {
+    id: randomUUID(),
+    worldId: input.world.id,
+    type,
+    actorId: input.request.actorId,
+    ...(targetId ? { targetId } : {}),
+    payload,
+    occurredAt: input.world.worldTime,
+    correlationId: input.request.id,
+  };
+}
+
 export async function completeResidentAction(
   database: ResidentActionDatabase,
   input: CompleteResidentActionInput,
@@ -488,7 +1123,6 @@ export async function completeResidentAction(
         `World ${input.worldId} was not found`,
       );
     }
-
     const [requestRow] = await transaction
       .select()
       .from(actionRequests)
@@ -498,49 +1132,78 @@ export async function completeResidentAction(
           eq(actionRequests.worldId, input.worldId),
         ),
       );
-    if (
-      !requestRow ||
-      (requestRow.actionType !== "MOVE" && requestRow.actionType !== "SLEEP")
-    ) {
+    if (!requestRow) {
       throw new ResidentActionExecutorError(
         "ACTION_REQUEST_NOT_FOUND",
-        `MOVE/SLEEP action request ${input.actionRequestId} was not found`,
+        `Resident action request ${input.actionRequestId} was not found`,
       );
     }
     const request = requestRow.payload as ActionRequest;
     if (!isResidentAction(request)) {
       throw new ResidentActionExecutorError(
         "ACTION_NOT_SUPPORTED",
-        "Completion request is not a MOVE or SLEEP action",
+        "BUY completion is not executable in M3",
       );
     }
-
     const outcome = await findKernelActionOutcomeInTransaction(transaction, {
       requestId: request.id,
       worldId: world.id,
     });
-    if (!outcome) {
+    if (!outcome || outcome.status !== "COMMITTED") {
       throw new ResidentActionExecutorError(
         "INVALID_COMPLETION",
-        "A MOVE/SLEEP completion requires an existing committed start outcome",
+        "A completion requires an existing committed start outcome",
       );
     }
 
-    const resolved = await readResidentRuntimeForActor(
-      transaction,
-      world,
-      request.actorId,
-      true,
-    );
-    if (!resolved) {
+    const actorSeed = residentSeedByActor(world, request.actorId);
+    if (!actorSeed) {
+      throw new ResidentActionExecutorError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        "Resident actor could not be resolved for completion",
+      );
+    }
+    const participantSeed =
+      request.actionType === "TALK"
+        ? residentSeedByActor(world, request.parameters.participantId)
+        : undefined;
+    if (request.actionType === "TALK" && !participantSeed) {
+      throw new ResidentActionExecutorError(
+        "INVALID_COMPLETION",
+        "TALK completion requires a resolvable participant",
+      );
+    }
+    const runtimeRows =
+      participantSeed && participantSeed.residentId !== actorSeed.residentId
+        ? await lockResidentRuntimePair(transaction, world, [
+            actorSeed.residentId,
+            participantSeed.residentId,
+          ])
+        : new Map([
+            [
+              actorSeed.residentId,
+              (await readResidentRuntimeById(
+                transaction,
+                world,
+                actorSeed.residentId,
+                true,
+              )) as typeof residentRuntimeStates.$inferSelect,
+            ],
+          ]);
+    const resolvedRuntime = runtimeRows.get(actorSeed.residentId);
+    if (!resolvedRuntime) {
       throw new ResidentActionExecutorError(
         "RUNTIME_STATE_UNAVAILABLE",
         "Resident runtime state was not found for completion",
       );
     }
-    const activity = runtimeActivity(resolved.runtime);
+    const activity = runtimeActivity(resolvedRuntime);
     if (activity.kind === "IDLE") {
-      if (outcome.eventCount > 1) {
+      const participantIdle = participantSeed
+        ? runtimeRows.get(participantSeed.residentId)?.currentActivity ===
+          "IDLE"
+        : true;
+      if (outcome.eventCount > 1 && participantIdle) {
         return { disposition: "REUSED", outcome };
       }
       throw new ResidentActionExecutorError(
@@ -549,7 +1212,15 @@ export async function completeResidentAction(
       );
     }
     const expectedActivity =
-      request.actionType === "MOVE" ? "TRAVELING" : "SLEEPING";
+      request.actionType === "MOVE"
+        ? "TRAVELING"
+        : request.actionType === "SLEEP"
+          ? "SLEEPING"
+          : request.actionType === "EAT"
+            ? "EATING"
+            : request.actionType === "WORK"
+              ? "WORKING"
+              : "TALKING";
     if (
       activity.kind !== expectedActivity ||
       activity.activityInstanceId !== request.id
@@ -561,12 +1232,60 @@ export async function completeResidentAction(
     }
     if (
       input.expectedStateVersion !== undefined &&
-      resolved.runtime.stateVersion !== input.expectedStateVersion
+      resolvedRuntime.stateVersion !== input.expectedStateVersion
     ) {
       throw new ResidentActionExecutorError(
         "INVALID_COMPLETION",
         "Resident runtime state changed after the due work item was read",
       );
+    }
+    if (participantSeed) {
+      const participantRuntime = runtimeRows.get(participantSeed.residentId);
+      if (
+        !participantRuntime ||
+        participantRuntime.currentActivity !== "TALKING" ||
+        participantRuntime.activityInstanceId !== request.id ||
+        participantRuntime.activityTargetResidentId !== actorSeed.residentId ||
+        activity.kind !== "TALKING" ||
+        activity.targetResidentId !== participantSeed.residentId ||
+        participantRuntime.currentLocationId !==
+          resolvedRuntime.currentLocationId
+      ) {
+        throw new ResidentActionExecutorError(
+          "INVALID_COMPLETION",
+          "TALK completion requires an intact reciprocal pair",
+        );
+      }
+    }
+    if (request.actionType === "WORK") {
+      const startedAtWorldTime = resolvedRuntime.activityStartedAtWorldTime;
+      const dueAtWorldTime = resolvedRuntime.activityDueAtWorldTime;
+      const shift = startedAtWorldTime
+        ? getWorkShift(startedAtWorldTime)
+        : null;
+      const obligationKey = startedAtWorldTime
+        ? workObligationKey(
+            actorSeed.residentId,
+            startedAtWorldTime.toISOString(),
+          )
+        : null;
+      if (
+        !startedAtWorldTime ||
+        !shift ||
+        !dueAtWorldTime ||
+        actorSeed.employment.status !== "EMPLOYED" ||
+        actorSeed.employment.workplaceId !== request.parameters.workplaceId ||
+        resolvedRuntime.currentLocationId !== request.parameters.workplaceId ||
+        shift.start !== startedAtWorldTime.toISOString() ||
+        shift.end !== dueAtWorldTime.toISOString() ||
+        !obligationKey ||
+        completedWorkShiftKeys(resolvedRuntime).includes(obligationKey)
+      ) {
+        throw new ResidentActionExecutorError(
+          "INVALID_COMPLETION",
+          "WORK completion requires the original workplace and obligation",
+        );
+      }
     }
     if (world.status !== "RUNNING") {
       return {
@@ -582,7 +1301,7 @@ export async function completeResidentAction(
     }
 
     const fixtures = fixtureById(world.id);
-    const source = fixtures.get(resolved.runtime.currentLocationId);
+    const source = fixtures.get(resolvedRuntime.currentLocationId);
     const destinationId =
       activity.kind === "TRAVELING" ? activity.targetLocationId : undefined;
     const destination = destinationId ? fixtures.get(destinationId) : source;
@@ -592,26 +1311,27 @@ export async function completeResidentAction(
         "Completion references an invalid semantic location",
       );
     }
-    const durationWorldMinutes =
-      request.actionType === "MOVE"
-        ? getTravelDurationWorldMinutes(source.kind, destination.kind)
-        : getSleepDurationWorldMinutes();
-    const completedOutcome = await appendKernelActionOutcomeEventsInTransaction(
-      transaction,
-      {
-        requestId: request.id,
-        worldId: world.id,
-        state: {},
-        events: [
-          completionEvent({
+    const event =
+      request.actionType === "MOVE" || request.actionType === "SLEEP"
+        ? legacyCompletionEvent({
             request,
             world,
-            runtime: resolved.runtime,
+            runtime: resolvedRuntime,
             ...(destinationId ? { destinationId } : {}),
-            durationWorldMinutes,
-          }),
-        ],
-      },
+            durationWorldMinutes:
+              request.actionType === "MOVE"
+                ? getTravelDurationWorldMinutes(source.kind, destination.kind)
+                : getSleepDurationWorldMinutes(),
+          })
+        : lifecycleCompletionEvent({
+            request,
+            world,
+            runtime: resolvedRuntime,
+            ...(participantSeed ? { participant: participantSeed } : {}),
+          });
+    const completedOutcome = await appendKernelActionOutcomeEventsInTransaction(
+      transaction,
+      { requestId: request.id, worldId: world.id, state: {}, events: [event] },
     );
     if (completedOutcome.worldSeqEnd === null) {
       throw new ResidentActionExecutorError(
@@ -619,33 +1339,81 @@ export async function completeResidentAction(
         "Completed action outcome is missing its world sequence",
       );
     }
-    const [updated] = await transaction
-      .update(residentRuntimeStates)
-      .set({
-        currentLocationId: destination.id,
-        currentActivity: "IDLE",
-        activityInstanceId: null,
-        activityTargetLocationId: null,
-        activityStartedAtWorldTime: null,
-        activityDueAtWorldTime: null,
-        stateVersion: resolved.runtime.stateVersion + 1,
-        sourceWorldSeq: BigInt(completedOutcome.worldSeqEnd),
-        updatedAt: world.worldTime,
-      })
-      .where(
-        and(
-          eq(residentRuntimeStates.worldId, world.id),
-          eq(residentRuntimeStates.residentId, resolved.residentId),
-          eq(residentRuntimeStates.stateVersion, resolved.runtime.stateVersion),
-          eq(residentRuntimeStates.activityInstanceId, request.id),
-        ),
-      )
-      .returning();
-    if (!updated) {
-      throw new ResidentActionExecutorError(
-        "RUNTIME_STATE_UNAVAILABLE",
-        "Resident runtime changed before action completion could commit",
-      );
+
+    const participantRuntime = participantSeed
+      ? runtimeRows.get(participantSeed.residentId)
+      : undefined;
+    type RuntimeEntry = readonly [
+      string,
+      typeof residentRuntimeStates.$inferSelect,
+    ];
+    const updates: RuntimeEntry[] = [[actorSeed.residentId, resolvedRuntime]];
+    if (participantRuntime && participantSeed) {
+      updates.push([participantSeed.residentId, participantRuntime]);
+    }
+    for (const [residentId, current] of updates) {
+      const isParticipant = residentId === participantSeed?.residentId;
+      const keys = completedWorkShiftKeys(current);
+      const shiftKey =
+        request.actionType === "WORK"
+          ? workObligationKey(
+              actorSeed.residentId,
+              current.activityStartedAtWorldTime?.toISOString() ?? "",
+            )
+          : undefined;
+      const nextKeys =
+        shiftKey && !keys.includes(shiftKey) ? [...keys, shiftKey] : keys;
+      const [updated] = await transaction
+        .update(residentRuntimeStates)
+        .set({
+          currentLocationId:
+            !isParticipant && destinationId
+              ? destination.id
+              : current.currentLocationId,
+          currentActivity: "IDLE",
+          activityInstanceId: null,
+          activityTargetLocationId: null,
+          activityTargetResidentId: null,
+          activityStartedAtWorldTime: null,
+          activityDueAtWorldTime: null,
+          ...(request.actionType === "EAT" && !isParticipant
+            ? { lastAteAtWorldTime: world.worldTime }
+            : {}),
+          ...(request.actionType === "TALK"
+            ? { lastSocialContactAtWorldTime: world.worldTime }
+            : {}),
+          ...(request.actionType === "WORK" && !isParticipant
+            ? { completedWorkShiftKeys: nextKeys }
+            : {}),
+          stateVersion: current.stateVersion + 1,
+          sourceWorldSeq: BigInt(completedOutcome.worldSeqEnd),
+          updatedAt: world.worldTime,
+        })
+        .where(
+          and(
+            eq(residentRuntimeStates.worldId, world.id),
+            eq(residentRuntimeStates.residentId, residentId),
+            eq(residentRuntimeStates.stateVersion, current.stateVersion),
+            eq(residentRuntimeStates.activityInstanceId, request.id),
+          ),
+        )
+        .returning();
+      if (!updated) {
+        throw new ResidentActionExecutorError(
+          "RUNTIME_STATE_UNAVAILABLE",
+          "Resident runtime changed before action completion could commit",
+        );
+      }
+      if (request.actionType === "WORK" && !isParticipant) {
+        await registerNextWorkBoundaryWakeInTransaction(transaction, {
+          worldId: world.id,
+          worldSeed: world.seed,
+          worldTime: world.worldTime,
+          sourceWorldSeq: BigInt(completedOutcome.worldSeqEnd),
+          residentId,
+          sourceStateVersion: current.stateVersion + 1,
+        });
+      }
     }
     return { disposition: "EXECUTED", outcome: completedOutcome };
   });

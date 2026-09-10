@@ -1,4 +1,11 @@
-import { generateResidentSeed, type ResidentSeed } from "@mirror/db";
+import { and, eq, inArray } from "drizzle-orm";
+import {
+  createDb,
+  generateResidentSeed,
+  getResidentFoodItemId,
+  residentResourceStates,
+  type ResidentSeed,
+} from "@mirror/db";
 import {
   parseActorRef,
   parseResidentResourceSnapshot,
@@ -41,6 +48,10 @@ export type ResidentBridge = Readonly<{
 export type ResidentBridgeFactory = (
   input: M3SeedBridgeInput,
 ) => ResidentBridge;
+
+export type PostgresResidentResourceDatabase = ReturnType<
+  typeof createDb
+>["db"];
 
 function sortedResidentIds(ids: readonly string[]): string[] {
   if (
@@ -218,4 +229,73 @@ export function createM3SeedResourceReadPort(
   input: M3SeedBridgeInput,
 ): ResourceReadPort {
   return createM3SeedResidentBridge(input).resourceReader;
+}
+
+export function createPostgresResidentResourceReadPort(
+  database: PostgresResidentResourceDatabase,
+  input: M3SeedBridgeInput,
+): ResourceReadPort {
+  const residentsById = fixtureByResidentId(
+    input.worldId,
+    generateResidentSeed({ worldId: input.worldId, seed: input.worldSeed })
+      .residents,
+  );
+
+  return {
+    async getResidentResourceSnapshot(query) {
+      const [snapshot] = await this.getResidentResourceSnapshots({
+        worldId: query.worldId,
+        residentIds: [query.residentId],
+      });
+      return snapshot;
+    },
+    async getResidentResourceSnapshots(query) {
+      assertWorld(input.worldId, query.worldId);
+      const ids = sortedResidentIds(query.residentIds);
+      ids.forEach((residentId) => {
+        if (!residentsById.has(residentId)) {
+          throw new ResidentBridgeError(
+            "RESIDENT_NOT_FOUND",
+            `Resident ${residentId} was not found in world ${input.worldId}`,
+          );
+        }
+      });
+      const rows = await database
+        .select()
+        .from(residentResourceStates)
+        .where(
+          and(
+            eq(residentResourceStates.worldId, input.worldId),
+            inArray(residentResourceStates.residentId, ids),
+          ),
+        );
+      const rowsByResidentId = new Map(
+        rows.map((row) => [row.residentId, row]),
+      );
+      return ids.map((residentId) => {
+        const row = rowsByResidentId.get(residentId);
+        if (!row) {
+          throw new ResidentBridgeError(
+            "RESOURCE_SOURCE_UNAVAILABLE",
+            `Canonical resource for resident ${residentId} was not found`,
+          );
+        }
+        if (row.itemId !== getResidentFoodItemId(input.worldId, residentId)) {
+          throw new ResidentBridgeError(
+            "RESOURCE_VERSION_INVALID",
+            `Canonical resource item for resident ${residentId} is invalid`,
+          );
+        }
+        return parseResidentResourceSnapshot({
+          worldId: row.worldId,
+          residentId: row.residentId,
+          cashCents: residentsById.get(residentId)?.resources.cashCents ?? 0,
+          foodUnits: row.foodUnits,
+          version: row.resourceVersion,
+          itemId: row.itemId,
+          locationId: row.locationId,
+        });
+      });
+    },
+  };
 }

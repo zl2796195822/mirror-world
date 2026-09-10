@@ -12,6 +12,7 @@ import {
 import {
   parseSchedulerStepResult,
   parseSchedulerWorkItem,
+  SCHEDULER_POLICY_VERSION,
   type DueActivityReadPort,
   type KernelActionOutcome,
   type ScheduledWakeReadPort,
@@ -130,7 +131,7 @@ function completionWakeItem(
     );
   }
   return parseSchedulerWorkItem({
-    policyVersion: SCHEDULER_POLICY.version,
+    policyVersion: workItem.policyVersion,
     worldId: workItem.worldId,
     residentId: workItem.residentId,
     workType: "DECISION_WAKE",
@@ -150,7 +151,7 @@ function failureItem(
   retryable: boolean,
 ): SchedulerFailureItem {
   return {
-    policyVersion: SCHEDULER_POLICY.version,
+    policyVersion: workItem.policyVersion,
     workType: workItem.workType,
     worldId: workItem.worldId,
     residentId: workItem.residentId,
@@ -471,7 +472,7 @@ export class DeterministicSimulationDriver
     nextDueWorldTime: Date | null;
   }): SchedulerStepResult {
     return parseSchedulerStepResult({
-      policyVersion: SCHEDULER_POLICY.version,
+      policyVersion: SCHEDULER_POLICY_VERSION,
       worldId: input.world.id,
       fromWorldTime: input.fromWorldTime.toISOString(),
       toWorldTime: input.world.worldTime.toISOString(),

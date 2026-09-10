@@ -91,6 +91,10 @@ test("resident runtime bootstrap is durable, idempotent, isolated, and read-only
       );
     } finally {
       await client`
+        delete from resident_resource_states
+        where world_id = ${otherWorldId}
+      `;
+      await client`
         delete from resident_runtime_states
         where world_id = ${otherWorldId}
       `;

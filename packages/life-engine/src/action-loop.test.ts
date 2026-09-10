@@ -4,6 +4,7 @@ import {
   applyCompletedSleepToAnchors,
   createResidentNeedAnchorStore,
   runResidentActionLoopStep,
+  runResidentActionLoopStepV2,
   type ActionLoopObservation,
   type ActionSubmissionResult,
 } from "./action-loop.js";
@@ -16,6 +17,9 @@ const HOME_ID = "44444444-4444-4444-8444-444444444444";
 const OFFICE_ID = "55555555-5555-4555-8555-555555555555";
 const CAFE_ID = "66666666-6666-4666-8666-666666666666";
 const PARK_ID = "77777777-7777-4777-8777-777777777777";
+const ITEM_ID = "88888888-8888-4888-8888-888888888888";
+const PARTICIPANT_RESIDENT_ID = "99999999-9999-4999-8999-999999999999";
+const PARTICIPANT_ACTOR_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
 const LOCATIONS: readonly DecisionLocationRef[] = [
   { id: HOME_ID, kind: "HOME" },
@@ -326,5 +330,180 @@ describe("runResidentActionLoopStep", () => {
 
     expect(store.get(otherId)?.restPressure).toBe(50);
     expect(store.get(RESIDENT_ID)?.restPressure).toBe(95);
+  });
+});
+
+describe("runResidentActionLoopStepV2", () => {
+  function v2Observation(
+    overrides: Partial<ActionLoopObservation> = {},
+  ): ActionLoopObservation {
+    return observation({
+      locationId: HOME_ID,
+      locationKind: "HOME",
+      ...overrides,
+    });
+  }
+
+  function v2World(worldTime: Date) {
+    return {
+      id: WORLD_ID,
+      seed: "m3-v2-loop",
+      status: "RUNNING" as const,
+      worldTime,
+      worldSeq: "40",
+    };
+  }
+
+  it.each([
+    [
+      "EAT",
+      new Date("2026-09-10T08:00:00.000Z"),
+      v2Observation({
+        foodItems: [
+          {
+            itemId: ITEM_ID,
+            locationId: HOME_ID,
+            foodUnits: 2,
+            resourceVersion: 7,
+          },
+        ],
+        eatCapable: true,
+      }),
+      {
+        activity: "AWAKE" as const,
+        hungerPressure: 95,
+        restPressure: 10,
+        socialPressure: 10,
+      },
+    ],
+    [
+      "WORK",
+      new Date("2026-09-10T09:00:00.000Z"),
+      v2Observation({
+        locationId: OFFICE_ID,
+        locationKind: "OFFICE",
+        workplaceId: OFFICE_ID,
+        obligation: {
+          status: "DUE",
+          workplaceId: OFFICE_ID,
+          startsAtWorldTime: new Date("2026-09-10T09:00:00.000Z"),
+        },
+      }),
+      {
+        activity: "AWAKE" as const,
+        hungerPressure: 10,
+        restPressure: 10,
+        socialPressure: 10,
+      },
+    ],
+    [
+      "TALK",
+      new Date("2026-09-10T12:00:00.000Z"),
+      v2Observation({
+        nearbyResidents: [
+          {
+            residentId: PARTICIPANT_RESIDENT_ID,
+            actorId: PARTICIPANT_ACTOR_ID,
+            locationId: HOME_ID,
+            active: true,
+            activityKind: "IDLE",
+          },
+        ],
+      }),
+      {
+        activity: "AWAKE" as const,
+        hungerPressure: 10,
+        restPressure: 10,
+        socialPressure: 95,
+      },
+    ],
+  ] as const)(
+    "submits a strict %s ActionRequest with expected versions",
+    async (actionType, worldTime, residentObservation, anchor) => {
+      const { store } = createResidentNeedAnchorStore();
+      store.set(RESIDENT_ID, {
+        worldTime,
+        ...anchor,
+      });
+      const submitted: ActionRequest[] = [];
+
+      const result = await runResidentActionLoopStepV2({
+        world: v2World(worldTime),
+        observation: residentObservation,
+        locations: [
+          { id: HOME_ID, kind: "HOME", capabilities: ["EAT"] },
+          { id: OFFICE_ID, kind: "OFFICE", capabilities: ["WORK"] },
+        ],
+        needAnchors: store,
+        submission: {
+          async submit(request) {
+            submitted.push(request);
+            return {
+              disposition: "EXECUTED",
+              request,
+              outcome: committedOutcome(request),
+            };
+          },
+        },
+      });
+
+      expect(result.policyVersion).toBe("m3-action-loop-v2");
+      expect(submitted).toHaveLength(1);
+      expect(submitted[0]?.actionType).toBe(actionType);
+      expect(submitted[0]?.expectedActorVersion).toBe(1);
+      if (actionType === "EAT") {
+        expect(submitted[0]?.parameters).toEqual({
+          itemId: ITEM_ID,
+          quantity: 1,
+        });
+      } else if (actionType === "WORK") {
+        expect(submitted[0]?.parameters).toEqual({ workplaceId: OFFICE_ID });
+      } else {
+        expect(submitted[0]?.parameters).toEqual({
+          participantId: PARTICIPANT_ACTOR_ID,
+        });
+      }
+    },
+  );
+
+  it("passes the observed resource version to the Kernel submission boundary", async () => {
+    const { store } = createResidentNeedAnchorStore();
+    store.set(RESIDENT_ID, {
+      worldTime: new Date("2026-09-10T08:00:00.000Z"),
+      activity: "AWAKE",
+      hungerPressure: 95,
+      restPressure: 10,
+      socialPressure: 10,
+    });
+    const submissionContexts: unknown[] = [];
+
+    await runResidentActionLoopStepV2({
+      world: v2World(new Date("2026-09-10T08:00:00.000Z")),
+      observation: v2Observation({
+        foodItems: [
+          {
+            itemId: ITEM_ID,
+            locationId: HOME_ID,
+            foodUnits: 2,
+            resourceVersion: 7,
+          },
+        ],
+        eatCapable: true,
+      }),
+      locations: [{ id: HOME_ID, kind: "HOME", capabilities: ["EAT"] }],
+      needAnchors: store,
+      submission: {
+        async submit(request, submissionContext) {
+          submissionContexts.push(submissionContext);
+          return {
+            disposition: "EXECUTED",
+            request,
+            outcome: committedOutcome(request),
+          };
+        },
+      },
+    });
+
+    expect(submissionContexts).toEqual([{ expectedResourceVersion: 7 }]);
   });
 });

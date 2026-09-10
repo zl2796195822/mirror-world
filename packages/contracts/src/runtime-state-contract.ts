@@ -42,6 +42,25 @@ export const residentActivitySchema = z
         ...activityTransitionFields,
       })
       .strict(),
+    z
+      .object({
+        kind: z.literal("EATING"),
+        ...activityTransitionFields,
+      })
+      .strict(),
+    z
+      .object({
+        kind: z.literal("WORKING"),
+        ...activityTransitionFields,
+      })
+      .strict(),
+    z
+      .object({
+        kind: z.literal("TALKING"),
+        ...activityTransitionFields,
+        targetResidentId: z.uuid(),
+      })
+      .strict(),
   ])
   .superRefine((activity, context) => {
     if (activity.kind === "IDLE") return;
@@ -85,6 +104,7 @@ export const workObligationSchema = z
     workplaceId: z.uuid().nullable(),
     startsAtWorldTime: z.iso.datetime({ offset: true }).nullable(),
     endsAtWorldTime: z.iso.datetime({ offset: true }).nullable(),
+    completedWorkShiftKeys: z.array(z.string().min(1)).optional(),
   })
   .strict();
 

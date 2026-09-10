@@ -12,6 +12,7 @@ import type { ResidentRuntimeStateReadPort } from "@mirror/contracts";
 import { createDb, generateResidentSeed, worlds } from "@mirror/db";
 import {
   createM3SeedResidentBridge,
+  createPostgresResidentResourceReadPort,
   ResidentBridgeError,
   type ResidentBridgeFactory,
 } from "./resident-bridges.js";
@@ -283,7 +284,18 @@ export function createPostgresObservationQuery(
       ));
   const residentBridgeFactory =
     options.residentBridgeFactory ??
-    (usingDefaultResidentSource ? createM3SeedResidentBridge : undefined);
+    (usingDefaultResidentSource
+      ? (input) => {
+          const seeded = createM3SeedResidentBridge(input);
+          return {
+            actorResolver: seeded.actorResolver,
+            resourceReader: createPostgresResidentResourceReadPort(
+              database,
+              input,
+            ),
+          };
+        }
+      : undefined);
   const runtimeStateReadPortFactory =
     options.runtimeStateReadPortFactory ??
     (usingDefaultResidentSource

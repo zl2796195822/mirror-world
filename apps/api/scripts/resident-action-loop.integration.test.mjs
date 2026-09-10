@@ -90,6 +90,7 @@ async function removeWorldGraph(client, worldIds) {
     await client`delete from kernel_action_outcomes where world_id = ${worldId}`;
     await client`delete from action_requests where world_id = ${worldId}`;
     await client`delete from scheduled_wake_registrations where world_id = ${worldId}`;
+    await client`delete from resident_resource_states where world_id = ${worldId}`;
     await client`delete from resident_runtime_states where world_id = ${worldId}`;
   }
 }
@@ -490,6 +491,7 @@ test("M3-T04 rejects SLEEP outside HOME through Kernel and replans", async () =>
     await client`delete from kernel_action_outcome_events where world_id = ${world.id}`;
     await client`delete from kernel_action_outcomes where world_id = ${world.id}`;
     await client`delete from action_requests where world_id = ${world.id}`;
+    await client`delete from resident_resource_states where world_id = ${world.id}`;
     await client`delete from resident_runtime_states where world_id = ${world.id}`;
     await client.end({ timeout: 5 });
   }
@@ -581,6 +583,7 @@ test("M3-T04 world isolation: decision only acts on its own world resident", asy
       await client`delete from kernel_action_outcome_events where world_id = ${world.id}`;
       await client`delete from kernel_action_outcomes where world_id = ${world.id}`;
       await client`delete from action_requests where world_id = ${world.id}`;
+      await client`delete from resident_resource_states where world_id = ${world.id}`;
       await client`delete from resident_runtime_states where world_id = ${world.id}`;
     }
     await client.end({ timeout: 5 });

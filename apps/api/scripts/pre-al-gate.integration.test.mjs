@@ -228,6 +228,7 @@ async function removeWorldGraph(client, worldIds) {
     await client`delete from kernel_action_outcomes where world_id = ${worldId}`;
     await client`delete from action_requests where world_id = ${worldId}`;
     await client`delete from scheduled_wake_registrations where world_id = ${worldId}`;
+    await client`delete from resident_resource_states where world_id = ${worldId}`;
     await client`delete from resident_runtime_states where world_id = ${worldId}`;
   }
 }

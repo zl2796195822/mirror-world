@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import { evaluateNeeds } from "./needs.js";
 import {
   evaluateRuleDecision,
+  evaluateRuleDecisionV2,
   RULE_DECISION_POLICY_VERSION,
+  RULE_DECISION_POLICY_VERSION_V2,
   type DecisionLocationRef,
   type RuleDecisionInput,
+  type RuleDecisionV2Input,
 } from "./rule-decision.js";
 
 const WORLD_ID = "11111111-1111-4111-8111-111111111111";
@@ -14,6 +17,9 @@ const HOME_ID = "44444444-4444-4444-8444-444444444444";
 const OFFICE_ID = "55555555-5555-4555-8555-555555555555";
 const CAFE_ID = "66666666-6666-4666-8666-666666666666";
 const PARK_ID = "77777777-7777-4777-8777-777777777777";
+const ITEM_ID = "88888888-8888-4888-8888-888888888888";
+const PARTICIPANT_RESIDENT_ID = "99999999-9999-4999-8999-999999999999";
+const PARTICIPANT_ACTOR_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
 const LOCATIONS: readonly DecisionLocationRef[] = [
   { id: HOME_ID, kind: "HOME" },
@@ -291,5 +297,257 @@ describe("evaluateRuleDecision", () => {
       needs.restPressure,
       6,
     );
+  });
+});
+
+describe("evaluateRuleDecisionV2", () => {
+  function baseV2Input(
+    overrides: Partial<RuleDecisionV2Input> = {},
+  ): RuleDecisionV2Input {
+    return {
+      worldId: WORLD_ID,
+      seed: "m3-v2-seed",
+      currentWorldTime: new Date("2026-09-10T09:00:00.000Z"),
+      status: "RUNNING",
+      sourceWorldSeq: "40",
+      decisionEpoch: 2,
+      resident: {
+        residentId: RESIDENT_ID,
+        worldId: WORLD_ID,
+        actorId: ACTOR_ID,
+        homeLocationId: HOME_ID,
+        workplaceId: OFFICE_ID,
+        stateVersion: 5,
+      },
+      observation: {
+        locationId: HOME_ID,
+        locationKind: "HOME",
+        activity: { kind: "IDLE" },
+        workObligation: {
+          status: "DUE",
+          workplaceId: OFFICE_ID,
+          startsAtWorldTime: new Date("2026-09-10T09:00:00.000Z"),
+        },
+        eatCapable: true,
+        foodItems: [
+          {
+            itemId: ITEM_ID,
+            locationId: HOME_ID,
+            foodUnits: 2,
+            resourceVersion: 7,
+          },
+        ],
+        nearbyResidents: [],
+      },
+      needs: {
+        residentId: RESIDENT_ID,
+        hungerPressure: 95,
+        restPressure: 10,
+        socialPressure: 10,
+      },
+      selectedGoal: {
+        type: "SATISFY_HUNGER",
+        score: 100,
+        priority: 80,
+        reasonCode: "HUNGER_HIGH",
+      },
+      locations: [
+        { id: HOME_ID, kind: "HOME", capabilities: ["EAT"] },
+        { id: OFFICE_ID, kind: "OFFICE", capabilities: ["WORK"] },
+      ],
+      ...overrides,
+    };
+  }
+
+  it("creates EAT(itemId, 1) only for local food at an EAT-capable location", () => {
+    const decision = evaluateRuleDecisionV2(baseV2Input());
+
+    expect(decision.policyVersion).toBe(RULE_DECISION_POLICY_VERSION_V2);
+    expect(decision.selectedCandidate?.actionType).toBe("EAT");
+    expect(decision.selectedCandidate?.parameters).toEqual({
+      actionType: "EAT",
+      itemId: ITEM_ID,
+      quantity: 1,
+    });
+    expect(decision.actionRequestDraft).toMatchObject({
+      actionType: "EAT",
+      expectedActorVersion: 5,
+      expectedResourceVersion: 7,
+    });
+  });
+
+  it("skips an exhausted local item and selects the next available item deterministically", () => {
+    const availableItemId = ITEM_ID;
+    const decision = evaluateRuleDecisionV2(
+      baseV2Input({
+        observation: {
+          ...baseV2Input().observation,
+          foodItems: [
+            {
+              itemId: "11111111-1111-4111-8111-111111111111",
+              locationId: HOME_ID,
+              foodUnits: 0,
+              resourceVersion: 8,
+            },
+            {
+              itemId: availableItemId,
+              locationId: HOME_ID,
+              foodUnits: 1,
+              resourceVersion: 9,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(decision.selectedCandidate?.parameters).toEqual({
+      actionType: "EAT",
+      itemId: availableItemId,
+      quantity: 1,
+    });
+    expect(decision.actionRequestDraft?.expectedResourceVersion).toBe(9);
+  });
+
+  it.each([
+    ["without EAT capability", { eatCapable: false }],
+    ["without available food", { foodItems: [] }],
+  ])("does not create EAT when %s", (_label, change) => {
+    const decision = evaluateRuleDecisionV2(
+      baseV2Input({
+        observation: {
+          ...baseV2Input().observation,
+          ...change,
+        },
+      }),
+    );
+
+    expect(decision.selectedCandidate).toBeNull();
+    expect(decision.noActionReason).toBe("NO_FEASIBLE_CANDIDATE");
+  });
+
+  it("creates WORK only at the exact UTC 09:00 DUE boundary", () => {
+    const decision = evaluateRuleDecisionV2(
+      baseV2Input({
+        observation: {
+          ...baseV2Input().observation,
+          locationId: OFFICE_ID,
+          locationKind: "OFFICE",
+          eatCapable: false,
+          foodItems: [],
+        },
+        selectedGoal: {
+          type: "FULFILL_WORK_OBLIGATION",
+          score: 120,
+          priority: 100,
+          reasonCode: "WORK_OBLIGATION_DUE",
+          targetLocationId: OFFICE_ID,
+        },
+      }),
+    );
+
+    expect(decision.selectedCandidate?.actionType).toBe("WORK");
+    expect(decision.selectedCandidate?.parameters).toEqual({
+      actionType: "WORK",
+      workplaceId: OFFICE_ID,
+    });
+    expect(decision.actionRequestDraft?.expectedActorVersion).toBe(5);
+  });
+
+  it.each([
+    ["after the boundary", new Date("2026-09-10T09:00:01.000Z"), "LATE"],
+    ["for an unemployed resident", new Date("2026-09-10T09:00:00.000Z"), "DUE"],
+  ] as const)("does not create WORK %s", (_label, currentWorldTime, status) => {
+    const unemployed = _label.includes("unemployed");
+    const decision = evaluateRuleDecisionV2(
+      baseV2Input({
+        currentWorldTime,
+        resident: {
+          ...baseV2Input().resident,
+          workplaceId: unemployed ? null : OFFICE_ID,
+        },
+        observation: {
+          ...baseV2Input().observation,
+          locationId: OFFICE_ID,
+          locationKind: "OFFICE",
+          eatCapable: false,
+          foodItems: [],
+          workObligation: {
+            status,
+            workplaceId: OFFICE_ID,
+            startsAtWorldTime: new Date("2026-09-10T09:00:00.000Z"),
+          },
+        },
+        selectedGoal: {
+          type: "FULFILL_WORK_OBLIGATION",
+          score: 120,
+          priority: 100,
+          reasonCode:
+            status === "LATE" ? "WORK_OBLIGATION_LATE" : "WORK_OBLIGATION_DUE",
+          targetLocationId: OFFICE_ID,
+        },
+      }),
+    );
+
+    expect(decision.selectedCandidate?.actionType).not.toBe("WORK");
+    expect(decision.actionRequestDraft?.actionType).not.toBe("WORK");
+  });
+
+  it("selects an active same-location TALK participant by resident UUID order", () => {
+    const secondResidentId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+    const secondActorId = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+    const decision = evaluateRuleDecisionV2(
+      baseV2Input({
+        selectedGoal: {
+          type: "MAKE_SOCIAL_CONTACT",
+          score: 90,
+          priority: 70,
+          reasonCode: "SOCIAL_HIGH",
+        },
+        observation: {
+          ...baseV2Input().observation,
+          nearbyResidents: [
+            {
+              residentId: secondResidentId,
+              actorId: secondActorId,
+              locationId: HOME_ID,
+              active: true,
+              activityKind: "IDLE",
+            },
+            {
+              residentId: PARTICIPANT_RESIDENT_ID,
+              actorId: PARTICIPANT_ACTOR_ID,
+              locationId: HOME_ID,
+              active: true,
+              activityKind: "IDLE",
+            },
+            {
+              residentId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+              actorId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+              locationId: OFFICE_ID,
+              active: true,
+              activityKind: "IDLE",
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(decision.selectedCandidate?.actionType).toBe("TALK");
+    expect(decision.selectedCandidate?.parameters).toEqual({
+      actionType: "TALK",
+      participantId: PARTICIPANT_ACTOR_ID,
+    });
+    expect(
+      decision.selectedCandidate?.hardConstraints.every(({ passed }) => passed),
+    ).toBe(true);
+  });
+
+  it("never emits BUY as a candidate or executable draft", () => {
+    const decision = evaluateRuleDecisionV2(baseV2Input());
+
+    expect(
+      decision.candidates.map(({ actionType }) => String(actionType)),
+    ).not.toContain("BUY");
+    expect(decision.actionRequestDraft?.actionType).not.toBe("BUY");
   });
 });

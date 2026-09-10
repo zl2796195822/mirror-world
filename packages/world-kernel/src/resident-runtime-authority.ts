@@ -56,6 +56,7 @@ function activityFromRow(row: {
   currentActivity: string;
   activityInstanceId: string | null;
   activityTargetLocationId: string | null;
+  activityTargetResidentId: string | null;
   activityStartedAtWorldTime: Date | null;
   activityDueAtWorldTime: Date | null;
 }): ResidentActivity {
@@ -63,6 +64,7 @@ function activityFromRow(row: {
     if (
       row.activityInstanceId !== null ||
       row.activityTargetLocationId !== null ||
+      row.activityTargetResidentId !== null ||
       row.activityStartedAtWorldTime !== null ||
       row.activityDueAtWorldTime !== null
     ) {
@@ -102,7 +104,10 @@ function activityFromRow(row: {
   }
 
   if (row.currentActivity === "SLEEPING") {
-    if (row.activityTargetLocationId !== null) {
+    if (
+      row.activityTargetLocationId !== null ||
+      row.activityTargetResidentId !== null
+    ) {
       throw new ResidentRuntimeAuthorityError(
         "RUNTIME_STATE_UNAVAILABLE",
         "Sleeping runtime state cannot contain a target location",
@@ -111,6 +116,43 @@ function activityFromRow(row: {
     return {
       kind: "SLEEPING",
       activityInstanceId: row.activityInstanceId,
+      startedAtWorldTime: row.activityStartedAtWorldTime.toISOString(),
+      dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
+    };
+  }
+
+  if (row.currentActivity === "EATING" || row.currentActivity === "WORKING") {
+    if (
+      row.activityTargetLocationId !== null ||
+      row.activityTargetResidentId !== null
+    ) {
+      throw new ResidentRuntimeAuthorityError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        `${row.currentActivity} runtime state cannot contain a target`,
+      );
+    }
+    return {
+      kind: row.currentActivity,
+      activityInstanceId: row.activityInstanceId,
+      startedAtWorldTime: row.activityStartedAtWorldTime.toISOString(),
+      dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
+    };
+  }
+
+  if (row.currentActivity === "TALKING") {
+    if (
+      row.activityTargetLocationId !== null ||
+      row.activityTargetResidentId === null
+    ) {
+      throw new ResidentRuntimeAuthorityError(
+        "RUNTIME_STATE_UNAVAILABLE",
+        "Talking runtime state must contain a resident target",
+      );
+    }
+    return {
+      kind: "TALKING",
+      activityInstanceId: row.activityInstanceId,
+      targetResidentId: row.activityTargetResidentId,
       startedAtWorldTime: row.activityStartedAtWorldTime.toISOString(),
       dueAtWorldTime: row.activityDueAtWorldTime.toISOString(),
     };
@@ -329,6 +371,11 @@ export function createPostgresResidentRuntimeStateReadPort(
           worldTime: query.worldTime,
           resident,
         });
+        const completedWorkShiftKeys = Array.isArray(row.completedWorkShiftKeys)
+          ? row.completedWorkShiftKeys.filter(
+              (value): value is string => typeof value === "string",
+            )
+          : [];
         return parseResidentRuntimeObservation({
           runtimeState: {
             policyVersion: row.runtimePolicyVersion,
@@ -344,7 +391,10 @@ export function createPostgresResidentRuntimeStateReadPort(
             stateVersion: row.stateVersion,
             sourceWorldSeq: row.sourceWorldSeq.toString(),
           },
-          workObligation: derived.workObligation,
+          workObligation: {
+            ...derived.workObligation,
+            completedWorkShiftKeys,
+          },
         });
       });
     },

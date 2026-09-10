@@ -126,6 +126,7 @@ async function deleteWorldGraph(client, worldIds) {
     await client`delete from kernel_action_outcome_events where world_id = ${worldId}`;
     await client`delete from kernel_action_outcomes where world_id = ${worldId}`;
     await client`delete from action_requests where world_id = ${worldId}`;
+    await client`delete from resident_resource_states where world_id = ${worldId}`;
     await client`delete from resident_runtime_states where world_id = ${worldId}`;
     await client`
       delete from worlds

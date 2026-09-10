@@ -94,6 +94,41 @@ const localContextSchema = z
   })
   .strict();
 
+const localFoodItemSchema = z
+  .object({
+    itemId: z.uuid(),
+    locationId: z.uuid(),
+    foodUnits: z.int().nonnegative(),
+    resourceVersion: z.int().nonnegative(),
+  })
+  .strict();
+
+const localResidentSchema = z
+  .object({
+    residentId: z.uuid(),
+    actorId: z.uuid(),
+    locationId: z.uuid(),
+    active: z.boolean(),
+    activityKind: z.enum([
+      "IDLE",
+      "TRAVELING",
+      "SLEEPING",
+      "EATING",
+      "WORKING",
+      "TALKING",
+    ]),
+  })
+  .strict();
+
+const availableLocalContextSchema = z
+  .object({
+    status: z.literal("AVAILABLE"),
+    entities: z.array(z.never()).length(0),
+    foodItems: z.array(localFoodItemSchema),
+    nearbyResidents: z.array(localResidentSchema),
+  })
+  .strict();
+
 const residentEmploymentSchema = z
   .object({
     status: z.enum(["EMPLOYED", "UNEMPLOYED"]),
@@ -172,7 +207,7 @@ export const worldObservationSnapshotSchema = z
         reasonCode: z.literal("RESOURCE_BRIDGE_PENDING"),
       }),
     ]),
-    localContext: localContextSchema,
+    localContext: z.union([localContextSchema, availableLocalContextSchema]),
   })
   .strict();
 
@@ -215,7 +250,12 @@ export type ObservationResidentRecord = Readonly<{
   actorRef?: ActorRef;
   resources?: ResidentResourceSnapshot;
   runtimeState?: ResidentRuntimeObservation;
+  localContext?: ObservationLocalContext;
 }>;
+export type ObservationLocalContext = Readonly<
+  | z.infer<typeof localContextSchema>
+  | z.infer<typeof availableLocalContextSchema>
+>;
 export type WorldObservationSnapshot = Readonly<
   z.infer<typeof worldObservationSnapshotSchema>
 >;
@@ -365,7 +405,7 @@ export function buildWorldObservationSnapshot(input: {
     resources: resources
       ? { status: "AVAILABLE", snapshot: resources }
       : { status: "UNAVAILABLE", reasonCode: "RESOURCE_BRIDGE_PENDING" },
-    localContext: {
+    localContext: input.resident.localContext ?? {
       status: "UNAVAILABLE",
       reasonCode: "LOCAL_CONTEXT_UNAVAILABLE",
       entities: [],
