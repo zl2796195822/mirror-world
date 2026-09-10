@@ -217,7 +217,7 @@ Last verified main/doc baseline: 0ddceafc91c4da274f545b98742d4b69c3a9ade1
 - `docs/verification/PRE-AL-07-report.md`（PRE-AL-07 = PASS；deterministic scheduler/driver）
 - `docs/verification/PRE-AL-GATE-report.md`（PRE-AL-GATE = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`（治理完成记录；不含 lifecycle/T05 实现）
-- `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`（M3 Behavioral Lifecycle Extension = PASS；CI runs `34463283837`/`34463309484`）
+- `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`（M3 Behavioral Lifecycle Extension = PASS；CI runs `34463283837`/`34463309484`/`34464013190`）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task

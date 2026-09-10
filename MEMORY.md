@@ -266,9 +266,9 @@
 - 实现包含 Kernel-backed EAT/WORK/TALK、M3-T04 Rule Decision/Action Loop v2、既有 scheduler/due-wake extension、typed events v2、reducers/projection/full-suffix-genesis replay/checkpoint 与 causal/idempotency/restart/race/isolation evidence；BUY 仍 declared-but-non-executable，无 payroll、economy、dialogue、LLM、M4+。
 - Node `v24.11.1` 下 frozen install、format/lint/typecheck、uncached unit tests、build、官方 production audit（HIGH=0、CRITICAL=0）通过；一次性 clean PostgreSQL 上 `db:setup` 应用 12 个 journal entries，完整 integration 35/35、M3 lifecycle targeted 15/15、life-engine 72/72 通过。证据报告为 `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`。
 - EAT/TALK completion payloads 通过纯 `m3-need-effects-v1` adapter 进入下一次 Needs evaluation（EAT `55 × quantity` hunger relief，TALK `35` social relief）；不写 durable Need truth。WORK wake 只在成功 WORK start 注册/刷新；没有启用 bootstrap-wide 自动 reconcile，以保持历史 PRE-AL fixture profile 不变。
-- 当前状态为 `LOCAL_VERIFICATION_PASS_CI_PENDING`；尚未执行 `M3-LIFECYCLE-STORY-GATE`、expanded 30×30、M3-T05 或 M4+。待 push 后以当前提交的 GitHub Actions Success 完成正式关闭。
+- 实现提交阶段状态曾为 `LOCAL_VERIFICATION_PASS_CI_PENDING`；随后通过 GitHub Actions 完成正式关闭。尚未执行 `M3-LIFECYCLE-STORY-GATE`、expanded 30×30、M3-T05 或 M4+。
 
 ## 2026-09-10 M3 Behavioral Lifecycle Extension CI Closure
 
-- PR #1 已合并到 `main`，合并提交为 `0ddceafc91c4da274f545b98742d4b69c3a9ade1`；feature commit `96a9576b17fe80615c9e664012e2fa0cdcb4f5b0` 的 `foundation-ci` run `34463283837` 与 merge commit 的 run `34463309484` 均为 `Success`。
+- PR #1 已合并到 `main`，合并提交为 `0ddceafc91c4da274f545b98742d4b69c3a9ade1`；feature commit `96a9576b17fe80615c9e664012e2fa0cdcb4f5b0` 的 `foundation-ci` run `34463283837`、merge commit 的 run `34463309484` 与最终 main 文档收口提交 `bf19b9e760124d23ddc10b3a284b89e713c4409b` 的 run `34464013190` 均为 `Success`。
 - `M3 Behavioral Lifecycle Extension = PASS`；`M3 = IN_PROGRESS` 不变。没有执行 `M3-LIFECYCLE-STORY-GATE`、expanded 30×30、M3-T05 或 M4+；下一允许任务仅为 `M3-LIFECYCLE-STORY-GATE`。
