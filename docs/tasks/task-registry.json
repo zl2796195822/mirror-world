@@ -9,8 +9,8 @@
       "id": "FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID",
       "name": "M3 Behavioral Lifecycle Extension",
       "kind": "IMPLEMENTATION",
-      "status": "REGISTERED / NOT_STARTED",
-      "nextAllowedFormalTask": true,
+      "status": "LOCAL_VERIFICATION_PASS_CI_PENDING",
+      "nextAllowedFormalTask": false,
       "prerequisites": [
         "ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY",
         "ADR-M3-TALK-PAIRED-RUNTIME-LOCK"

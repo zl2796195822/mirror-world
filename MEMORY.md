@@ -259,3 +259,11 @@
 - EAT 只使用单一 Kernel/PostgreSQL food resource seam 与 start-time CAS；TALK 保持 single initiator、participant reference、world-first + resident UUID-byte paired lock；WORK 为 attendance-only、`ADR_NOT_REQUIRED`。
 - 注册 `M3 Behavioral Lifecycle Extension`，不发明数字 task ID，formal ID 为 `FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；注册 `M3-LIFECYCLE-STORY-GATE` 与 `M3-T05 = DEFINED / NOT_STARTED`。
 - 治理任务未修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05 或 M4/M5/M6。`foundation-ci` run `34433236275` 对治理提交 `69fcf40b83fea3b30428ea87997c8458935a0bdc` 为 `Success`。
+
+## 2026-09-10 M3 Behavioral Lifecycle Extension
+
+- 在独立 worktree `mirror-world-m3-behavioral-lifecycle-extension`、分支 `task/m3-behavioral-lifecycle-extension`，基于 `origin/main=cbcd1ae58771c9a261fed9c5f96fcaf4ea08e0ca` 完成正式 EAT/WORK/TALK lifecycle extension，实现提交 `b5cb5a7a29444d2db33704d655d29688287fd23a`。
+- 实现包含 Kernel-backed EAT/WORK/TALK、M3-T04 Rule Decision/Action Loop v2、既有 scheduler/due-wake extension、typed events v2、reducers/projection/full-suffix-genesis replay/checkpoint 与 causal/idempotency/restart/race/isolation evidence；BUY 仍 declared-but-non-executable，无 payroll、economy、dialogue、LLM、M4+。
+- Node `v24.11.1` 下 frozen install、format/lint/typecheck、uncached unit tests、build、官方 production audit（HIGH=0、CRITICAL=0）通过；一次性 clean PostgreSQL 上 `db:setup` 应用 12 个 journal entries，完整 integration 35/35、M3 lifecycle targeted 15/15、life-engine 72/72 通过。证据报告为 `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`。
+- EAT/TALK completion payloads 通过纯 `m3-need-effects-v1` adapter 进入下一次 Needs evaluation（EAT `55 × quantity` hunger relief，TALK `35` social relief）；不写 durable Need truth。WORK wake 只在成功 WORK start 注册/刷新；没有启用 bootstrap-wide 自动 reconcile，以保持历史 PRE-AL fixture profile 不变。
+- 当前状态为 `LOCAL_VERIFICATION_PASS_CI_PENDING`；尚未执行 `M3-LIFECYCLE-STORY-GATE`、expanded 30×30、M3-T05 或 M4+。待 push 后以当前提交的 GitHub Actions Success 完成正式关闭。

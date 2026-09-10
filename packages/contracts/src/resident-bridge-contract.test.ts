@@ -55,4 +55,19 @@ describe("resident bridge contracts", () => {
       }),
     ).toThrow();
   });
+
+  it("carries the canonical food item location when available", () => {
+    const snapshot = parseResidentResourceSnapshot({
+      worldId,
+      residentId,
+      cashCents: 200_000,
+      foodUnits: 2,
+      version: 3,
+      itemId: "00000000-0000-4000-8000-000000000012",
+      locationId: "00000000-0000-4000-8000-000000000013",
+    });
+
+    expect(snapshot.itemId).toBe("00000000-0000-4000-8000-000000000012");
+    expect(snapshot.locationId).toBe("00000000-0000-4000-8000-000000000013");
+  });
 });

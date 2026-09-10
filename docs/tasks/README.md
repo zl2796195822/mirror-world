@@ -3,11 +3,11 @@
 The machine-readable registry is [`task-registry.json`](./task-registry.json).
 This directory registers formal scope and order; it does not execute a task.
 
-| Registry entry                                                          | Status                     | Definition                                            |
-| ----------------------------------------------------------------------- | -------------------------- | ----------------------------------------------------- |
-| `M3-BEHAVIORAL-LIFECYCLE-EXTENSION` — M3 Behavioral Lifecycle Extension | `REGISTERED / NOT_STARTED` | [formal task](./M3-behavioral-lifecycle-extension.md) |
-| `M3-LIFECYCLE-STORY-GATE`                                               | `DEFINED / NOT_STARTED`    | [formal gate](./M3-lifecycle-story-gate.md)           |
-| `M3-T05` — Story Sanity Report                                          | `DEFINED / NOT_STARTED`    | [clarified task](./M3-T05-story-sanity.md)            |
+| Registry entry                                                          | Status                               | Definition                                            |
+| ----------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------- |
+| `M3-BEHAVIORAL-LIFECYCLE-EXTENSION` — M3 Behavioral Lifecycle Extension | `LOCAL_VERIFICATION_PASS_CI_PENDING` | [formal task](./M3-behavioral-lifecycle-extension.md) |
+| `M3-LIFECYCLE-STORY-GATE`                                               | `DEFINED / NOT_STARTED`              | [formal gate](./M3-lifecycle-story-gate.md)           |
+| `M3-T05` — Story Sanity Report                                          | `DEFINED / NOT_STARTED`              | [clarified task](./M3-T05-story-sanity.md)            |
 
 ## Registration decisions
 

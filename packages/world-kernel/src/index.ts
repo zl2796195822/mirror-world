@@ -92,6 +92,7 @@ export {
   createM3ResidentActorResolver,
   createM3ResidentResourceReadPort,
   createM3SeedResourceReadPort,
+  createPostgresResidentResourceReadPort,
   createM3SeedResidentActorResolver,
   createM3SeedResidentBridge,
   ResidentBridgeError,

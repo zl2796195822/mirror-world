@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { test } from "node:test";
 import {
   bootstrapResidentRuntimeStates,
@@ -91,6 +92,10 @@ test("resident runtime bootstrap is durable, idempotent, isolated, and read-only
       );
     } finally {
       await client`
+        delete from resident_resource_states
+        where world_id = ${otherWorldId}
+      `;
+      await client`
         delete from resident_runtime_states
         where world_id = ${otherWorldId}
       `;
@@ -132,6 +137,51 @@ test("resident runtime bootstrap is durable, idempotent, isolated, and read-only
       26,
     );
   } finally {
+    await client.end();
+  }
+});
+
+test("resident runtime observation fails closed for a half-locked TALK pair", async () => {
+  const { db, client } = createDb();
+  const worldId = randomUUID();
+  const worldTime = "2026-09-14T00:00:00.000Z";
+  try {
+    await client`
+      insert into worlds
+        (id, name, timezone, time_scale, status, seed, world_time, clock_anchor_at)
+      values
+        (${worldId}, 'runtime authority pair', 'UTC', 1, 'RUNNING', 'runtime-pair-seed', ${worldTime}, ${worldTime})
+    `;
+    await bootstrapResidentRuntimeStates(db, { worldId });
+    const residents = generateResidentSeed({
+      worldId,
+      seed: "runtime-pair-seed",
+    }).residents.slice(0, 2);
+    const activityId = randomUUID();
+    await client`
+      update resident_runtime_states
+      set current_location_id = ${residents[0].homeLocationId},
+          current_activity = 'TALKING',
+          activity_instance_id = ${activityId},
+          activity_target_resident_id = ${residents[1].residentId},
+          activity_started_at_world_time = ${worldTime},
+          activity_due_at_world_time = '2026-09-14T00:15:00.000Z'
+      where world_id = ${worldId} and resident_id = ${residents[0].residentId}
+    `;
+    await assert.rejects(
+      createPostgresObservationQuery(db).getResidentObservation({
+        worldId,
+        residentId: residents[0].residentId,
+      }),
+      (error) =>
+        error?.code === "RUNTIME_STATE_UNAVAILABLE" ||
+        (error instanceof ResidentRuntimeAuthorityError &&
+          error.code === "RUNTIME_STATE_UNAVAILABLE"),
+    );
+  } finally {
+    await client`delete from resident_resource_states where world_id = ${worldId}`;
+    await client`delete from resident_runtime_states where world_id = ${worldId}`;
+    await client`delete from worlds where id = ${worldId}`;
     await client.end();
   }
 });

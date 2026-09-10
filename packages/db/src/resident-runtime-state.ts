@@ -1,10 +1,12 @@
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { RUNTIME_STATE_POLICY_VERSION } from "@mirror/contracts";
 import { residentRuntimeStates, worlds } from "./schema.js";
+import { residentResourceStates } from "./schema.js";
 import { createDb } from "./client.js";
 import {
   generateResidentSeed,
   getFirstStreetLocationFixtures,
+  getResidentFoodItemId,
 } from "./resident-seed.js";
 
 export const RUNTIME_STATE_BOOTSTRAP_POLICY_VERSION =
@@ -78,6 +80,26 @@ export async function bootstrapResidentRuntimeStates(
         target: [
           residentRuntimeStates.worldId,
           residentRuntimeStates.residentId,
+        ],
+      });
+
+    await transaction
+      .insert(residentResourceStates)
+      .values(
+        fixture.residents.map((resident) => ({
+          worldId: world.id,
+          residentId: resident.residentId,
+          itemId: getResidentFoodItemId(world.id, resident.residentId),
+          locationId: resident.homeLocationId,
+          foodUnits: resident.resources.foodUnits,
+          resourceVersion: resident.resources.version,
+        })),
+      )
+      .onConflictDoNothing({
+        target: [
+          residentResourceStates.worldId,
+          residentResourceStates.residentId,
+          residentResourceStates.itemId,
         ],
       });
 

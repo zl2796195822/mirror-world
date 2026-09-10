@@ -89,6 +89,16 @@ export type ResidentSeedInput = Readonly<{
   seed: string;
 }>;
 
+export function getResidentFoodItemId(
+  worldId: string,
+  residentId: string,
+): string {
+  if (!UUID_PATTERN.test(worldId) || !UUID_PATTERN.test(residentId)) {
+    throw new Error("Resident food item ids require UUID world and resident");
+  }
+  return deterministicUuid(`resident-food-item|${worldId}|${residentId}`);
+}
+
 const PROFILE_DEFINITIONS: readonly ResidentRoutineProfile[] = [
   {
     profileId: "early-social",

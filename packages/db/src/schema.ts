@@ -67,6 +67,7 @@ export const residentRuntimeStates = pgTable(
     currentActivity: text("current_activity").notNull(),
     activityInstanceId: uuid("activity_instance_id"),
     activityTargetLocationId: uuid("activity_target_location_id"),
+    activityTargetResidentId: uuid("activity_target_resident_id"),
     activityStartedAtWorldTime: timestamp("activity_started_at_world_time", {
       withTimezone: true,
     }),
@@ -78,6 +79,16 @@ export const residentRuntimeStates = pgTable(
       .notNull()
       .default(sql`0`),
     runtimePolicyVersion: text("runtime_policy_version").notNull(),
+    lastAteAtWorldTime: timestamp("last_ate_at_world_time", {
+      withTimezone: true,
+    }),
+    lastSocialContactAtWorldTime: timestamp(
+      "last_social_contact_at_world_time",
+      { withTimezone: true },
+    ),
+    completedWorkShiftKeys: jsonb("completed_work_shift_keys")
+      .notNull()
+      .default(sql`'[]'::jsonb`),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -93,12 +104,14 @@ export const residentRuntimeStates = pgTable(
         (${table.currentActivity} = 'IDLE'
           and ${table.activityInstanceId} is null
           and ${table.activityTargetLocationId} is null
+          and ${table.activityTargetResidentId} is null
           and ${table.activityStartedAtWorldTime} is null
           and ${table.activityDueAtWorldTime} is null)
         or
         (${table.currentActivity} = 'TRAVELING'
           and ${table.activityInstanceId} is not null
           and ${table.activityTargetLocationId} is not null
+          and ${table.activityTargetResidentId} is null
           and ${table.activityStartedAtWorldTime} is not null
           and ${table.activityDueAtWorldTime} is not null
           and ${table.activityDueAtWorldTime} >= ${table.activityStartedAtWorldTime})
@@ -106,6 +119,23 @@ export const residentRuntimeStates = pgTable(
         (${table.currentActivity} = 'SLEEPING'
           and ${table.activityInstanceId} is not null
           and ${table.activityTargetLocationId} is null
+          and ${table.activityTargetResidentId} is null
+          and ${table.activityStartedAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} >= ${table.activityStartedAtWorldTime})
+        or
+        ((${table.currentActivity} = 'EATING' or ${table.currentActivity} = 'WORKING')
+          and ${table.activityInstanceId} is not null
+          and ${table.activityTargetLocationId} is null
+          and ${table.activityTargetResidentId} is null
+          and ${table.activityStartedAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} is not null
+          and ${table.activityDueAtWorldTime} >= ${table.activityStartedAtWorldTime})
+        or
+        (${table.currentActivity} = 'TALKING'
+          and ${table.activityInstanceId} is not null
+          and ${table.activityTargetLocationId} is null
+          and ${table.activityTargetResidentId} is not null
           and ${table.activityStartedAtWorldTime} is not null
           and ${table.activityDueAtWorldTime} is not null
           and ${table.activityDueAtWorldTime} >= ${table.activityStartedAtWorldTime})
@@ -119,6 +149,33 @@ export const residentRuntimeStates = pgTable(
       table.worldId,
       table.currentActivity,
       table.activityDueAtWorldTime,
+    ),
+  ],
+);
+
+export const residentResourceStates = pgTable(
+  "resident_resource_states",
+  {
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id),
+    residentId: uuid("resident_id").notNull(),
+    itemId: uuid("item_id").notNull(),
+    locationId: uuid("location_id").notNull(),
+    foodUnits: integer("food_units").notNull(),
+    resourceVersion: integer("resource_version").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.worldId, table.residentId, table.itemId] }),
+    check(
+      "resident_resource_states_units_check",
+      sql`${table.foodUnits} >= 0 and ${table.resourceVersion} >= 0`,
     ),
   ],
 );

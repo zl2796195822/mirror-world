@@ -217,11 +217,12 @@ Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 - `docs/verification/PRE-AL-07-report.md`（PRE-AL-07 = PASS；deterministic scheduler/driver）
 - `docs/verification/PRE-AL-GATE-report.md`（PRE-AL-GATE = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`（治理完成记录；不含 lifecycle/T05 实现）
+- `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`（本地 DoD PASS；CI 待定）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
 - `M3-LIFECYCLE-ADR-FORMALIZATION = PASS`；`M3 = IN_PROGRESS` remains.
-- `NEXT_ALLOWED_FORMAL_TASK = M3 Behavioral Lifecycle Extension`，正式 ID 为 `FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；当前状态 `REGISTERED / NOT_STARTED`。
-- 后续顺序固定为 `M3 Behavioral Lifecycle Extension` → `M3-LIFECYCLE-STORY-GATE` → `M3-T05` → `M3 Final Status Review #2`；本状态文件不授权自动执行。
+- `M3 Behavioral Lifecycle Extension`（正式 ID：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`）已完成本地 DoD，当前状态为 `LOCAL_VERIFICATION_PASS_CI_PENDING`；CI 成功前不关闭本任务。
+- CI 成功后，下一允许正式任务为 `M3-LIFECYCLE-STORY-GATE`；后续顺序固定为 `M3-LIFECYCLE-STORY-GATE` → `M3-T05` → `M3 Final Status Review #2`，本状态文件不授权自动执行。
 - 不执行 M4/M5/M6/M7/M8/M9/M10，不修改冻结 research worktree，不把本 Gate 扩展为 Economy/Memory/Relationship/AI/3D 或规模验收。

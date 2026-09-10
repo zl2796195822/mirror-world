@@ -78,6 +78,13 @@
       "when": 1788958850441,
       "tag": "0010_dizzy_falcon",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1789013503234,
+      "tag": "0011_giant_hellcat",
+      "breakpoints": true
     }
   ]
 }

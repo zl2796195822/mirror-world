@@ -9,12 +9,17 @@ export {
 } from "./resident-runtime-state.js";
 export {
   acknowledgeScheduledWake,
+  nextWorkBoundaryWorldTime,
   readDueScheduledWakes,
   readNextScheduledWakeWorldTime,
   registerScheduledWake,
+  registerNextWorkBoundaryWakeInTransaction,
+  registerNextWorkBoundaryWakes,
+  registerScheduledWakeInTransaction,
   ScheduledWakeStoreError,
   type ScheduledWakeDatabase,
   type ScheduledWakeRow,
+  type ScheduledWakeTransaction,
 } from "./scheduled-wake.js";
 export {
   DUE_ACTIVITY_MAX_BATCH_SIZE,
@@ -31,6 +36,7 @@ export {
   RESIDENT_SEED_COUNT,
   RESIDENT_SEED_GENERATOR_VERSION,
   generateResidentSeed,
+  getResidentFoodItemId,
   getFirstStreetLocationFixtures,
   type ResidentEmploymentSeed,
   type ResidentIdentityKind,
@@ -52,6 +58,7 @@ export {
   worldEvents,
   worlds,
   residentRuntimeStates,
+  residentResourceStates,
   scheduledWakeRegistrations,
   simulationDriverLeases,
 } from "./schema.js";

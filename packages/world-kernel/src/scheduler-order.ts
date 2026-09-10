@@ -1,10 +1,10 @@
 import {
-  SCHEDULER_POLICY_VERSION,
+  SCHEDULER_POLICY_V2_VERSION,
   type SchedulerWorkItem,
 } from "@mirror/contracts";
 
 export const SCHEDULER_POLICY = {
-  version: SCHEDULER_POLICY_VERSION,
+  version: SCHEDULER_POLICY_V2_VERSION,
   maxWorkItemsPerStep: 30,
   phases: ["ACTIVITY_COMPLETION", "DECISION_WAKE"] as const,
   wakeReasonOrder: [

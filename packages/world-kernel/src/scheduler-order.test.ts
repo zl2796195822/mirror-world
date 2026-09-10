@@ -38,7 +38,8 @@ describe("scheduler ordering", () => {
   });
 
   it("has a bounded serial policy", () => {
-    expect(SCHEDULER_POLICY.version).toBe(SCHEDULER_POLICY_VERSION);
+    expect(SCHEDULER_POLICY.version).toBe("m3-scheduler-v2");
+    expect(SCHEDULER_POLICY_VERSION).toBe("m3-scheduler-v2");
     expect(SCHEDULER_POLICY.maxWorkItemsPerStep).toBe(30);
     expect(SCHEDULER_POLICY.phases).toEqual([
       "ACTIVITY_COMPLETION",
