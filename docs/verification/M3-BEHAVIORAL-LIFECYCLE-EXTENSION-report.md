@@ -2,11 +2,10 @@
 
 ## Status
 
-`LOCAL_VERIFICATION_PASS_CI_PENDING`
+`PASS`
 
-The implementation DoD is satisfied by local Node 24 and clean disposable
-PostgreSQL evidence. The formal task remains pending until the pushed branch
-CI is `Success`.
+The implementation DoD is satisfied by local Node 24, clean disposable
+PostgreSQL evidence, and successful GitHub Actions verification.
 
 `M3 = IN_PROGRESS` remains unchanged.
 
@@ -19,6 +18,8 @@ CI is `Success`.
 | Branch                      | `task/m3-behavioral-lifecycle-extension`                                        |
 | Worktree                    | `/Users/alin/AI项目/mirror-world-m3-behavioral-lifecycle-extension`             |
 | Implementation commit       | `b5cb5a7` (`feat: implement M3 behavioral lifecycle extension`)                 |
+| Final task commit           | `96a9576b17fe80615c9e664012e2fa0cdcb4f5b0`                                      |
+| Main merge commit           | `0ddceafc91c4da274f545b98742d4b69c3a9ade1`                                      |
 | Frozen specification        | `docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/`, `SPEC FREEZE = ON` |
 | Frozen/governance reference | `69fcf40b83fea3b30428ea87997c8458935a0bdc` and current baseline docs            |
 | ADR-0011                    | `Accepted` — single Kernel/PostgreSQL food resource seam and start-time CAS     |
@@ -215,15 +216,15 @@ also passed through the targeted and existing integration suites.
 
 ## 9. Final gate state
 
-| Field                              | Result at report creation                                               |
-| ---------------------------------- | ----------------------------------------------------------------------- |
-| CI                                 | Pending push and GitHub Actions result                                  |
-| M3 Behavioral Lifecycle Extension  | Pending CI; local DoD PASS                                              |
-| M3                                 | `IN_PROGRESS`                                                           |
-| `M3-LIFECYCLE-STORY-GATE` executed | No                                                                      |
-| M3 expanded 30×30 gate executed    | No                                                                      |
-| M3-T05 executed                    | No                                                                      |
-| Remaining M3 P1                    | M3-LIFECYCLE-STORY-GATE and M3-T05                                      |
-| Next allowed formal task           | `M3-LIFECYCLE-STORY-GATE`                                               |
-| Main integration                   | Pending CI, then fast-forward main if origin remains unchanged          |
-| Stop confirmation                  | Stop immediately after CI-backed task close; do not enter the next task |
+| Field                              | Result                                                               |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| CI                                 | PASS — runs `34463283837` and `34463309484`                          |
+| M3 Behavioral Lifecycle Extension  | `PASS`                                                               |
+| M3                                 | `IN_PROGRESS`                                                        |
+| `M3-LIFECYCLE-STORY-GATE` executed | No                                                                   |
+| M3 expanded 30×30 gate executed    | No                                                                   |
+| M3-T05 executed                    | No                                                                   |
+| Remaining M3 P1                    | M3-LIFECYCLE-STORY-GATE and M3-T05                                   |
+| Next allowed formal task           | `M3-LIFECYCLE-STORY-GATE`                                            |
+| Main integration                   | PR #1 merged to `main` as `0ddceafc91c4da274f545b98742d4b69c3a9ade1` |
+| Stop confirmation                  | Stop immediately after this task close; do not enter the next task   |

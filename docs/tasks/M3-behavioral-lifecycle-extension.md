@@ -7,13 +7,14 @@
 | Registry key    | `M3-BEHAVIORAL-LIFECYCLE-EXTENSION`                                                                                                  |
 | Numeric task ID | None assigned by governance                                                                                                          |
 | Formal ID       | `FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`                                                                                          |
-| Status          | `LOCAL_VERIFICATION_PASS_CI_PENDING`                                                                                                 |
+| Status          | `PASS`                                                                                                                               |
 | Milestone       | M3                                                                                                                                   |
 | Prerequisites   | `ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY`, `ADR-M3-TALK-PAIRED-RUNTIME-LOCK`                                                         |
 | Frozen scope    | [20 Formal Implementation Task Specification](../verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/20_IMPLEMENTATION_TASK_SPEC.md) |
 
-The implementation is complete against the frozen scope locally. Formal task
-closure remains pending until the pushed branch has a successful CI run.
+The implementation is complete against the frozen scope locally and passed
+the required GitHub Actions verification. This formal task is closed; M3
+remains `IN_PROGRESS` until its separately registered Story Gate and T05 work.
 
 ## Scope
 

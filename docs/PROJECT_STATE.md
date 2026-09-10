@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3 Lifecycle ADR Formalization & Formal Task Registration (completed)
-Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 remains IN_PROGRESS
-Last verified implementation commit: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
-Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
+Current task: M3 Behavioral Lifecycle Extension (completed)
+Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 Behavioral Lifecycle Extension = PASS; M3 remains IN_PROGRESS
+Last verified implementation commit: 96a9576b17fe80615c9e664012e2fa0cdcb4f5b0
+Last verified main/doc baseline: 0ddceafc91c4da274f545b98742d4b69c3a9ade1
 
 ## Completed
 
@@ -217,12 +217,12 @@ Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 - `docs/verification/PRE-AL-07-report.md`（PRE-AL-07 = PASS；deterministic scheduler/driver）
 - `docs/verification/PRE-AL-GATE-report.md`（PRE-AL-GATE = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`（治理完成记录；不含 lifecycle/T05 实现）
-- `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`（本地 DoD PASS；CI 待定）
+- `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`（M3 Behavioral Lifecycle Extension = PASS；CI runs `34463283837`/`34463309484`）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
 - `M3-LIFECYCLE-ADR-FORMALIZATION = PASS`；`M3 = IN_PROGRESS` remains.
-- `M3 Behavioral Lifecycle Extension`（正式 ID：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`）已完成本地 DoD，当前状态为 `LOCAL_VERIFICATION_PASS_CI_PENDING`；CI 成功前不关闭本任务。
-- CI 成功后，下一允许正式任务为 `M3-LIFECYCLE-STORY-GATE`；后续顺序固定为 `M3-LIFECYCLE-STORY-GATE` → `M3-T05` → `M3 Final Status Review #2`，本状态文件不授权自动执行。
+- `M3 Behavioral Lifecycle Extension`（正式 ID：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`）已完成本地 DoD 与 GitHub Actions 验证，当前状态为 `PASS`；PR #1 已合并到 main。
+- 下一允许正式任务为 `M3-LIFECYCLE-STORY-GATE`；后续顺序固定为 `M3-LIFECYCLE-STORY-GATE` → `M3-T05` → `M3 Final Status Review #2`，本状态文件不授权自动执行。
 - 不执行 M4/M5/M6/M7/M8/M9/M10，不修改冻结 research worktree，不把本 Gate 扩展为 Economy/Memory/Relationship/AI/3D 或规模验收。

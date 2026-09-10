@@ -9,7 +9,7 @@
       "id": "FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID",
       "name": "M3 Behavioral Lifecycle Extension",
       "kind": "IMPLEMENTATION",
-      "status": "LOCAL_VERIFICATION_PASS_CI_PENDING",
+      "status": "PASS",
       "nextAllowedFormalTask": false,
       "prerequisites": [
         "ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY",
@@ -24,7 +24,7 @@
       "name": "M3-LIFECYCLE-STORY-GATE",
       "kind": "VERIFICATION_GATE",
       "status": "DEFINED / NOT_STARTED",
-      "nextAllowedFormalTask": false,
+      "nextAllowedFormalTask": true,
       "after": "M3-BEHAVIORAL-LIFECYCLE-EXTENSION",
       "definition": "docs/tasks/M3-lifecycle-story-gate.md",
       "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/14_PRE_AL_GATE_RERUN_DECISION.md"
