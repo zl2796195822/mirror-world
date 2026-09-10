@@ -1,0 +1,126 @@
+{
+  "specVersion": "m3-lifecycle-story-spec-v1",
+  "status": "SPEC_RECONCILIATION_COMPLETE",
+  "freeze": true,
+  "implementationReady": false,
+  "readyAfterPrerequisites": true,
+  "implementationPrerequisites": ["ACCEPT_REQUIRED_ADR_GATES"],
+  "baseline": {
+    "originMain": "a5846b723a11e4902166f6441cc8355904b268f4",
+    "head": "a5846b723a11e4902166f6441cc8355904b268f4",
+    "headEqualsOriginMain": true,
+    "productionCodeChanged": false,
+    "projectStateChanged": false,
+    "memoryChanged": false
+  },
+  "commonLifecycle": {
+    "chain": [
+      "OBSERVATION",
+      "NEEDS",
+      "GOALS",
+      "CANDIDATE",
+      "RULE_DECISION",
+      "ACTION_REQUEST",
+      "KERNEL",
+      "OUTCOME",
+      "TYPED_EVENTS",
+      "PROJECTION_REPLAY",
+      "NEXT_OBSERVATION"
+    ],
+    "phases": ["STARTED", "COMPLETED"],
+    "activeActivityExclusive": true,
+    "worldTimeOnly": true
+  },
+  "actions": {
+    "MOVE": {
+      "status": "existing",
+      "durationPolicy": "m3-action-semantics-v1"
+    },
+    "SLEEP": {
+      "status": "existing",
+      "durationWorldMinutes": 480,
+      "durationPolicy": "m3-action-semantics-v1"
+    },
+    "EAT": {
+      "status": "required",
+      "durationWorldMinutes": 30,
+      "durationPolicy": "m3-lifecycle-semantics-v1",
+      "needEffect": {
+        "kind": "HUNGER_PRESSURE_RELIEF",
+        "reliefPointsPerQuantity": 55,
+        "policyVersion": "m3-need-effects-v1"
+      },
+      "resourceEffect": "KERNEL_OWNED_FOOD_CAS_AT_START",
+      "events": ["RESIDENT_EAT_STARTED", "RESIDENT_EAT_COMPLETED"]
+    },
+    "WORK": {
+      "status": "required",
+      "duration": "SHIFT_START_TO_SHIFT_END",
+      "durationPolicy": "m3-lifecycle-semantics-v1",
+      "attendanceMinutes": 480,
+      "payroll": false,
+      "events": ["RESIDENT_WORK_STARTED", "RESIDENT_WORK_COMPLETED"]
+    },
+    "TALK": {
+      "status": "required",
+      "durationWorldMinutes": 15,
+      "durationPolicy": "m3-lifecycle-semantics-v1",
+      "participantModel": "SINGLE_INITIATOR_WITH_PARTICIPANT_REFERENCE",
+      "pairedAtomicLock": true,
+      "needEffect": {
+        "kind": "SOCIAL_PRESSURE_RELIEF",
+        "reliefPoints": 35,
+        "policyVersion": "m3-need-effects-v1"
+      },
+      "events": ["RESIDENT_TALK_STARTED", "RESIDENT_TALK_COMPLETED"]
+    },
+    "BUY": {
+      "status": "DECLARED_BUT_NON_EXECUTABLE_IN_M3",
+      "owner": "M6_ECONOMY",
+      "settlement": false
+    }
+  },
+  "policies": {
+    "needs": "m3-needs-v1",
+    "needEffects": "m3-need-effects-v1",
+    "goals": "m3-goals-v1",
+    "decision": "m3-rule-decision-v2",
+    "actionSemantics": "m3-lifecycle-semantics-v1",
+    "replan": "m3-replan-v1",
+    "scheduler": "m3-scheduler-v2",
+    "eventRegistry": "m3-domain-event-registry-v2",
+    "replay": "m3-resident-projection-v2",
+    "storySanity": "m3-story-sanity-v1"
+  },
+  "gate": {
+    "name": "M3-LIFECYCLE-STORY-GATE",
+    "residents": 30,
+    "worldMinutes": 43200,
+    "hardGateCount": 15,
+    "diagnosticClassCount": 15,
+    "equivalence": [
+      "LIVE",
+      "FULL_REPLAY",
+      "CHECKPOINT_SUFFIX_REPLAY",
+      "GENESIS_REBUILD"
+    ],
+    "sameSeedDigestEqual": true,
+    "differentSeedDigestDifferent": true,
+    "zeroLlm": true,
+    "buyAccepted": false
+  },
+  "adrGates": [
+    "ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY",
+    "ADR-M3-TALK-PAIRED-RUNTIME-LOCK"
+  ],
+  "m3T05": {
+    "status": "EXISTS_BUT_NOT_COMPLETED",
+    "hardGateDefinition": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/16_STORY_SANITY_HARD_GATES.md",
+    "artifactSchema": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/18_STORY_SANITY_ARTIFACT_SCHEMA.md"
+  },
+  "nextFormalTask": {
+    "name": "M3 Behavioral Lifecycle Extension",
+    "taskId": "PENDING_FORMAL_REGISTRATION",
+    "prerequisite": "ACCEPT_REQUIRED_ADR_GATES"
+  }
+}
