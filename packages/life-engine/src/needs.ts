@@ -5,6 +5,7 @@ export type NeedActivity = "AWAKE" | "RESTING";
 export type NeedPolicyVersion = string;
 
 export const NEED_POLICY_VERSION = "m3-needs-v1" as const;
+export const NEED_EFFECTS_POLICY_VERSION = "m3-need-effects-v1" as const;
 export const CORE_NEED_KEYS = [
   "hungerPressure",
   "restPressure",
@@ -113,6 +114,28 @@ export type NeedState = Readonly<{
   conditionBand: ConditionBand;
 }>;
 
+export type NeedEffect =
+  | Readonly<{
+      policyVersion: typeof NEED_EFFECTS_POLICY_VERSION;
+      kind: "HUNGER_PRESSURE_RELIEF";
+      quantity: number;
+      reliefPoints: number;
+    }>
+  | Readonly<{
+      policyVersion: typeof NEED_EFFECTS_POLICY_VERSION;
+      kind: "SOCIAL_PRESSURE_RELIEF";
+      reliefPoints: number;
+    }>;
+
+export type NeedEffectApplicationInput = Readonly<{
+  worldId: string;
+  resident: ResidentNeedProfile;
+  anchor: NeedAnchor;
+  completedAtWorldTime: Date;
+  effect: NeedEffect;
+  policy?: NeedPolicy;
+}>;
+
 export type SleepCompletionNeedAnchorInput = Readonly<{
   worldId: string;
   resident: ResidentNeedProfile;
@@ -159,6 +182,23 @@ function assertPressure(value: number, name: string): void {
 
 function clampPressure(value: number): number {
   return Math.min(100, Math.max(0, value));
+}
+
+function validateNeedEffect(effect: NeedEffect): void {
+  if (effect.policyVersion !== NEED_EFFECTS_POLICY_VERSION) {
+    throw new Error("Need effect policy version is invalid");
+  }
+  if (
+    !Number.isFinite(effect.reliefPoints) ||
+    effect.reliefPoints < 0 ||
+    (effect.kind === "HUNGER_PRESSURE_RELIEF" &&
+      (!Number.isInteger(effect.quantity) ||
+        effect.quantity < 1 ||
+        effect.reliefPoints !== 55 * effect.quantity)) ||
+    (effect.kind === "SOCIAL_PRESSURE_RELIEF" && effect.reliefPoints !== 35)
+  ) {
+    throw new Error("Need effect payload is invalid");
+  }
 }
 
 function roundValue(value: number): number {
@@ -389,6 +429,45 @@ export function applySleepCompletionToNeedAnchor(
     hungerPressure: restingAtCompletion.hungerPressure,
     restPressure: restingAtCompletion.restPressure,
     socialPressure: restingAtCompletion.socialPressure,
+  };
+}
+
+export function applyCompletedNeedEffectToNeedAnchor(
+  input: NeedEffectApplicationInput,
+): NeedAnchor {
+  assertValidDate(input.completedAtWorldTime, "completedAtWorldTime");
+  if (input.completedAtWorldTime.getTime() < input.anchor.worldTime.getTime()) {
+    throw new Error("need effect completion cannot precede anchor time");
+  }
+  validateNeedEffect(input.effect);
+  const atCompletion = evaluateNeeds({
+    worldId: input.worldId,
+    currentWorldTime: input.completedAtWorldTime,
+    status: "RUNNING",
+    resident: input.resident,
+    anchor: input.anchor,
+    policy: input.policy,
+  });
+  return {
+    worldTime: input.completedAtWorldTime,
+    activity: "AWAKE",
+    hungerPressure: roundValue(
+      clampPressure(
+        atCompletion.hungerPressure -
+          (input.effect.kind === "HUNGER_PRESSURE_RELIEF"
+            ? input.effect.reliefPoints
+            : 0),
+      ),
+    ),
+    restPressure: atCompletion.restPressure,
+    socialPressure: roundValue(
+      clampPressure(
+        atCompletion.socialPressure -
+          (input.effect.kind === "SOCIAL_PRESSURE_RELIEF"
+            ? input.effect.reliefPoints
+            : 0),
+      ),
+    ),
   };
 }
 

@@ -506,4 +506,48 @@ describe("runResidentActionLoopStepV2", () => {
 
     expect(submissionContexts).toEqual([{ expectedResourceVersion: 7 }]);
   });
+
+  it("feeds a completed need effect into the next Needs evaluation", async () => {
+    const { store } = createResidentNeedAnchorStore();
+    const anchorTime = new Date("2026-09-10T08:00:00.000Z");
+    const completionTime = new Date("2026-09-10T08:30:00.000Z");
+    store.set(RESIDENT_ID, {
+      worldTime: anchorTime,
+      activity: "AWAKE",
+      hungerPressure: 80,
+      restPressure: 10,
+      socialPressure: 10,
+    });
+
+    const result = await runResidentActionLoopStepV2({
+      world: v2World(completionTime),
+      observation: v2Observation(),
+      locations: [{ id: HOME_ID, kind: "HOME", capabilities: ["EAT"] }],
+      needAnchors: store,
+      completedNeedEffect: {
+        completedAtWorldTime: completionTime,
+        effect: {
+          policyVersion: "m3-need-effects-v1",
+          kind: "HUNGER_PRESSURE_RELIEF",
+          quantity: 1,
+          reliefPoints: 55,
+        },
+      },
+      submission: {
+        async submit(request) {
+          return {
+            disposition: "EXECUTED",
+            request,
+            outcome: committedOutcome(request),
+          };
+        },
+      },
+    });
+
+    expect(result.nextNeedAnchor.hungerPressure).toBeLessThan(30);
+    expect(result.needState.hungerPressure).toBe(
+      result.nextNeedAnchor.hungerPressure,
+    );
+    expect(store.get(RESIDENT_ID)).toEqual(result.nextNeedAnchor);
+  });
 });

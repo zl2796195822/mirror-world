@@ -1,7 +1,9 @@
 export {
   CORE_NEED_KEYS,
+  NEED_EFFECTS_POLICY_VERSION,
   NEED_POLICY_V1,
   NEED_POLICY_VERSION,
+  applyCompletedNeedEffectToNeedAnchor,
   applySleepCompletionToNeedAnchor,
   evaluateNeeds,
   evaluateResidentsNeeds,
@@ -9,6 +11,8 @@ export {
   type ConditionBand,
   type NeedActivity,
   type NeedAnchor,
+  type NeedEffect,
+  type NeedEffectApplicationInput,
   type NeedEvaluationInput,
   type NeedPolicy,
   type NeedPolicyVersion,

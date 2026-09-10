@@ -548,6 +548,9 @@ async function validateResidentActionInTransaction(
     ) {
       return { accepted: false, reasonCode: "KERNEL_INVALID_LOCATION" };
     }
+    if (input.expectedResourceVersion === undefined) {
+      return { accepted: false, reasonCode: "KERNEL_CONFLICT" };
+    }
     if (
       input.expectedResourceVersion !== undefined &&
       resource.resourceVersion !== input.expectedResourceVersion
@@ -710,8 +713,7 @@ async function buildStartExecution(
         ),
       )
       .for("update");
-    const expectedVersion =
-      input.expectedResourceVersion ?? resource?.resourceVersion;
+    const expectedVersion = input.expectedResourceVersion;
     if (
       !resource ||
       resource.itemId !== input.request.parameters.itemId ||
@@ -945,6 +947,16 @@ async function buildStartExecution(
             "RUNTIME_STATE_UNAVAILABLE",
             "Resident runtime changed before action start could commit",
           );
+        }
+        if (input.request.actionType === "WORK") {
+          await registerNextWorkBoundaryWakeInTransaction(tx, {
+            worldId: world.id,
+            worldSeed: world.seed,
+            worldTime: world.worldTime,
+            sourceWorldSeq: committed.world.worldSeq,
+            residentId,
+            sourceStateVersion: current.stateVersion + 1,
+          });
         }
       }
     },
@@ -1246,14 +1258,40 @@ export async function completeResidentAction(
         participantRuntime.currentActivity !== "TALKING" ||
         participantRuntime.activityInstanceId !== request.id ||
         participantRuntime.activityTargetResidentId !== actorSeed.residentId ||
+        participantRuntime.activityTargetLocationId !== null ||
         activity.kind !== "TALKING" ||
         activity.targetResidentId !== participantSeed.residentId ||
         participantRuntime.currentLocationId !==
-          resolvedRuntime.currentLocationId
+          resolvedRuntime.currentLocationId ||
+        participantRuntime.activityStartedAtWorldTime?.getTime() !==
+          resolvedRuntime.activityStartedAtWorldTime?.getTime() ||
+        participantRuntime.activityDueAtWorldTime?.getTime() !==
+          resolvedRuntime.activityDueAtWorldTime?.getTime()
       ) {
         throw new ResidentActionExecutorError(
           "INVALID_COMPLETION",
           "TALK completion requires an intact reciprocal pair",
+        );
+      }
+    }
+    if (
+      (request.actionType === "EAT" || request.actionType === "TALK") &&
+      resolvedRuntime.activityStartedAtWorldTime &&
+      resolvedRuntime.activityDueAtWorldTime
+    ) {
+      const expectedDueAt = lifecycleDueAt(
+        resolvedRuntime.activityStartedAtWorldTime,
+        request.actionType === "EAT"
+          ? EAT_DURATION_WORLD_MINUTES
+          : TALK_DURATION_WORLD_MINUTES,
+      );
+      if (
+        resolvedRuntime.activityDueAtWorldTime.getTime() !==
+        expectedDueAt.getTime()
+      ) {
+        throw new ResidentActionExecutorError(
+          "INVALID_COMPLETION",
+          `${request.actionType} completion has an invalid due time`,
         );
       }
     }

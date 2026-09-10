@@ -170,7 +170,9 @@ export async function registerNextWorkBoundaryWakeInTransaction(
       "Work boundary source state is invalid",
     );
   }
-  const dueWorldTime = nextWorkBoundaryWorldTime(input.worldTime);
+  const dueWorldTime = nextWorkBoundaryWorldTime(
+    new Date(input.worldTime.getTime() + 1),
+  );
   const dedupeKey = [
     WORK_BOUNDARY_POLICY_VERSION,
     "WORK_BOUNDARY",
@@ -190,6 +192,47 @@ export async function registerNextWorkBoundaryWakeInTransaction(
     decisionEpoch: input.decisionEpoch ?? 0,
     dedupeKey,
   };
+  const [existing] = await transaction
+    .select()
+    .from(scheduledWakeRegistrations)
+    .where(
+      and(
+        eq(scheduledWakeRegistrations.worldId, wake.worldId),
+        eq(scheduledWakeRegistrations.dedupeKey, wake.dedupeKey),
+      ),
+    )
+    .for("update");
+  if (existing) {
+    const persisted = toRegistration(existing);
+    if (
+      persisted.wakeId !== wake.wakeId ||
+      persisted.residentId !== wake.residentId ||
+      persisted.wakeReason !== wake.wakeReason ||
+      persisted.dueWorldTime !== wake.dueWorldTime ||
+      persisted.policyVersion !== wake.policyVersion
+    ) {
+      throw new ScheduledWakeStoreError(
+        "WAKE_REGISTRATION_CONFLICT",
+        `Scheduled wake dedupe key ${wake.dedupeKey} is already registered with different content`,
+      );
+    }
+    const [updated] = await transaction
+      .update(scheduledWakeRegistrations)
+      .set({
+        sourceStateVersion: wake.sourceStateVersion,
+        sourceWorldSeq: BigInt(wake.sourceWorldSeq),
+        decisionEpoch: wake.decisionEpoch,
+      })
+      .where(eq(scheduledWakeRegistrations.wakeId, wake.wakeId))
+      .returning();
+    if (!updated) {
+      throw new ScheduledWakeStoreError(
+        "INVALID_WAKE",
+        "Scheduled work boundary wake could not be refreshed",
+      );
+    }
+    return toRegistration(updated);
+  }
   return registerScheduledWakeInTransaction(transaction, wake);
 }
 

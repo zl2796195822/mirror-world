@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { M0_FIXTURE_IDS, generateResidentSeed } from "@mirror/db";
 import {
   NEED_POLICY_V1,
+  NEED_EFFECTS_POLICY_VERSION,
+  applyCompletedNeedEffectToNeedAnchor,
   applySleepCompletionToNeedAnchor,
   evaluateNeeds,
   evaluateResidentsNeeds,
@@ -178,6 +180,67 @@ describe("M3-T02 needs evaluator", () => {
     expect(nextAnchor.restPressure).toBeLessThan(anchor.restPressure);
     expect(nextAnchor.hungerPressure).toBeGreaterThan(anchor.hungerPressure);
     expect(nextAnchor.socialPressure).toBeGreaterThan(anchor.socialPressure);
+  });
+
+  it("applies an accepted EAT effect at the completion boundary", () => {
+    const completedAt = new Date("2026-09-08T00:30:00.000Z");
+    const before = evaluateNeeds({
+      worldId,
+      currentWorldTime: completedAt,
+      status: "RUNNING",
+      resident,
+      anchor,
+    });
+    const nextAnchor = applyCompletedNeedEffectToNeedAnchor({
+      worldId,
+      resident,
+      anchor,
+      completedAtWorldTime: completedAt,
+      effect: {
+        policyVersion: NEED_EFFECTS_POLICY_VERSION,
+        kind: "HUNGER_PRESSURE_RELIEF",
+        quantity: 1,
+        reliefPoints: 55,
+      },
+    });
+
+    expect(nextAnchor).toMatchObject({
+      activity: "AWAKE",
+      worldTime: completedAt,
+      hungerPressure: Math.max(0, before.hungerPressure - 55),
+    });
+    expect(nextAnchor.socialPressure).toBe(before.socialPressure);
+  });
+
+  it("applies a TALK effect to the next social evaluation and rejects invalid effects", () => {
+    const completedAt = new Date("2026-09-08T00:30:00.000Z");
+    const nextAnchor = applyCompletedNeedEffectToNeedAnchor({
+      worldId,
+      resident,
+      anchor,
+      completedAtWorldTime: completedAt,
+      effect: {
+        policyVersion: NEED_EFFECTS_POLICY_VERSION,
+        kind: "SOCIAL_PRESSURE_RELIEF",
+        reliefPoints: 35,
+      },
+    });
+
+    expect(nextAnchor.socialPressure).toBe(0);
+    expect(() =>
+      applyCompletedNeedEffectToNeedAnchor({
+        worldId,
+        resident,
+        anchor,
+        completedAtWorldTime: completedAt,
+        effect: {
+          policyVersion: NEED_EFFECTS_POLICY_VERSION,
+          kind: "HUNGER_PRESSURE_RELIEF",
+          quantity: 2,
+          reliefPoints: 55,
+        },
+      }),
+    ).toThrow("Need effect payload is invalid");
   });
 
   it("exposes the policy version instead of hiding calibration changes", () => {

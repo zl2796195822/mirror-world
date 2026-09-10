@@ -7,14 +7,13 @@
 | Registry key    | `M3-BEHAVIORAL-LIFECYCLE-EXTENSION`                                                                                                  |
 | Numeric task ID | None assigned by governance                                                                                                          |
 | Formal ID       | `FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`                                                                                          |
-| Status          | `REGISTERED / NOT_STARTED`                                                                                                           |
+| Status          | `LOCAL_VERIFICATION_PASS_CI_PENDING`                                                                                                 |
 | Milestone       | M3                                                                                                                                   |
 | Prerequisites   | `ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY`, `ADR-M3-TALK-PAIRED-RUNTIME-LOCK`                                                         |
 | Frozen scope    | [20 Formal Implementation Task Specification](../verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/20_IMPLEMENTATION_TASK_SPEC.md) |
 
-This registration freezes the next implementation boundary. It is not an
-implementation authorization for this governance task; the task stops after
-registration.
+The implementation is complete against the frozen scope locally. Formal task
+closure remains pending until the pushed branch has a successful CI run.
 
 ## Scope
 

@@ -5,9 +5,11 @@ import type {
   ReplanDecision,
 } from "@mirror/contracts";
 import {
+  applyCompletedNeedEffectToNeedAnchor,
   applySleepCompletionToNeedAnchor,
   evaluateNeeds,
   type NeedAnchor,
+  type NeedEffect,
   type NeedState,
   type ResidentNeedProfile,
 } from "./needs.js";
@@ -425,6 +427,10 @@ export type ActionLoopObservationV2 = Omit<
 
 export type ActionLoopStepInputV2 = Omit<ActionLoopStepInput, "observation"> & {
   observation: ActionLoopObservationV2;
+  completedNeedEffect?: Readonly<{
+    completedAtWorldTime: Date;
+    effect: NeedEffect;
+  }>;
 };
 
 export type ActionLoopStepResultV2 = Readonly<{
@@ -547,11 +553,20 @@ export async function runResidentActionLoopStepV2(
       },
     },
   };
-  const anchor = ensureAnchor(
+  const storedAnchor = ensureAnchor(
     input.needAnchors,
     observation.residentId,
     world.worldTime,
   );
+  const anchor = input.completedNeedEffect
+    ? applyCompletedNeedEffectToNeedAnchor({
+        worldId: world.id,
+        resident: needProfile,
+        anchor: storedAnchor,
+        completedAtWorldTime: input.completedNeedEffect.completedAtWorldTime,
+        effect: input.completedNeedEffect.effect,
+      })
+    : storedAnchor;
   const needState = evaluateNeeds({
     worldId: world.id,
     currentWorldTime: world.worldTime,

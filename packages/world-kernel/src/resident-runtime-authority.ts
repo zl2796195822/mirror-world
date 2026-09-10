@@ -14,6 +14,7 @@ import {
 import {
   readResidentRuntimeStateRows,
   type ResidentRuntimeStateDatabase,
+  type ResidentRuntimeStateRow,
 } from "@mirror/db";
 
 export const M3_RUNTIME_STATE_POLICY = {
@@ -52,14 +53,10 @@ function assertInput(input: {
   }
 }
 
-function activityFromRow(row: {
-  currentActivity: string;
-  activityInstanceId: string | null;
-  activityTargetLocationId: string | null;
-  activityTargetResidentId: string | null;
-  activityStartedAtWorldTime: Date | null;
-  activityDueAtWorldTime: Date | null;
-}): ResidentActivity {
+function activityFromRow(
+  row: ResidentRuntimeStateRow,
+  participantRow?: ResidentRuntimeStateRow,
+): ResidentActivity {
   if (row.currentActivity === "IDLE") {
     if (
       row.activityInstanceId !== null ||
@@ -142,7 +139,19 @@ function activityFromRow(row: {
   if (row.currentActivity === "TALKING") {
     if (
       row.activityTargetLocationId !== null ||
-      row.activityTargetResidentId === null
+      row.activityTargetResidentId === null ||
+      !participantRow ||
+      participantRow.worldId !== row.worldId ||
+      participantRow.runtimePolicyVersion !== RUNTIME_STATE_POLICY_VERSION ||
+      participantRow.currentActivity !== "TALKING" ||
+      participantRow.currentLocationId !== row.currentLocationId ||
+      participantRow.activityInstanceId !== row.activityInstanceId ||
+      participantRow.activityTargetResidentId !== row.residentId ||
+      participantRow.activityTargetLocationId !== null ||
+      participantRow.activityStartedAtWorldTime?.getTime() !==
+        row.activityStartedAtWorldTime.getTime() ||
+      participantRow.activityDueAtWorldTime?.getTime() !==
+        row.activityDueAtWorldTime.getTime()
     ) {
       throw new ResidentRuntimeAuthorityError(
         "RUNTIME_STATE_UNAVAILABLE",
@@ -330,6 +339,19 @@ export function createPostgresResidentRuntimeStateReadPort(
       const rowsByResidentId = new Map(
         rows.map((row) => [row.residentId, row]),
       );
+      const participantIds = rows.flatMap((row) =>
+        row.currentActivity === "TALKING" && row.activityTargetResidentId
+          ? [row.activityTargetResidentId]
+          : [],
+      );
+      const participantRows = await readResidentRuntimeStateRows(database, {
+        worldId: input.worldId,
+        residentIds: [...new Set(participantIds)],
+      });
+      const runtimeRowsByResidentId = new Map([
+        ...rowsByResidentId,
+        ...participantRows.map((row) => [row.residentId, row] as const),
+      ]);
 
       return [...query.residentIds].sort().map((residentId) => {
         const resident = residentsById.get(residentId);
@@ -387,7 +409,12 @@ export function createPostgresResidentRuntimeStateReadPort(
               key: location.key,
               kind: location.kind,
             },
-            activity: activityFromRow(row),
+            activity: activityFromRow(
+              row,
+              row.activityTargetResidentId
+                ? runtimeRowsByResidentId.get(row.activityTargetResidentId)
+                : undefined,
+            ),
             stateVersion: row.stateVersion,
             sourceWorldSeq: row.sourceWorldSeq.toString(),
           },
