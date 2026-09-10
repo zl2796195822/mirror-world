@@ -258,4 +258,4 @@
 - 完成正式治理：冻结 spec 已 promote 至 main 输入；`ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY` 与 `ADR-M3-TALK-PAIRED-RUNTIME-LOCK` Accepted；未实现 lifecycle 或 T05。
 - EAT 只使用单一 Kernel/PostgreSQL food resource seam 与 start-time CAS；TALK 保持 single initiator、participant reference、world-first + resident UUID-byte paired lock；WORK 为 attendance-only、`ADR_NOT_REQUIRED`。
 - 注册 `M3 Behavioral Lifecycle Extension`，不发明数字 task ID，formal ID 为 `FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；注册 `M3-LIFECYCLE-STORY-GATE` 与 `M3-T05 = DEFINED / NOT_STARTED`。
-- 治理任务未修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05 或 M4/M5/M6。最终状态以 main CI Success 为准。
+- 治理任务未修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05 或 M4/M5/M6。`foundation-ci` run `34433236275` 对治理提交 `69fcf40b83fea3b30428ea87997c8458935a0bdc` 为 `Success`。

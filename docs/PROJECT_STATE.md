@@ -103,7 +103,7 @@ Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 - `ADR-M3-TALK-PAIRED-RUNTIME-LOCK` 已由 `docs/adr/ADR-0012-m3-talk-paired-runtime-lock.md` Accepted；保持单 initiator + participant reference，world-first 后按 resident UUID bytes 锁定两行，shared activity 与单一 completion，核心 ActionRequest/Event Ledger 不变。
 - WORK 复用 employment + UTC work-obligation read model，attendance-only、NO PAYROLL，判定 `ADR_NOT_REQUIRED`。新增 ADR index 为 `docs/adr/README.md`。
 - 正式注册 `M3 Behavioral Lifecycle Extension`，无自创永久数字编号：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；同步注册 `M3-LIFECYCLE-STORY-GATE = DEFINED / NOT_STARTED`，并将 `M3-T05 = DEFINED / NOT_STARTED`、定义状态 `CLARIFIED_AND_MACHINE_GATED`。
-- 本治理任务没有修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05、M4/M5/M6。验证报告为 `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`；最终 CI 结果需以 main 同步后的 Success 为准。
+- 本治理任务没有修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05、M4/M5/M6。验证报告为 `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`；`foundation-ci` run `34433236275` 对治理提交 `69fcf40b83fea3b30428ea87997c8458935a0bdc` 为 `Success`。
 
 ## In progress
 

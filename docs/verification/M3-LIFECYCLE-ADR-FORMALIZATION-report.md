@@ -2,8 +2,9 @@
 
 ## Status
 
-`ADR_FORMALIZATION_COMPLETE` is conditional on the final governance commit
-being on `origin/main` with a successful `foundation-ci` run. This report is
+`ADR_FORMALIZATION_COMPLETE` is recorded for the governance payload at
+`69fcf40b83fea3b30428ea87997c8458935a0bdc`, which is on `origin/main` and has
+a successful `foundation-ci` run. This report is
 the governance evidence record; it does not implement M3 lifecycle behavior,
 run M3-T05, or claim M3 PASS.
 
@@ -104,9 +105,9 @@ under `docs/tasks/`; the ADR index is `docs/adr/README.md`.
 | ADR status/required sections | PASS (Decision, alternatives, boundary, durability, transaction, idempotency, replay, failure, compatibility, consequences, migration, tests) |
 | Task registry JSON           | PASS (three entries, unique registry keys, valid order/statuses, no numeric invention)                                                        |
 | Markdown link validation     | PASS (all new relative links resolve)                                                                                                         |
-| Prettier                     | pending final governance commit                                                                                                               |
-| `git diff --check`           | pending final governance commit                                                                                                               |
-| CI                           | pending final main synchronization                                                                                                            |
+| Prettier                     | PASS (`prettier --check`, full repository)                                                                                                    |
+| `git diff --check`           | PASS                                                                                                                                          |
+| CI                           | `foundation-ci` run `34433236275`, commit `69fcf40b83fea3b30428ea87997c8458935a0bdc`, `Success`                                               |
 
 ## Stop boundary
 
