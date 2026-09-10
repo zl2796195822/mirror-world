@@ -252,3 +252,10 @@
 - 冻结 EAT/WORK/TALK 的 Kernel-backed `STARTED → COMPLETED` 生命周期、M3-T04 candidate/action-loop 扩展、scheduler/due-wake、typed events、replay/checkpoint 与机器化 Story Sanity gate；未实现生产代码、schema、migration 或 M3-T05。
 - BUY 明确保持 M3 declared-but-non-executable，完整 settlement 属于 M6；M3 仍为 `IN_PROGRESS`，剩余 P1 为 lifecycle implementation + extended gate 与 M3-T05 execution。
 - 两项实现前 ADR 注册/接受仍是前置门：EAT consumable capability 与 TALK paired runtime lock。下一正式任务为 `M3 Behavioral Lifecycle Extension`（`TASK_ID_PENDING_FORMAL_REGISTRATION`）。
+
+## 2026-09-10 M3 Lifecycle ADR Formalization
+
+- 完成正式治理：冻结 spec 已 promote 至 main 输入；`ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY` 与 `ADR-M3-TALK-PAIRED-RUNTIME-LOCK` Accepted；未实现 lifecycle 或 T05。
+- EAT 只使用单一 Kernel/PostgreSQL food resource seam 与 start-time CAS；TALK 保持 single initiator、participant reference、world-first + resident UUID-byte paired lock；WORK 为 attendance-only、`ADR_NOT_REQUIRED`。
+- 注册 `M3 Behavioral Lifecycle Extension`，不发明数字 task ID，formal ID 为 `FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；注册 `M3-LIFECYCLE-STORY-GATE` 与 `M3-T05 = DEFINED / NOT_STARTED`。
+- 治理任务未修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05 或 M4/M5/M6。最终状态以 main CI Success 为准。

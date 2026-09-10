@@ -1,0 +1,281 @@
+# ADR-0012 M3 TALK Paired Runtime Lock
+
+Status: Accepted
+Date: 2026-09-10
+Milestone: M3 Behavioral Lifecycle Extension prerequisite
+Decision ID: `ADR-M3-TALK-PAIRED-RUNTIME-LOCK`
+
+## Context
+
+The frozen M3 Lifecycle & Story Sanity specification requires a legal,
+structured TALK:
+
+```text
+TALK(participantId)
+  -> one initiator ActionRequest
+  -> both residents TALKING
+  -> 15 World Minutes
+  -> one shared completion
+```
+
+The current ActionRequest already supports one actor plus `participantId`, and
+the current `resident_runtime_states` table is the durable location/activity
+authority. It currently has no paired target field and the current executor
+only runs MOVE/SLEEP. The correctness risk is a reciprocal A→B/B→A race: a
+check-then-update implementation could leave one resident TALKING and the
+other idle, or commit two contacts.
+
+This decision is the formal prerequisite for implementation. It does not
+implement TALK, add a migration, add dialogue, or claim M3 completion.
+
+## Evidence reviewed
+
+- Frozen input: `docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/06_TALK_FORMAL_SPEC.md`.
+- Frozen common, scheduler, event, replay, and compatibility boundaries in
+  `03_LIFECYCLE_COMMON_CONTRACT.md`, `09_SCHEDULER_DUE_WAKE_EXTENSION.md`,
+  `11_EVENT_REGISTRY_EXTENSION.md`, `12_REPLAY_EXTENSION_SPEC.md`, and
+  `25_M4_M5_COMPATIBILITY_BOUNDARY.md`.
+- Existing authority: `docs/adr/ADR-0003-m2-t02-action-contract.md`,
+  `ADR-0005-m2-t04-event-ledger.md`, `ADR-0008-pre-al-01-kernel-action-outcome.md`,
+  and `ADR-0010-pre-al-07-deterministic-scheduler.md`.
+- Current code audit: runtime state is world/resident scoped and fenced by
+  `state_version`; scheduler due work is rebuildable and the Outcome store
+  already supports ordered event association.
+
+No reviewed source requires a multi-actor ActionRequest or a change to the
+core Event Ledger transaction/sequence structure.
+
+## Decision
+
+### 1. Actor and request model
+
+The initiator remains the sole ActionRequest actor:
+
+```text
+actorId = initiator ActorRef.actorId
+parameters.participantId = participant ActorRef.actorId
+message = omitted by M3 rule candidates
+```
+
+The participant is a stable target reference resolved through the same
+world-local ActorRef/resident mapping. It is a co-occupant of the runtime
+activity, not a second ActionRequest actor. The strict ActionRequest contract
+and idempotency boundary do not change.
+
+At START the Kernel resolves and validates both resident IDs under the
+request's `worldId`: both exist and are active, are different residents, are
+in the same world and current location, and are both `IDLE`. The participant
+cannot be selected from another world or from input order.
+
+### 2. Paired lock and atomic start
+
+The Kernel uses the existing PostgreSQL transaction and runtime table. The
+lock order is deterministic and independent of who initiated the request:
+
+```text
+world row
+  -> min(resident UUID bytes) runtime row
+  -> max(resident UUID bytes) runtime row
+```
+
+The implementation must acquire both runtime row locks through one explicit
+Kernel helper in that order. PostgreSQL UUID byte ordering is the canonical
+comparison; caller/request order is never the lock order. The transaction then
+re-reads both rows and validates world, active status, location, activity,
+state versions, participant identity, and the action request before changing
+either row.
+
+Only after all checks pass does one transaction:
+
+- set both rows to `TALKING`;
+- set both rows to the same deterministic activity instance ID and due World
+  Time;
+- set the initiator row's `activity_target_resident_id` to the participant;
+- set the participant row's target to the initiator;
+- append one `RESIDENT_TALK_STARTED` event and persist one committed start
+  outcome.
+
+The runtime schema extension adds nullable `activity_target_resident_id` to
+the existing `resident_runtime_states` authority. The activity check must
+require reciprocal target IDs for `TALKING`, no target location, valid start /
+due times, and no target metadata for `IDLE`. No second runtime authority or
+generic activity JSON is introduced.
+
+### 3. Deadlock and reciprocal race behavior
+
+An A→B and B→A submission both use the same world-first, UUID-byte lock
+ordering. They cannot deadlock due to opposite caller order. Once one
+transaction commits both rows to `TALKING`, the other transaction re-reads a
+non-idle row and returns the existing deterministic conflict/reobserve result.
+
+At most one request can commit the paired activity. The loser is handled by
+the existing bounded `STALE_STATE`/`REOBSERVE_NOW` policy; no unbounded retry,
+second participant, or automatic new idempotency key is created.
+
+### 4. Shared activity and due ownership
+
+`activityInstanceId = actionRequest.id`. The ID is already the stable
+activity identity for the existing MOVE/SLEEP lifecycle and is deterministic
+for the rule-generated M3 request. It is not a random UUID generated by the
+paired lock. The request ID is correlation identity, not a new business fact.
+
+Both runtime rows carry the same instance ID and due time. There is no
+separate durable activity table. The existing runtime due source returns two
+rows, and `m3-scheduler-v2` coalesces them by `activityInstanceId` into one
+canonical completion item owned by the initiator request. The scheduler still
+owns only WHEN; it never chooses TALK or mutates either row.
+
+### 5. Completion ownership and atomic release
+
+The due item calls the same Kernel completion boundary with the initiator
+request/activity identity and state-version fence. Completion locks the world
+and both runtime rows in the same canonical order, then validates:
+
+- the committed start outcome belongs to the same world/request;
+- both rows are `TALKING` with the same activity instance;
+- each target points to the other resident;
+- both due times and the target World Time are valid;
+- neither row has been changed by a stale work item.
+
+On success, one transaction appends one `RESIDENT_TALK_COMPLETED` event to the
+same Kernel Outcome, records the versioned social-contact effect, clears both
+rows to `IDLE`, clears both target fields, and increments both state versions.
+
+An early completion is `NOT_DUE`. An already completed request is `REUSED`.
+A duplicate participant due row cannot create a second completion because the
+shared activity identity and outcome event count are checked inside the
+Kernel transaction.
+
+M3 has no normal participant STOP, move, or deactivation while a paired TALK
+is active. A corrupted or externally stale pair is an integrity failure: the
+transaction rolls back and emits no partial release. A future cancellation
+transition requires a separate accepted decision.
+
+### 6. Event model
+
+One TALK has exactly one typed event per phase, not one event per resident:
+
+- `RESIDENT_TALK_STARTED`, actor = initiator, target = participant;
+- `RESIDENT_TALK_COMPLETED`, actor = initiator, target = participant.
+
+The payload contains the participant resident/ActorRef identity, shared
+activity instance, source location, start/due/completion World Times, duration
+`15`, and `m3-lifecycle-semantics-v1`. The existing Outcome event-association
+table records these events in order; no new contiguous-event assumption or
+core ledger structure is added. Interleaved events from other residents may
+produce world sequence gaps between the two references, as already allowed by
+the accepted Outcome contract.
+
+The expanded `m3-domain-event-registry-v2` validates the exact TALK event
+pair. The replay reducer requires both resident projections, validates the
+same-world/co-location/reciprocal-target transition, and updates both
+projections from the one event. Live, full replay, checkpoint suffix replay,
+and genesis rebuild therefore use the same one-event-per-phase semantics.
+Unknown, wrong-world, missing-participant, malformed, or half-pair events fail
+closed. Historical v1 MOVE/SLEEP replay is not rewritten.
+
+### 7. Social effect and exclusions
+
+`RESIDENT_TALK_COMPLETED` is a structured contact fact. Under
+`m3-need-effects-v1` it contributes `35` `SocialPressure` relief to both
+residents at completion. `SocialPressure` remains derived and no direct Life
+Engine write is performed.
+
+M3 does not create or mutate relationship, affinity, familiarity, trust,
+conflict, Memory, transcript, dialogue, summary, prompt, model output, or LLM
+state. M4 may consume the structured contact event for Relationship/Memory
+work; M5 may later own Dialogue/Agent behavior. Neither future milestone may
+reinterpret this ADR as already providing those capabilities.
+
+## Failure, restart, and isolation rules
+
+- self, missing, inactive, cross-world, or unknown participant: deterministic
+  rejection; no retry loop;
+- different location or busy participant: reobserve or bounded defer using
+  `m3-replan-v1`;
+- reciprocal race: one committed winner, one conflict/reobserve loser;
+- same request/key and fingerprint: `REUSED`; different payload: immutable
+  `IDEMPOTENCY_CONFLICT`;
+- early completion: `NOT_DUE`; duplicate completion: existing outcome reuse;
+- pause/maintenance: no due completion or World-Time advance;
+- stale driver fence, stale state version, or completion corruption: fail
+  closed with transaction rollback and no half-locked pair.
+
+On restart, the runtime rows are re-queried as the durable due source. The
+in-memory work list may be discarded. Duplicate rows are coalesced by the
+shared instance ID, and only the initiator-owned item calls completion.
+
+World isolation is enforced by the composite runtime identity, request world,
+world-local ActorRef resolution, event world foreign keys, and replay world
+checks. Resident isolation is enforced by the two explicit resident IDs and
+the reciprocal target invariant.
+
+## Alternatives considered and rejected
+
+- **Update A then B:** rejected; it permits half-locked state.
+- **Lock in request order:** rejected; reciprocal submissions can deadlock.
+- **Two ActionRequests or a multi-actor contract:** rejected; the participant
+  is a target/co-occupant and the frozen single-initiator contract is enough.
+- **Best-effort application lock:** rejected; restart/process failure would
+  lose the authority and it cannot protect PostgreSQL facts.
+- **One event per resident:** rejected; it creates a mismatch between live and
+  replay semantics and duplicates one contact fact.
+- **Separate durable shared activity table:** rejected for M3; the existing
+  runtime rows plus event/outcome identity are sufficient and keep the
+  scheduler due source rebuildable.
+
+## Migration impact
+
+`IMPLEMENTATION_MIGRATION_REQUIRED`. This governance task creates no
+migration. The implementation must extend the existing
+`resident_runtime_states` table and its activity check with the paired target
+field and `TALKING` invariant, preserving current IDLE/TRAVELING/SLEEPING
+rows. No second runtime table is allowed.
+
+## Consequences
+
+Positive:
+
+- Reciprocal TALK has a single atomic correctness boundary with deterministic
+  lock ordering and restart-safe due ownership.
+- One typed event per phase gives one live/replay meaning and a structured
+  future M4/M5 seam.
+- The existing ActionRequest, Outcome, Event Ledger, runtime, scheduler, and
+  bounded recovery contracts remain the owners of their current concerns.
+
+Negative:
+
+- Every TALK start/completion holds two runtime row locks and requires a
+  runtime schema extension.
+- Paired corruption has no implicit repair or refund-like compensation; it
+  stops closed until a separately authorized policy exists.
+- The participant cannot independently act while the shared activity is
+  active, by design.
+
+## Required tests
+
+The implementation must prove, with clean PostgreSQL and unit contracts:
+
+- same-world, distinct, active, same-location, both-idle validation;
+- canonical UUID-byte lock ordering and reciprocal A→B/B→A concurrency with
+  one success, one deterministic reject/conflict, no deadlock, and no half
+  pair;
+- shared activity identity, one due item, exact `15` World Minute boundary,
+  atomic paired release, duplicate completion, and restart/requery;
+- stale versions, pause/maintenance, fence loss, rollback, and bounded
+  failure/replan behavior;
+- one STARTED and one COMPLETED event, ordered Outcome refs, typed payload
+  negatives, full/suffix/genesis replay equivalence, and checkpoint deletion;
+- `35` social-pressure effect to both without relationship, Memory, dialogue,
+  or LLM writes;
+- cross-world/resident isolation and accepted BUY/settlement absence.
+
+This ADR is accepted as a governance decision only. It does not mean any of
+these tests or the TALK implementation has run.
+
+## Documents to update
+
+- `docs/PROJECT_STATE.md` and `MEMORY.md` with the accepted ADR and registered
+  next task, without claiming implementation or M3 PASS.
+- `docs/adr/README.md` with this decision ID and status.
+- `docs/tasks/task-registry.json` and the M3 task documents.

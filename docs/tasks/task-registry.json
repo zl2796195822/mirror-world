@@ -1,0 +1,46 @@
+{
+  "registryVersion": "m3-formal-task-registry-v1",
+  "updatedAt": "2026-09-10",
+  "milestone": "M3",
+  "milestoneStatus": "IN_PROGRESS",
+  "entries": [
+    {
+      "registryKey": "M3-BEHAVIORAL-LIFECYCLE-EXTENSION",
+      "id": "FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID",
+      "name": "M3 Behavioral Lifecycle Extension",
+      "kind": "IMPLEMENTATION",
+      "status": "REGISTERED / NOT_STARTED",
+      "nextAllowedFormalTask": true,
+      "prerequisites": [
+        "ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY",
+        "ADR-M3-TALK-PAIRED-RUNTIME-LOCK"
+      ],
+      "definition": "docs/tasks/M3-behavioral-lifecycle-extension.md",
+      "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/20_IMPLEMENTATION_TASK_SPEC.md"
+    },
+    {
+      "registryKey": "M3-LIFECYCLE-STORY-GATE",
+      "id": "M3-LIFECYCLE-STORY-GATE",
+      "name": "M3-LIFECYCLE-STORY-GATE",
+      "kind": "VERIFICATION_GATE",
+      "status": "DEFINED / NOT_STARTED",
+      "nextAllowedFormalTask": false,
+      "after": "M3-BEHAVIORAL-LIFECYCLE-EXTENSION",
+      "definition": "docs/tasks/M3-lifecycle-story-gate.md",
+      "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/14_PRE_AL_GATE_RERUN_DECISION.md"
+    },
+    {
+      "registryKey": "M3-T05",
+      "id": "M3-T05",
+      "name": "Story Sanity Report",
+      "kind": "VERIFICATION_TASK",
+      "status": "DEFINED / NOT_STARTED",
+      "definitionStatus": "CLARIFIED_AND_MACHINE_GATED",
+      "previousStatus": "EXISTS_BUT_NOT_COMPLETED",
+      "nextAllowedFormalTask": false,
+      "after": "M3-LIFECYCLE-STORY-GATE",
+      "definition": "docs/tasks/M3-T05-story-sanity.md",
+      "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/19_M3_T05_FORMAL_TASK_SPEC.md"
+    }
+  ]
+}

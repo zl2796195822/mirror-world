@@ -1,8 +1,8 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: PRE-AL-GATE Pre-Action-Loop Final Gate (completed)
-Status: PRE-AL-GATE = PASS; M3-T04 = PASS; PRE-AL-07 = PASS; PRE-AL-06 = PASS; PRE-AL-05 = PASS; PRE-AL-04 = PASS; PRE-AL-03 = PASS; PRE-AL-02 = PASS; PRE-AL-01 = PASS; PRE-AL-00 = PASS; M3 remains IN_PROGRESS
+Current task: M3 Lifecycle ADR Formalization & Formal Task Registration (completed)
+Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 remains IN_PROGRESS
 Last verified implementation commit: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 
@@ -96,6 +96,15 @@ Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 - PRE-AL-GATE fault/recovery evidence 通过：pause/resume、stale driver rejection/takeover、wake restart/requery/ack、ActionRequest/completion idempotency、poison resident bounded STOP=3 且其余 29 人继续、world/resident isolation、zero-LLM。
 - implementation main CI `foundation-ci` run `34363874063` 对 commit `15d2b25733ba44c7dcd43dbc3e4fe60babc1b651` 为 `Success`；完整 report 为 `docs/verification/PRE-AL-GATE-report.md`，机器证据在 `docs/verification/artifacts/PRE-AL-GATE/`。
 
+## 2026-09-10 M3 Lifecycle ADR Formalization
+
+- 冻结规格已从 `spec/m3-lifecycle-story-sanity-v1` 的 `292850f80792f42a2dd6d42c5d2c78bb1e6683b0` 至 final tip `0b667c3e6cd6da29b50b625e8e956bfbc88d88dd` 审计并 promote；只包含 spec/docs/governance 与 7 行事实性 MEMORY 记录，冻结语义未改。
+- `ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY` 已由 `docs/adr/ADR-0011-m3-eat-kernel-consumable-capability.md` Accepted；资源真相为单一 Kernel/PostgreSQL world/resident/item food seam，`ResourceReadPort` 保持只读，CAS 与事件/Outcome 在同一 Kernel transaction，M6 不得创建第二库存真相。
+- `ADR-M3-TALK-PAIRED-RUNTIME-LOCK` 已由 `docs/adr/ADR-0012-m3-talk-paired-runtime-lock.md` Accepted；保持单 initiator + participant reference，world-first 后按 resident UUID bytes 锁定两行，shared activity 与单一 completion，核心 ActionRequest/Event Ledger 不变。
+- WORK 复用 employment + UTC work-obligation read model，attendance-only、NO PAYROLL，判定 `ADR_NOT_REQUIRED`。新增 ADR index 为 `docs/adr/README.md`。
+- 正式注册 `M3 Behavioral Lifecycle Extension`，无自创永久数字编号：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；同步注册 `M3-LIFECYCLE-STORY-GATE = DEFINED / NOT_STARTED`，并将 `M3-T05 = DEFINED / NOT_STARTED`、定义状态 `CLARIFIED_AND_MACHINE_GATED`。
+- 本治理任务没有修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05、M4/M5/M6。验证报告为 `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`；最终 CI 结果需以 main 同步后的 Success 为准。
+
 ## In progress
 
 - M3-T01/T02/T03/T04 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 `IN_PROGRESS`。
@@ -105,7 +114,7 @@ Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 ## Blocked
 
 - `PRE-AL-GATE = PASS`；本 Gate 未发现剩余 P1 blocker。
-- `M3 = IN_PROGRESS` 保持；当前权威资料没有命名新的 M3-T05，不能据此发明后续任务或自动开始 M4+。
+- `M3 = IN_PROGRESS` 保持；M3-T05 已由冻结规格 reconciliation 正式定义为 `DEFINED / NOT_STARTED`，不得据此执行 T05 或自动开始 M4+。
 
 ## P0/P1
 
@@ -171,6 +180,8 @@ Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 - `docs/adr/ADR-0006-m2-t05-checkpoint-replay.md`：M2-T05 replay authority、checkpoint rebuildability、canonical hash 与版本边界。
 - `docs/adr/ADR-0007-m3-life-engine-needs-model-v1.md`：M3 Needs 的 CORE/DERIVED/DEFER、authority、lazy evaluation、pause、determinism、persistence/replay 与 T02 contract。
 - `docs/adr/ADR-0008-pre-al-01-kernel-action-outcome.md`：Kernel execution outcome status、调用处置/transport 分离、0/1/N event association、事务、幂等与 world isolation。
+- `docs/adr/ADR-0011-m3-eat-kernel-consumable-capability.md`：`ADR-M3-EAT-KERNEL-CONSUMABLE-CAPABILITY` Accepted；M3 EAT resource CAS seam。
+- `docs/adr/ADR-0012-m3-talk-paired-runtime-lock.md`：`ADR-M3-TALK-PAIRED-RUNTIME-LOCK` Accepted；M3 TALK paired runtime lock。
 - `docs/architecture/m3-needs-source-audit.md`：4/6/7 Needs 定义来源逐项审计。
 
 ## Verification report
@@ -205,10 +216,12 @@ Last verified main/doc baseline: 15d2b25733ba44c7dcd43dbc3e4fe60babc1b651
 - `docs/verification/PRE-AL-07-RES-M3-003-COMPATIBILITY.md`（RES-M3-003 compatibility matrix）
 - `docs/verification/PRE-AL-07-report.md`（PRE-AL-07 = PASS；deterministic scheduler/driver）
 - `docs/verification/PRE-AL-GATE-report.md`（PRE-AL-GATE = PASS；M3 仍 IN_PROGRESS）
+- `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`（治理完成记录；不含 lifecycle/T05 实现）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
-- `PRE-AL-GATE = PASS`；`M3 = IN_PROGRESS` remains.
-- 当前权威资料没有命名新的 `M3-T05` 或其他后续 M3 实现任务；只允许在获得明确授权后做 M3 final-status review。
+- `M3-LIFECYCLE-ADR-FORMALIZATION = PASS`；`M3 = IN_PROGRESS` remains.
+- `NEXT_ALLOWED_FORMAL_TASK = M3 Behavioral Lifecycle Extension`，正式 ID 为 `FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；当前状态 `REGISTERED / NOT_STARTED`。
+- 后续顺序固定为 `M3 Behavioral Lifecycle Extension` → `M3-LIFECYCLE-STORY-GATE` → `M3-T05` → `M3 Final Status Review #2`；本状态文件不授权自动执行。
 - 不执行 M4/M5/M6/M7/M8/M9/M10，不修改冻结 research worktree，不把本 Gate 扩展为 Economy/Memory/Relationship/AI/3D 或规模验收。
