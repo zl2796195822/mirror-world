@@ -20,7 +20,7 @@ This result is not `M3 PASS`, `IMPLEMENTED`, or `M3-T05 PASS`.
 | Baseline                         | latest main; clean; historical PRE-AL-GATE artifacts retained                                                                                    |
 | Branch                           | `spec/m3-lifecycle-story-sanity-v1`                                                                                                              |
 | Worktree                         | `/Users/alin/AI项目/mirror-world-m3-lifecycle-story-spec`                                                                                        |
-| Spec commit                      | `292850f`                                                                                                                                         |
+| Spec commit                      | `292850f`                                                                                                                                        |
 | CI                               | not triggered by branch push; workflow triggers only `main` push or Pull Request; historical main CI `34368050309` was Success                   |
 | M3 current status                | `IN_PROGRESS`                                                                                                                                    |
 | Remaining P1                     | EAT/WORK/TALK lifecycle + expanded gate; M3-T05 execution                                                                                        |
