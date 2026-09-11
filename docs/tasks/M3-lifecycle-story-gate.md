@@ -2,16 +2,24 @@
 
 ## Registration
 
-| Field         | Value                                                                                                                                                                                                                |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ID            | `M3-LIFECYCLE-STORY-GATE`                                                                                                                                                                                            |
-| Kind          | Verification gate                                                                                                                                                                                                    |
-| Status        | `DEFINED / NOT_STARTED`                                                                                                                                                                                              |
-| Runs after    | `M3 Behavioral Lifecycle Extension`                                                                                                                                                                                  |
-| Frozen inputs | [14 PRE-AL decision](../verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/14_PRE_AL_GATE_RERUN_DECISION.md), [16 Hard Gates](../verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/16_STORY_SANITY_HARD_GATES.md) |
+| Field                         | Value                                                                                                                                                                                                                |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ID                            | `M3-LIFECYCLE-STORY-GATE`                                                                                                                                                                                            |
+| Kind                          | Verification gate                                                                                                                                                                                                    |
+| Status                        | `FAIL` (2026-09-10; Hard Gate #3)                                                                                                                                                                                    |
+| Runs after                    | `M3 Behavioral Lifecycle Extension`                                                                                                                                                                                  |
+| Frozen inputs                 | [14 PRE-AL decision](../verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/14_PRE_AL_GATE_RERUN_DECISION.md), [16 Hard Gates](../verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/16_STORY_SANITY_HARD_GATES.md) |
+| Current Hard Gate #3 contract | [Coverage Contract v2](../verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md)                                                                                                                              |
 
-This is a registered future gate, not a run performed by the current
-governance task.
+The formal run is recorded in
+[`M3-LIFECYCLE-STORY-GATE-report.md`](../verification/M3-LIFECYCLE-STORY-GATE-report.md).
+The gate is failed until an independently authorized fix or contract decision
+is completed and a new immutable run is performed.
+
+The historical run `20260910-run-08` used the frozen v1 Hard Gate #3
+predicate and remains `FAIL`. Coverage Contract v2 is an accepted clarification
+for a future run only; registration does not rerun or reclassify the historical
+run.
 
 ## Required run
 

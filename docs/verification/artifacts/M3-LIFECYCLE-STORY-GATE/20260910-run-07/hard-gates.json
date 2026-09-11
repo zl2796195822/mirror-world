@@ -1,0 +1,77 @@
+[
+  {
+    "number": 1,
+    "name": "Run endpoint",
+    "result": "PASS"
+  },
+  {
+    "number": 2,
+    "name": "Fixture integrity",
+    "result": "PASS"
+  },
+  {
+    "number": 3,
+    "name": "Accepted action coverage",
+    "result": "FAIL"
+  },
+  {
+    "number": 4,
+    "name": "Causal chain",
+    "result": "PASS"
+  },
+  {
+    "number": 5,
+    "name": "Need response",
+    "result": "PASS"
+  },
+  {
+    "number": 6,
+    "name": "Need effect",
+    "result": "PASS"
+  },
+  {
+    "number": 7,
+    "name": "Work obligation",
+    "result": "PASS"
+  },
+  {
+    "number": 8,
+    "name": "Resource conservation",
+    "result": "PASS"
+  },
+  {
+    "number": 9,
+    "name": "TALK legality / atomicity",
+    "result": "PASS"
+  },
+  {
+    "number": 10,
+    "name": "Bounded recovery",
+    "result": "PASS"
+  },
+  {
+    "number": 11,
+    "name": "Liveness",
+    "result": "PASS"
+  },
+  {
+    "number": 12,
+    "name": "Spatial / activity safety",
+    "result": "PASS"
+  },
+  {
+    "number": 13,
+    "name": "Replay equivalence",
+    "result": "PASS"
+  },
+  {
+    "number": 14,
+    "name": "Determinism",
+    "result": "PASS"
+  },
+  {
+    "number": 15,
+    "name": "Isolation / scope",
+    "result": "PASS"
+  }
+]

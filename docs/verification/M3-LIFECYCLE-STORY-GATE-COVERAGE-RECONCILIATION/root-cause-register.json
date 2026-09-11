@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "m3-story-gate-root-cause-register-v1",
+  "artifactKind": "verification-analysis-not-world-truth",
+  "generatedAt": "2026-09-10",
+  "source": {
+    "runId": "20260910-run-08",
+    "manifestHash": "af1b1f0aa120a1c66e777a6ec23686f63317a8cf0b1c66ca9aff8cf2952963c2",
+    "sourceWorktree": "/Users/alin/AI项目/镜界",
+    "sourceArtifactPath": "docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE/20260910-run-08"
+  },
+  "decisionRule": "Primary is the smallest supported causal class; secondary records a contributing contract/policy mismatch. Case sets may overlap by resident.",
+  "entries": [
+    {
+      "id": "RC-EAT-001",
+      "action": "EAT",
+      "caseCount": 5,
+      "caseUnit": "residents",
+      "primary": "CONTRACT_FIXTURE_CONFLICT",
+      "secondary": null,
+      "confidence": "CONFIRMED",
+      "evidence": [
+        "foodUnits=0 in frozen T01-derived fixture",
+        "25 positive-food residents completed 60 EAT starts",
+        "no M3 food acquisition mechanism",
+        "resource conservation PASS"
+      ],
+      "fixType": "GATE_CONTRACT_FIX",
+      "fixtureChangeRequired": false,
+      "productionChangeRequired": false,
+      "adrChangeRequired": false
+    },
+    {
+      "id": "RC-WORK-001",
+      "action": "WORK",
+      "caseCount": 23,
+      "caseUnit": "employed residents without WORK completion",
+      "primary": "SCHEDULER_WAKE_DEFECT",
+      "secondary": "POLICY_COVERAGE_MISMATCH",
+      "confidence": "SUPPORTED_SYSTEM_LEVEL_NOT_EXCLUSIVE_PER_RESIDENT",
+      "evidence": [
+        "488 workplace-directed MOVE starts are at or after 09:00",
+        "0 residents arrived before exact 09:00 boundary",
+        "4 WORK starts at exact 09:00 across 3 residents",
+        "existing bootstrap-wide WORK wake reconciliation is not used by the Gate harness"
+      ],
+      "fixType": "SCHEDULER_WAKE_FIX",
+      "fixtureChangeRequired": false,
+      "productionChangeRequired": true,
+      "adrChangeRequired": "verify governance before implementation"
+    },
+    {
+      "id": "RC-TALK-001",
+      "action": "TALK",
+      "caseCount": 6,
+      "caseUnit": "residents without observed initiator or participant contact",
+      "primary": "INSUFFICIENT_EVIDENCE",
+      "secondary": null,
+      "confidence": "UNRESOLVED_BY_ARTIFACT",
+      "evidence": [
+        "203 completed paired contacts",
+        "24 residents in initiator/participant union",
+        "candidate-stage negative rows absent"
+      ],
+      "fixType": "POLICY_FIX_AFTER_INSTRUMENTATION",
+      "fixtureChangeRequired": false,
+      "productionChangeRequired": "instrumentation required; policy not yet proven",
+      "adrChangeRequired": false
+    },
+    {
+      "id": "RC-MOVE-001",
+      "action": "MOVE",
+      "caseCount": 4,
+      "caseUnit": "residents without MOVE completion",
+      "primary": "VALID_NO_ACTION_NEEDED",
+      "secondary": null,
+      "confidence": "CONFIRMED",
+      "evidence": [
+        "all four are unemployed",
+        "all four have no workplace",
+        "no formal MOVE necessity or goal is evidenced"
+      ],
+      "fixType": "GATE_CONTRACT_FIX",
+      "fixtureChangeRequired": false,
+      "productionChangeRequired": false,
+      "adrChangeRequired": false
+    },
+    {
+      "id": "RC-GATE-001",
+      "action": "GATE-3",
+      "caseCount": 1,
+      "caseUnit": "failed hard gate",
+      "primary": "POLICY_COVERAGE_MISMATCH",
+      "secondary": "CONTRACT_FIXTURE_CONFLICT",
+      "confidence": "CONFIRMED",
+      "evidence": [
+        "original predicate requires every resident to complete every scoped action",
+        "EAT and MOVE requirements are unconditional despite eligibility/necessity differences",
+        "WORK and TALK need stage-level causal review"
+      ],
+      "fixType": "SPEC_RECONCILIATION_REQUIRED",
+      "fixtureChangeRequired": false,
+      "productionChangeRequired": false,
+      "adrChangeRequired": false
+    }
+  ],
+  "unresolvedClasses": [
+    {
+      "classification": "IMPLEMENTATION_DEFECT",
+      "status": "NOT_PROVEN",
+      "reason": "all accepted actions commit and complete; no runtime invariant failure"
+    },
+    {
+      "classification": "FIXTURE_SEMANTICS_DEFECT",
+      "status": "NOT_PROVEN",
+      "reason": "fixture hashes and T01 seed semantics pass"
+    },
+    {
+      "classification": "RESOURCE_FEASIBILITY_DEFECT",
+      "status": "NOT_PROVEN",
+      "reason": "zero-food is intentional deterministic input, not failed resource accounting"
+    },
+    {
+      "classification": "DECISION_PRIORITY_DEFECT",
+      "status": "UNPROVEN_FOR_TALK",
+      "reason": "negative candidate and score suppression evidence unavailable"
+    },
+    {
+      "classification": "TOPOLOGY_FEASIBILITY_DEFECT",
+      "status": "UNPROVEN_FOR_TALK",
+      "reason": "co-location opportunity history not persisted"
+    }
+  ],
+  "summary": {
+    "formalDecision": "MIXED_CONTRACT_AND_POLICY_FIX_REQUIRED",
+    "storySpecChangeRequired": "YES_FOR_HARD_GATE_3_CLARIFICATION_ONLY",
+    "adr0011": "ACCEPTED_UNCHANGED",
+    "adr0012": "ACCEPTED_UNCHANGED",
+    "productionImplementationFixProven": "NO_FOR_KERNEL; WORK_SCHEDULER_INTEGRATION_REQUIRES_FIX_TASK",
+    "failedRunPreserved": true
+  }
+}

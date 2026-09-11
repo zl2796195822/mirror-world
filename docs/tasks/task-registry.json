@@ -1,6 +1,6 @@
 {
-  "registryVersion": "m3-formal-task-registry-v1",
-  "updatedAt": "2026-09-10",
+  "registryVersion": "m3-formal-task-registry-v2",
+  "updatedAt": "2026-09-11",
   "milestone": "M3",
   "milestoneStatus": "IN_PROGRESS",
   "entries": [
@@ -23,11 +23,36 @@
       "id": "M3-LIFECYCLE-STORY-GATE",
       "name": "M3-LIFECYCLE-STORY-GATE",
       "kind": "VERIFICATION_GATE",
-      "status": "DEFINED / NOT_STARTED",
-      "nextAllowedFormalTask": true,
+      "status": "FAIL",
+      "nextAllowedFormalTask": false,
       "after": "M3-BEHAVIORAL-LIFECYCLE-EXTENSION",
       "definition": "docs/tasks/M3-lifecycle-story-gate.md",
-      "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/14_PRE_AL_GATE_RERUN_DECISION.md"
+      "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/14_PRE_AL_GATE_RERUN_DECISION.md",
+      "currentCoverageContract": "docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md"
+    },
+    {
+      "registryKey": "M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION",
+      "id": "M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION",
+      "name": "M3 Lifecycle Story Gate Coverage Reconciliation",
+      "kind": "GOVERNANCE_RECONCILIATION",
+      "status": "PASS",
+      "nextAllowedFormalTask": false,
+      "after": "M3-LIFECYCLE-STORY-GATE",
+      "definition": "docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION/README.md",
+      "acceptedContract": "docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md",
+      "verificationReport": "docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-DEFINITION-report.md"
+    },
+    {
+      "registryKey": "M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX",
+      "id": "M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX",
+      "name": "M3 Lifecycle Story Gate Coverage Fix",
+      "kind": "FORMAL_REMEDIATION_TASK",
+      "status": "DEFINED / NOT_STARTED",
+      "nextAllowedFormalTask": false,
+      "after": "M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION",
+      "definition": "docs/tasks/M3-lifecycle-story-gate-coverage-fix.md",
+      "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md",
+      "executionAuthorization": "EXPLICIT_USER_AUTHORIZATION_REQUIRED"
     },
     {
       "registryKey": "M3-T05",
@@ -39,6 +64,7 @@
       "previousStatus": "EXISTS_BUT_NOT_COMPLETED",
       "nextAllowedFormalTask": false,
       "after": "M3-LIFECYCLE-STORY-GATE",
+      "blockedBy": "M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX",
       "definition": "docs/tasks/M3-T05-story-sanity.md",
       "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/19_M3_T05_FORMAL_TASK_SPEC.md"
     }

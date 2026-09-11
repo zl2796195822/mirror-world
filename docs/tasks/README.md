@@ -3,11 +3,13 @@
 The machine-readable registry is [`task-registry.json`](./task-registry.json).
 This directory registers formal scope and order; it does not execute a task.
 
-| Registry entry                                                          | Status                  | Definition                                            |
-| ----------------------------------------------------------------------- | ----------------------- | ----------------------------------------------------- |
-| `M3-BEHAVIORAL-LIFECYCLE-EXTENSION` — M3 Behavioral Lifecycle Extension | `PASS`                  | [formal task](./M3-behavioral-lifecycle-extension.md) |
-| `M3-LIFECYCLE-STORY-GATE`                                               | `DEFINED / NOT_STARTED` | [formal gate](./M3-lifecycle-story-gate.md)           |
-| `M3-T05` — Story Sanity Report                                          | `DEFINED / NOT_STARTED` | [clarified task](./M3-T05-story-sanity.md)            |
+| Registry entry                                                          | Status                  | Definition                                                                                  |
+| ----------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------- |
+| `M3-BEHAVIORAL-LIFECYCLE-EXTENSION` — M3 Behavioral Lifecycle Extension | `PASS`                  | [formal task](./M3-behavioral-lifecycle-extension.md)                                       |
+| `M3-LIFECYCLE-STORY-GATE`                                               | `FAIL`                  | [formal gate](./M3-lifecycle-story-gate.md)                                                 |
+| `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION`                       | `PASS`                  | [reconciliation](../verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION/README.md) |
+| `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX`                                  | `DEFINED / NOT_STARTED` | [formal remediation](./M3-lifecycle-story-gate-coverage-fix.md)                             |
+| `M3-T05` — Story Sanity Report                                          | `DEFINED / NOT_STARTED` | [clarified task](./M3-T05-story-sanity.md)                                                  |
 
 ## Registration decisions
 
@@ -22,12 +24,20 @@ This directory registers formal scope and order; it does not execute a task.
   definition.
 - The lifecycle gate is a separate verification boundary after the
   implementation task. It is not executed by registration.
+- The failed Gate's coverage reconciliation is accepted as governance input;
+  it changes only Hard Gate #3's measurement contract for future runs.
+- The registered coverage fix is the only next remediation task. Its Work
+  preparation change and funnel evidence extension require explicit user
+  authorization before execution. No TALK policy fix is registered yet.
 
 ## Formal order
 
 ```text
 M3 Behavioral Lifecycle Extension
   -> M3-LIFECYCLE-STORY-GATE
+  -> M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION
+  -> M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX
+  -> M3-LIFECYCLE-STORY-GATE (new immutable rerun)
   -> M3-T05 Story Sanity Report
   -> M3 Final Status Review #2
 ```

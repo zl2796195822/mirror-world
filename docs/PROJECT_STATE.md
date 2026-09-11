@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3 Behavioral Lifecycle Extension (completed)
-Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 Behavioral Lifecycle Extension = PASS; M3 remains IN_PROGRESS
+Current task: M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION (completed)
+Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 Behavioral Lifecycle Extension = PASS; M3-LIFECYCLE-STORY-GATE = FAIL; coverage reconciliation = PASS; coverage fix = DEFINED / NOT_STARTED; M3 remains IN_PROGRESS
 Last verified implementation commit: 96a9576b17fe80615c9e664012e2fa0cdcb4f5b0
-Last verified main/doc baseline: 0ddceafc91c4da274f545b98742d4b69c3a9ade1
+Last verified main/doc baseline: 590d19d000fc04723028556e267cdbed362b4da8
 
 ## Completed
 
@@ -96,6 +96,17 @@ Last verified main/doc baseline: 0ddceafc91c4da274f545b98742d4b69c3a9ade1
 - PRE-AL-GATE fault/recovery evidence 通过：pause/resume、stale driver rejection/takeover、wake restart/requery/ack、ActionRequest/completion idempotency、poison resident bounded STOP=3 且其余 29 人继续、world/resident isolation、zero-LLM。
 - implementation main CI `foundation-ci` run `34363874063` 对 commit `15d2b25733ba44c7dcd43dbc3e4fe60babc1b651` 为 `Success`；完整 report 为 `docs/verification/PRE-AL-GATE-report.md`，机器证据在 `docs/verification/artifacts/PRE-AL-GATE/`。
 
+## 2026-09-10 M3-LIFECYCLE-STORY-GATE
+
+- 正式 Gate 在 latest `origin/main=590d19d000fc04723028556e267cdbed362b4da8` 上完成；preflight 确认 `HEAD == origin/main`、初始 worktree clean，`foundation-ci` run `34464740586` 为 `success`。
+- 使用三套独立 clean PostgreSQL（PostgreSQL 18.6、12 migrations、fresh seed）执行 baseline、same-seed repeat、different-seed 三次 30 residents × 43,200 World Minutes；没有删除 append-only Event Ledger。
+- Run endpoint、fixture、causal evidence、Need、WORK obligation、resource conservation、TALK atomicity、bounded recovery、liveness、spatial safety、replay、determinism、isolation 等 Gate 结果通过；Hard Gate #3 `Accepted action coverage = FAIL`，因此本 Gate 总体为 `FAIL`。
+- baseline action evidence：MOVE 950、SLEEP 702、EAT 60、WORK 4、TALK 203；5 名固定居民初始 `foodUnits=0`，11 名居民无 TALK completion，23 名就业居民无 WORK completion，4 名居民无 MOVE completion。诊断为 `RESOURCE_DEPLETION=30`、`SOCIAL_STARVATION=11`、`WORK_ABSENCE=23`。
+- baseline/repeat 均精确到达 `2026-10-07T00:00:00.000Z`、`worldSeq=10668`，different-seed 也到达目标；四路 replay projection hash 一致，same-seed digest 相同，BUY/LLM/跨世界污染均为 0。
+- 机器证据与 manifest 位于 `docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE/20260910-run-08/`；正式报告为 `docs/verification/M3-LIFECYCLE-STORY-GATE-report.md`。Run-07 作为 artifact-writer failure lineage 保留，run-08 为最终自洽 bundle。
+- `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build`、官方 npm production audit 与 clean PostgreSQL API integration 全部通过；回归通过不覆盖生命周期 Gate 的 Hard Gate #3 失败。
+- 失败分类保留为 `GATE_CONTRACT_FIXTURE_CONFLICT` 与 `POLICY_COVERAGE_MISMATCH`，没有调参、补资源、改 fixture、改工作时间、改 TALK/Hard Gate 或修改生产事实。
+
 ## 2026-09-10 M3 Lifecycle ADR Formalization
 
 - 冻结规格已从 `spec/m3-lifecycle-story-sanity-v1` 的 `292850f80792f42a2dd6d42c5d2c78bb1e6683b0` 至 final tip `0b667c3e6cd6da29b50b625e8e956bfbc88d88dd` 审计并 promote；只包含 spec/docs/governance 与 7 行事实性 MEMORY 记录，冻结语义未改。
@@ -105,6 +116,14 @@ Last verified main/doc baseline: 0ddceafc91c4da274f545b98742d4b69c3a9ade1
 - 正式注册 `M3 Behavioral Lifecycle Extension`，无自创永久数字编号：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`；同步注册 `M3-LIFECYCLE-STORY-GATE = DEFINED / NOT_STARTED`，并将 `M3-T05 = DEFINED / NOT_STARTED`、定义状态 `CLARIFIED_AND_MACHINE_GATED`。
 - 本治理任务没有修改生产代码、schema、migration、依赖或运行时测试；没有执行 EAT/WORK/TALK、30×30、M3-T05、M4/M5/M6。验证报告为 `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`；`foundation-ci` run `34433236275` 对治理提交 `69fcf40b83fea3b30428ea87997c8458935a0bdc` 为 `Success`。
 
+## 2026-09-11 M3 Story Gate Coverage Contract
+
+- 已将 `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION` 正式纳入当前主线文档，并接受 [Hard Gate #3 Coverage Contract v2](verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md)；保留冻结 v1、run-08 `FAIL` 及其 manifest/statistics/diagnostics/causal evidence/hash，不做 retroactive reclassification。
+- Hard Gate #3 v2 仅澄清计量与 predicate：`ACTION_COUNT` 与 unique initiator/participant/eligible/feasible/completed resident counts 分离；统一 funnel 为 `TOTAL → ELIGIBLE → FEASIBLE → OPPORTUNITY → CANDIDATE_GENERATED → SELECTED → REQUESTED → COMMITTED → COMPLETED`；缺失 negative funnel 记录为 `UNKNOWN` 并失败，不得静默缩小 denominator。
+- EAT 按 Need episode 与资源 feasibility 分离，zero-food 不触发伪造食物；TALK participant 计入 completed contact union 但保留 initiator 指标；MOVE 按正式 necessity/goal；SLEEP 在当前固定 manifest 保留 30/30；WORK 保持 26 employed、exact 09:00、LATE 不合法。
+- 已注册唯一后续 remediation `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`：包含 Work Preparation Wake Fix 与 EAT/TALK/MOVE/WORK funnel evidence extension；未注册未经证实的 TALK policy fix。本轮没有执行该任务、生产修复、Gate rerun 或 M3-T05。
+- 本轮验证确认 review commit `ded7c6d…` 为 read-only analysis + 23 Markdown/3 JSON；保留工作区既存正确 run-summary SHA-256，并补正 review funnel 的 `OPPORTUNITY` 阶段。验证报告为 `docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-DEFINITION-report.md`。
+
 ## In progress
 
 - M3-T01/T02/T03/T04 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 `IN_PROGRESS`。
@@ -113,7 +132,8 @@ Last verified main/doc baseline: 0ddceafc91c4da274f545b98742d4b69c3a9ade1
 
 ## Blocked
 
-- `PRE-AL-GATE = PASS`；本 Gate 未发现剩余 P1 blocker。
+- `PRE-AL-GATE = PASS`；`M3-LIFECYCLE-STORY-GATE = FAIL`，Hard Gate #3 未通过，M3 不得关闭。
+- `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`；必须由用户明确授权后执行，完成 targeted clean-PostgreSQL DoD 后才可申请新的 immutable Gate run。
 - `M3 = IN_PROGRESS` 保持；M3-T05 已由冻结规格 reconciliation 正式定义为 `DEFINED / NOT_STARTED`，不得据此执行 T05 或自动开始 M4+。
 
 ## P0/P1
@@ -218,11 +238,16 @@ Last verified main/doc baseline: 0ddceafc91c4da274f545b98742d4b69c3a9ade1
 - `docs/verification/PRE-AL-GATE-report.md`（PRE-AL-GATE = PASS；M3 仍 IN_PROGRESS）
 - `docs/verification/M3-LIFECYCLE-ADR-FORMALIZATION-report.md`（治理完成记录；不含 lifecycle/T05 实现）
 - `docs/verification/M3-BEHAVIORAL-LIFECYCLE-EXTENSION-report.md`（M3 Behavioral Lifecycle Extension = PASS；CI runs `34463283837`/`34463309484`/`34464013190`）
+- `docs/verification/M3-LIFECYCLE-STORY-GATE-report.md`（M3-LIFECYCLE-STORY-GATE = FAIL；Hard Gate #3）
+- `docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md`（Hard Gate #3 accepted governance clarification）
+- `docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-DEFINITION-report.md`（coverage reconciliation/registration governance report）
 - M0 历史报告：`docs/verification/M0-report.md`
 
 ## Next allowed task
 
 - `M3-LIFECYCLE-ADR-FORMALIZATION = PASS`；`M3 = IN_PROGRESS` remains.
-- `M3 Behavioral Lifecycle Extension`（正式 ID：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`）已完成本地 DoD 与 GitHub Actions 验证，当前状态为 `PASS`；PR #1 已合并到 main。
-- 下一允许正式任务为 `M3-LIFECYCLE-STORY-GATE`；后续顺序固定为 `M3-LIFECYCLE-STORY-GATE` → `M3-T05` → `M3 Final Status Review #2`，本状态文件不授权自动执行。
+- `M3 Behavioral Lifecycle Extension`（正式 ID：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`）保持 `PASS`；PR #1 已合并到 main。
+- `M3-LIFECYCLE-STORY-GATE = FAIL`；不存在自动下一任务。必须先由独立任务处理 Gate contract/fixture/policy coverage mismatch，再由用户明确授权新的 immutable Gate run。
+- `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION = PASS`；v2 contract 已接受，下一注册任务为 `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`，当前不执行。
+- `M3-T05 = DEFINED / NOT_STARTED`、M3 Final Status Review #2 与 M4+ 均未开始，不能因本 Gate 失败而自动进入。
 - 不执行 M4/M5/M6/M7/M8/M9/M10，不修改冻结 research worktree，不把本 Gate 扩展为 Economy/Memory/Relationship/AI/3D 或规模验收。

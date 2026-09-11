@@ -1,0 +1,10 @@
+{
+  "manifestHash": "cefed3d1ab609c58108901ca7ab832bfa6be3e3bedd19c63c1c1c4d8e9f68233",
+  "fixtureHash": "7de8f5c62bb2bbd662ee9ac403e0c1d53379704383a677a19d42f0d842b75796",
+  "resourceFixtureHash": "9f112897a377e8c97f37165036b8e2595cd4a1ce26f5915c4b0d1b2448ac734f",
+  "initialSnapshotHash": "3d027ab726e886dcaa00f3bc2d0a3ef330bc76edd56d16ba40bfc039c1449419",
+  "historyHash": "bf4ab6725a9c540247f887a0a8e0036baddccea94561c9f64713b0db7e6040ac",
+  "liveProjectionHash": "899da98acfa86803f972c80d8649b236d9e2f8e16ae625f1965ebcf4bd120b82",
+  "replayProjectionHash": "899da98acfa86803f972c80d8649b236d9e2f8e16ae625f1965ebcf4bd120b82",
+  "storyDigest": "81196e517cbde549a57feb567d70cda2c2b8cf09a6bd20322603ece2d64ab23b"
+}

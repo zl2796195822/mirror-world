@@ -272,3 +272,18 @@
 
 - PR #1 已合并到 `main`，合并提交为 `0ddceafc91c4da274f545b98742d4b69c3a9ade1`；feature commit `96a9576b17fe80615c9e664012e2fa0cdcb4f5b0` 的 `foundation-ci` run `34463283837`、merge commit 的 run `34463309484` 与最终 main 文档收口提交 `bf19b9e760124d23ddc10b3a284b89e713c4409b` 的 run `34464013190` 均为 `Success`。
 - `M3 Behavioral Lifecycle Extension = PASS`；`M3 = IN_PROGRESS` 不变。没有执行 `M3-LIFECYCLE-STORY-GATE`、expanded 30×30、M3-T05 或 M4+；下一允许任务仅为 `M3-LIFECYCLE-STORY-GATE`。
+
+## 2026-09-10 M3-LIFECYCLE-STORY-GATE
+
+- 正式 Gate 在 `HEAD == origin/main=590d19d000fc04723028556e267cdbed362b4da8`、初始 worktree clean、`foundation-ci` run `34464740586=success` 上执行；三套独立 clean PostgreSQL（18.6、12 migrations、fresh seed）完成 baseline/repeat/different-seed 的 30×30 World-Time run。
+- baseline/repeat 精确到 `2026-10-07T00:00:00.000Z`、`worldSeq=10668`；baseline committed starts 为 MOVE 950、SLEEP 702、EAT 60、WORK 4、TALK 203；replay 四 hash 一致，same-seed digest 相同，different-seed/BUY/LLM/isolation 证据通过。
+- `M3-LIFECYCLE-STORY-GATE = FAIL`，唯一失败 Hard Gate 为 #3 Accepted action coverage：5 名 fixture resident 初始 food=0，11 名无 TALK completion，23 名 employed resident 无 WORK completion，4 名无 MOVE completion；diagnostics `RESOURCE_DEPLETION=30`、`SOCIAL_STARVATION=11`、`WORK_ABSENCE=23`。
+- 失败分类为 `GATE_CONTRACT_FIXTURE_CONFLICT` 与 `POLICY_COVERAGE_MISMATCH`；没有调参、补资源、修改 fixture/时间/规则/Hard Gate，也未执行 M3-T05、Final Status Review #2 或 M4+。报告与 bundle：`docs/verification/M3-LIFECYCLE-STORY-GATE-report.md`、`docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE/20260910-run-08/`。
+
+## 2026-09-11 M3 Story Gate Coverage Contract
+
+- 正式完成 `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION` 并纳入当前主线文档；接受 `M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2` 作为 Hard Gate #3 future-run clarification，仅改变 coverage measurement/predicate，不改其余 14 gates、ADR-0011/0012、Kernel、BUY boundary 或 run-08。
+- v2 固定区分 action count、unique initiator/participant/eligible/feasible/opportunity/candidate/selected/requested/committed/completed resident sets；funnel 为 `TOTAL → ELIGIBLE → FEASIBLE → OPPORTUNITY → CANDIDATE_GENERATED → SELECTED → REQUESTED → COMMITTED → COMPLETED`，missing negative evidence = `UNKNOWN`，不能作为 zero 或 denominator shrink。
+- 决策：SLEEP 当前固定 manifest 保留 30 denominator；EAT 分离 Need eligibility/resource feasibility，5 zero-food 不补资源；TALK participant 计入 resident contact union 但保留 initiator count；MOVE 按 formal necessity；WORK 注册 pre-shift wake 修复并保持 exact 09:00/LATE rejection。
+- 仅注册一个最小后续 `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`，内部包含 Work Preparation Wake Fix 与 read-only funnel evidence extension；未注册 TALK policy fix，未执行生产修复、full rerun、M3-T05 或 M4+。
+- 审计发现 review commit `ded7c6d…` 的 01_BASELINE run-summary hash 有误且 funnel 漏写 `OPPORTUNITY`；保留工作区正确 hash，补齐 funnel/model 与 accepted contract，并保留 run-08 原始 bundle 不变。

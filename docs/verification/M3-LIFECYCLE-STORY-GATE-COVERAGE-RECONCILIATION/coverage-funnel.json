@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "m3-story-gate-coverage-funnel-v1",
+  "artifactKind": "verification-analysis-not-world-truth",
+  "generatedAt": "2026-09-10",
+  "source": {
+    "runId": "20260910-run-08",
+    "manifestHash": "af1b1f0aa120a1c66e777a6ec23686f63317a8cf0b1c66ca9aff8cf2952963c2",
+    "sourceWorktree": "/Users/alin/AI项目/镜界",
+    "sourceArtifactPath": "docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE/20260910-run-08",
+    "custody": "read-only external uncommitted evidence"
+  },
+  "model": {
+    "stages": [
+      "TOTAL",
+      "ELIGIBLE",
+      "FEASIBLE",
+      "OPPORTUNITY",
+      "CANDIDATE_GENERATED",
+      "SELECTED",
+      "REQUESTED",
+      "COMMITTED",
+      "COMPLETED"
+    ],
+    "residentStageCounts": true,
+    "actionStageCountsExplicit": true,
+    "evidenceGrades": {
+      "measured": "directly present in run-08 artifacts",
+      "derived": "deterministic from fixture and source review",
+      "observedAcceptedPathOnly": "accepted actions prove lower bound, not complete negative funnel",
+      "unavailable": "run-08 did not persist negative candidate/opportunity rows"
+    }
+  },
+  "actions": {
+    "EAT": {
+      "totalResidents": 30,
+      "needEligibleResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE",
+        "rule": "Need-driven EAT episode; run-08 did not persist the complete negative funnel"
+      },
+      "eligibleResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE",
+        "rule": "EAT eligibility is separate from initial resource availability"
+      },
+      "feasibleResidents": {
+        "count": 25,
+        "evidenceGrade": "DERIVED_FROM_FIXTURE_PLUS_SOURCE_REVIEW",
+        "rule": "home exposes EAT and foodUnits >= 1"
+      },
+      "opportunityResidents": {
+        "count": 25,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY",
+        "completeFunnel": "UNAVAILABLE"
+      },
+      "candidateGeneratedResidents": {
+        "count": 25,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY",
+        "completeFunnel": "UNAVAILABLE"
+      },
+      "selectedResidents": {
+        "count": 25,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY"
+      },
+      "requestedResidents": 25,
+      "actionRequests": 60,
+      "committedActionStarts": 60,
+      "committedResidents": 25,
+      "completedActionStarts": 60,
+      "completedResidents": 25,
+      "unavailableOrInfeasibleResidents": 5,
+      "mainFunnelDrop": "TOTAL_TO_RESOURCE_FEASIBILITY",
+      "rootCause": "CONTRACT_FIXTURE_CONFLICT",
+      "note": "No legal M3 acquisition path is present; Kernel must not create food."
+    },
+    "WORK": {
+      "totalResidents": 26,
+      "eligibleResidents": {
+        "count": 26,
+        "evidenceGrade": "DERIVED_FROM_FIXTURE",
+        "rule": "employed with workplace and same-world reachable route"
+      },
+      "preShiftFeasibleResidents": {
+        "count": 26,
+        "evidenceGrade": "DERIVED_FROM_FIXTURE_PLUS_SOURCE_REVIEW",
+        "rule": "deterministic commute can arrive if preparation occurs"
+      },
+      "opportunityResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE",
+        "reason": "pre-shift wake/opportunity rows were not persisted"
+      },
+      "workplaceCommuteMoveStarts": {
+        "count": 488,
+        "evidenceGrade": "MEASURED"
+      },
+      "arrivedBeforeExactStartResidents": {
+        "count": 0,
+        "evidenceGrade": "MEASURED",
+        "routeDurationsWorldMinutes": "10 or 15"
+      },
+      "candidateGeneratedResidents": {
+        "count": 3,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY",
+        "completeFunnel": "UNAVAILABLE"
+      },
+      "selectedResidents": {
+        "count": 3,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY"
+      },
+      "requestedResidents": 3,
+      "actionRequests": 4,
+      "committedActionStarts": 4,
+      "committedResidents": 3,
+      "completedActionStarts": 4,
+      "completedResidents": 3,
+      "absentEmployedResidents": 23,
+      "mainFunnelDrop": "PRE_SHIFT_WAKE_OR_PREPARATION_TO_EXACT_START",
+      "rootCause": "SCHEDULER_WAKE_DEFECT",
+      "secondaryRootCause": "POLICY_COVERAGE_MISMATCH",
+      "contract": "exact 09:00 authorization retained; LATE is not authorized"
+    },
+    "TALK": {
+      "totalResidents": 30,
+      "legalOpportunityResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE",
+        "reason": "co-location and participant candidate negatives were not persisted"
+      },
+      "eligibleResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE",
+        "reason": "social Need/Goal episode rows were not persisted"
+      },
+      "feasibleResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE",
+        "reason": "same-world co-location and participant negative rows were not persisted"
+      },
+      "opportunityResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE"
+      },
+      "candidateGeneratedResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE"
+      },
+      "selectedInitiatorResidents": {
+        "count": 19,
+        "evidenceGrade": "MEASURED"
+      },
+      "completedInitiatorResidents": {
+        "count": 19,
+        "evidenceGrade": "MEASURED"
+      },
+      "requestedResidents": 19,
+      "pairedContactResidents": {
+        "count": 24,
+        "evidenceGrade": "MEASURED",
+        "rule": "initiator or participant"
+      },
+      "actionRequests": 203,
+      "committedActionStarts": 203,
+      "completedActionStarts": 203,
+      "noObservedContactResidents": 6,
+      "noOpportunityResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE"
+      },
+      "opportunityButNoActionResidents": {
+        "count": null,
+        "evidenceGrade": "UNAVAILABLE"
+      },
+      "mainFunnelDrop": "UNAVAILABLE",
+      "rootCause": "INSUFFICIENT_EVIDENCE",
+      "note": "Repair negative funnel accounting before selecting policy or topology fix."
+    },
+    "MOVE": {
+      "totalResidents": 30,
+      "formalNecessityResidents": {
+        "count": 26,
+        "evidenceGrade": "DERIVED_FROM_FIXTURE_PLUS_RUN",
+        "rule": "workplace/return obligation"
+      },
+      "eligibleResidents": {
+        "count": 26,
+        "evidenceGrade": "DERIVED_FROM_FIXTURE_PLUS_RUN"
+      },
+      "feasibleResidents": {
+        "count": 26,
+        "evidenceGrade": "DERIVED_FROM_FIXTURE_PLUS_RUN"
+      },
+      "opportunityResidents": {
+        "count": 26,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY",
+        "completeFunnel": "UNAVAILABLE"
+      },
+      "candidateGeneratedResidents": {
+        "count": 26,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY",
+        "completeFunnel": "UNAVAILABLE"
+      },
+      "selectedResidents": {
+        "count": 26,
+        "evidenceGrade": "OBSERVED_ACCEPTED_PATH_ONLY"
+      },
+      "requestedResidents": 26,
+      "actionRequests": 950,
+      "committedActionStarts": 950,
+      "completedActionStarts": 950,
+      "completedResidents": 26,
+      "noMoveResidents": 4,
+      "noMoveButNeededResidents": 0,
+      "mainFunnelDrop": "FORMAL_NECESSITY_TO_TOTAL",
+      "rootCause": "VALID_NO_ACTION_NEEDED",
+      "note": "Do not add random movement to satisfy an all-resident predicate."
+    }
+  }
+}

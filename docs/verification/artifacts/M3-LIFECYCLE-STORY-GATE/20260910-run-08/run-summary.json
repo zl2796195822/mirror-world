@@ -1,0 +1,24 @@
+{
+  "status": "FAIL",
+  "worldTimeReached": "2026-10-07T00:00:00.000Z",
+  "worldMinutesReached": 43200,
+  "finalWorldSeq": "10668",
+  "actionAttempts": 1919,
+  "committed": 1919,
+  "rejected": 0,
+  "conflicts": 0,
+  "replans": 0,
+  "deferred": 34624,
+  "acceptedActionCoverage": false,
+  "commuteCoverage": true,
+  "endpoint": {
+    "remainingActiveActivities": 0,
+    "remainingDueWakes": 0
+  },
+  "liveProjectionHash": "899da98acfa86803f972c80d8649b236d9e2f8e16ae625f1965ebcf4bd120b82",
+  "fullReplayProjectionHash": "899da98acfa86803f972c80d8649b236d9e2f8e16ae625f1965ebcf4bd120b82",
+  "suffixReplayProjectionHash": "899da98acfa86803f972c80d8649b236d9e2f8e16ae625f1965ebcf4bd120b82",
+  "genesisRebuildProjectionHash": "899da98acfa86803f972c80d8649b236d9e2f8e16ae625f1965ebcf4bd120b82",
+  "deterministicDigest": "91ea1ad1da48b1b23188d114735f054ee2390909773a5c017fac5922044374c5",
+  "repeatDeterministicDigest": "91ea1ad1da48b1b23188d114735f054ee2390909773a5c017fac5922044374c5"
+}

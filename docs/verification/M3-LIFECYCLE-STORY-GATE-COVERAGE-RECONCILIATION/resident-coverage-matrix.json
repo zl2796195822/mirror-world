@@ -1,0 +1,1022 @@
+{
+  "schemaVersion": "m3-story-gate-coverage-reconciliation-v1",
+  "artifactKind": "verification-analysis-not-world-truth",
+  "generatedAt": "2026-09-10",
+  "source": {
+    "runId": "20260910-run-08",
+    "worldId": "00000000-0000-4000-8000-00000000a300",
+    "manifestHash": "af1b1f0aa120a1c66e777a6ec23686f63317a8cf0b1c66ca9aff8cf2952963c2",
+    "sourceWorktree": "/Users/alin/AI项目/镜界",
+    "sourceArtifactPath": "docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE/20260910-run-08",
+    "custody": "read-only external uncommitted evidence"
+  },
+  "counts": {
+    "residents": 30,
+    "employed": 26,
+    "zeroFood": 5,
+    "noMove": 4,
+    "noTalkInitiator": 11,
+    "noObservedTalkContact": 6,
+    "workAbsentEmployed": 23,
+    "talkInitiators": 19,
+    "talkPairedContactResidents": 24
+  },
+  "evidenceGrades": {
+    "acceptedActionFields": "MEASURED",
+    "fixtureFields": "DERIVED_FROM_FIXTURE",
+    "candidateNegatives": "UNAVAILABLE",
+    "workPreShiftFeasibility": "DERIVED_FROM_FIXTURE_PLUS_SOURCE_REVIEW"
+  },
+  "rows": [
+    {
+      "residentId": "49177b40-dd6c-5237-9bb8-46c1c5aa8c61",
+      "sourceIndex": 9,
+      "fixturePosition": 0,
+      "homeLocationKey": "home-unit-01",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 1,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 1,
+        "WORK": 0,
+        "TALKInitiator": 16
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 16,
+        "participated": 16,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "2487e7e5-6e4d-5916-8aae-c0f76e352889",
+      "sourceIndex": 6,
+      "fixturePosition": 1,
+      "homeLocationKey": "home-unit-02",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 38,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "e7e4bcca-7843-5ba2-b110-a59403756e43",
+      "sourceIndex": 2,
+      "fixturePosition": 2,
+      "homeLocationKey": "home-unit-03",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 3,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 3,
+        "WORK": 0,
+        "TALKInitiator": 2
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 2,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "a5d97bf2-f351-529d-8f8d-d7a63ad4404d",
+      "sourceIndex": 3,
+      "fixturePosition": 3,
+      "homeLocationKey": "home-unit-04",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 4,
+      "completed": {
+        "MOVE": 39,
+        "SLEEP": 26,
+        "EAT": 4,
+        "WORK": 0,
+        "TALKInitiator": 24
+      },
+      "workplaceMoveStarts": 20,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 24,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "508ffd23-ce5d-5234-a542-bb83360a004b",
+      "sourceIndex": 8,
+      "fixturePosition": 4,
+      "homeLocationKey": "home-unit-05",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 0,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 23,
+        "EAT": 0,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 0,
+        "pairedContactObserved": false
+      },
+      "issues": [
+        {
+          "action": "EAT",
+          "classification": "CONTRACT_FIXTURE_CONFLICT",
+          "evidence": "DERIVED_FROM_FIXTURE"
+        },
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        },
+        {
+          "action": "TALK",
+          "classification": "INSUFFICIENT_EVIDENCE",
+          "evidence": "ACCEPTED_PATH_LOWER_BOUND_ONLY"
+        }
+      ]
+    },
+    {
+      "residentId": "33a1cd64-a71c-539e-92d6-8d7fa6bce1d3",
+      "sourceIndex": 28,
+      "fixturePosition": 5,
+      "homeLocationKey": "home-unit-06",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 19,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "91083903-25db-5ac8-a6d6-273c6568e8f3",
+      "sourceIndex": 21,
+      "fixturePosition": 6,
+      "homeLocationKey": "home-unit-07",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 1,
+      "completed": {
+        "MOVE": 37,
+        "SLEEP": 21,
+        "EAT": 1,
+        "WORK": 1,
+        "TALKInitiator": 1
+      },
+      "workplaceMoveStarts": 19,
+      "workCompletedShiftCount": 1,
+      "talk": {
+        "initiated": 1,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": []
+    },
+    {
+      "residentId": "5fc82ac5-57cd-5919-96c7-5c6e33a9efa6",
+      "sourceIndex": 25,
+      "fixturePosition": 7,
+      "homeLocationKey": "home-unit-08",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 37,
+        "SLEEP": 22,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 16
+      },
+      "workplaceMoveStarts": 19,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 16,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "390f66d0-33ce-5737-9509-a90ae6ba81e8",
+      "sourceIndex": 24,
+      "fixturePosition": 8,
+      "homeLocationKey": "home-unit-09",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 3,
+      "completed": {
+        "MOVE": 39,
+        "SLEEP": 26,
+        "EAT": 3,
+        "WORK": 0,
+        "TALKInitiator": 25
+      },
+      "workplaceMoveStarts": 20,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 25,
+        "participated": 10,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "c7e630d4-2930-5aea-a5d9-661e541a53fd",
+      "sourceIndex": 19,
+      "fixturePosition": 9,
+      "homeLocationKey": "home-unit-10",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 4,
+      "completed": {
+        "MOVE": 39,
+        "SLEEP": 24,
+        "EAT": 4,
+        "WORK": 0,
+        "TALKInitiator": 2
+      },
+      "workplaceMoveStarts": 20,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 2,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "6a97e582-c8b4-5152-b50f-b45135bfce0f",
+      "sourceIndex": 20,
+      "fixturePosition": 10,
+      "homeLocationKey": "home-unit-11",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 0,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 0,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 0,
+        "pairedContactObserved": false
+      },
+      "issues": [
+        {
+          "action": "EAT",
+          "classification": "CONTRACT_FIXTURE_CONFLICT",
+          "evidence": "DERIVED_FROM_FIXTURE"
+        },
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        },
+        {
+          "action": "TALK",
+          "classification": "INSUFFICIENT_EVIDENCE",
+          "evidence": "ACCEPTED_PATH_LOWER_BOUND_ONLY"
+        }
+      ]
+    },
+    {
+      "residentId": "a605e5bd-c171-52d0-ab28-b6e7efc33540",
+      "sourceIndex": 12,
+      "fixturePosition": 11,
+      "homeLocationKey": "home-unit-12",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 15
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 15,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "3c0e06be-b909-58d9-8c05-891dbe0bcf36",
+      "sourceIndex": 18,
+      "fixturePosition": 12,
+      "homeLocationKey": "home-unit-01",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 1,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 1,
+        "WORK": 0,
+        "TALKInitiator": 16
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 16,
+        "participated": 24,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "849cf567-2fdf-56f1-a262-4e2c5bdb7585",
+      "sourceIndex": 27,
+      "fixturePosition": 13,
+      "homeLocationKey": "home-unit-02",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 39,
+        "SLEEP": 26,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 23
+      },
+      "workplaceMoveStarts": 20,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 23,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "62700369-80e1-5b74-93e5-7235b9b856d3",
+      "sourceIndex": 15,
+      "fixturePosition": 14,
+      "homeLocationKey": "home-unit-03",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 3,
+      "completed": {
+        "MOVE": 39,
+        "SLEEP": 25,
+        "EAT": 3,
+        "WORK": 0,
+        "TALKInitiator": 1
+      },
+      "workplaceMoveStarts": 20,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 1,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "dcb67974-fc44-517e-8b5e-09e7a4c54aad",
+      "sourceIndex": 26,
+      "fixturePosition": 15,
+      "homeLocationKey": "home-unit-04",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 4,
+      "completed": {
+        "MOVE": 37,
+        "SLEEP": 22,
+        "EAT": 4,
+        "WORK": 0,
+        "TALKInitiator": 16
+      },
+      "workplaceMoveStarts": 19,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 16,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "9a07aa36-6468-53b5-b444-804086cbf903",
+      "sourceIndex": 23,
+      "fixturePosition": 16,
+      "homeLocationKey": "home-unit-05",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 0,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 0,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 0,
+        "pairedContactObserved": false
+      },
+      "issues": [
+        {
+          "action": "EAT",
+          "classification": "CONTRACT_FIXTURE_CONFLICT",
+          "evidence": "DERIVED_FROM_FIXTURE"
+        },
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        },
+        {
+          "action": "TALK",
+          "classification": "INSUFFICIENT_EVIDENCE",
+          "evidence": "ACCEPTED_PATH_LOWER_BOUND_ONLY"
+        }
+      ]
+    },
+    {
+      "residentId": "bdb2a3a2-7873-5314-b409-7a10cfe34250",
+      "sourceIndex": 4,
+      "fixturePosition": 17,
+      "homeLocationKey": "home-unit-06",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 1
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 1,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "7bdde7d3-206d-501f-bf01-c1807b04dade",
+      "sourceIndex": 7,
+      "fixturePosition": 18,
+      "homeLocationKey": "home-unit-07",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 1,
+      "completed": {
+        "MOVE": 39,
+        "SLEEP": 26,
+        "EAT": 1,
+        "WORK": 0,
+        "TALKInitiator": 2
+      },
+      "workplaceMoveStarts": 20,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 2,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "2302ff23-6e93-56ea-a573-e5eb4fb28143",
+      "sourceIndex": 17,
+      "fixturePosition": 19,
+      "homeLocationKey": "home-unit-08",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 37,
+        "SLEEP": 24,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 19,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 16,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "2d49951e-bb02-5ee7-b983-dc0ccff0a789",
+      "sourceIndex": 5,
+      "fixturePosition": 20,
+      "homeLocationKey": "home-unit-09",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 3,
+      "completed": {
+        "MOVE": 37,
+        "SLEEP": 22,
+        "EAT": 3,
+        "WORK": 0,
+        "TALKInitiator": 9
+      },
+      "workplaceMoveStarts": 19,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 9,
+        "participated": 25,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "a1001696-d8f9-5036-945b-4d8e0ec53633",
+      "sourceIndex": 1,
+      "fixturePosition": 21,
+      "homeLocationKey": "home-unit-10",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 4,
+      "completed": {
+        "MOVE": 37,
+        "SLEEP": 23,
+        "EAT": 4,
+        "WORK": 2,
+        "TALKInitiator": 2
+      },
+      "workplaceMoveStarts": 19,
+      "workCompletedShiftCount": 2,
+      "talk": {
+        "initiated": 2,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": []
+    },
+    {
+      "residentId": "e20b7ac0-101b-5a79-9170-9766e3d383e1",
+      "sourceIndex": 0,
+      "fixturePosition": 22,
+      "homeLocationKey": "home-unit-11",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 0,
+      "completed": {
+        "MOVE": 33,
+        "SLEEP": 21,
+        "EAT": 0,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 17,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 0,
+        "pairedContactObserved": false
+      },
+      "issues": [
+        {
+          "action": "EAT",
+          "classification": "CONTRACT_FIXTURE_CONFLICT",
+          "evidence": "DERIVED_FROM_FIXTURE"
+        },
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        },
+        {
+          "action": "TALK",
+          "classification": "INSUFFICIENT_EVIDENCE",
+          "evidence": "ACCEPTED_PATH_LOWER_BOUND_ONLY"
+        }
+      ]
+    },
+    {
+      "residentId": "247ca98f-ac49-5a24-a149-9ef21721f898",
+      "sourceIndex": 11,
+      "fixturePosition": 23,
+      "homeLocationKey": "home-unit-12",
+      "employment": "EMPLOYED",
+      "role": "STORE_CLERK",
+      "workplaceKey": "store",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 39,
+        "SLEEP": 26,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 20,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 15,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "511c9af3-f08b-55b2-a2da-d9fbfbf95d47",
+      "sourceIndex": 29,
+      "fixturePosition": 24,
+      "homeLocationKey": "home-unit-01",
+      "employment": "EMPLOYED",
+      "role": "OFFICE_ASSISTANT",
+      "workplaceKey": "office",
+      "foodUnitsInitial": 1,
+      "completed": {
+        "MOVE": 37,
+        "SLEEP": 24,
+        "EAT": 1,
+        "WORK": 1,
+        "TALKInitiator": 1
+      },
+      "workplaceMoveStarts": 19,
+      "workCompletedShiftCount": 1,
+      "talk": {
+        "initiated": 1,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": []
+    },
+    {
+      "residentId": "ddbefbb3-9aa6-5f95-81ec-8f2dc920f9fa",
+      "sourceIndex": 10,
+      "fixturePosition": 25,
+      "homeLocationKey": "home-unit-02",
+      "employment": "EMPLOYED",
+      "role": "CAFE_BARISTA",
+      "workplaceKey": "cafe",
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 35,
+        "SLEEP": 22,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 15
+      },
+      "workplaceMoveStarts": 18,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 15,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "WORK",
+          "classification": "SCHEDULER_WAKE_DEFECT",
+          "secondary": "POLICY_COVERAGE_MISMATCH",
+          "evidence": "MEASURED_PLUS_SOURCE_REVIEW"
+        }
+      ]
+    },
+    {
+      "residentId": "764ec258-67d8-507c-ab11-ab283991c9fa",
+      "sourceIndex": 14,
+      "fixturePosition": 26,
+      "homeLocationKey": "home-unit-03",
+      "employment": "UNEMPLOYED",
+      "role": null,
+      "workplaceKey": null,
+      "foodUnitsInitial": 3,
+      "completed": {
+        "MOVE": 0,
+        "SLEEP": 25,
+        "EAT": 3,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 0,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 0,
+        "pairedContactObserved": false
+      },
+      "issues": [
+        {
+          "action": "TALK",
+          "classification": "INSUFFICIENT_EVIDENCE",
+          "evidence": "ACCEPTED_PATH_LOWER_BOUND_ONLY"
+        },
+        {
+          "action": "MOVE",
+          "classification": "VALID_NO_ACTION_NEEDED",
+          "evidence": "DERIVED_FROM_FIXTURE_PLUS_RUN"
+        }
+      ]
+    },
+    {
+      "residentId": "42ebab5a-5da4-5d0e-95c1-baf6db8d8bf6",
+      "sourceIndex": 22,
+      "fixturePosition": 27,
+      "homeLocationKey": "home-unit-04",
+      "employment": "UNEMPLOYED",
+      "role": null,
+      "workplaceKey": null,
+      "foodUnitsInitial": 4,
+      "completed": {
+        "MOVE": 0,
+        "SLEEP": 26,
+        "EAT": 4,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 0,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 40,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "MOVE",
+          "classification": "VALID_NO_ACTION_NEEDED",
+          "evidence": "DERIVED_FROM_FIXTURE_PLUS_RUN"
+        }
+      ]
+    },
+    {
+      "residentId": "53857cc8-114a-5877-af02-14da434bc1d1",
+      "sourceIndex": 16,
+      "fixturePosition": 28,
+      "homeLocationKey": "home-unit-05",
+      "employment": "UNEMPLOYED",
+      "role": null,
+      "workplaceKey": null,
+      "foodUnitsInitial": 0,
+      "completed": {
+        "MOVE": 0,
+        "SLEEP": 25,
+        "EAT": 0,
+        "WORK": 0,
+        "TALKInitiator": 0
+      },
+      "workplaceMoveStarts": 0,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 0,
+        "participated": 0,
+        "pairedContactObserved": false
+      },
+      "issues": [
+        {
+          "action": "EAT",
+          "classification": "CONTRACT_FIXTURE_CONFLICT",
+          "evidence": "DERIVED_FROM_FIXTURE"
+        },
+        {
+          "action": "TALK",
+          "classification": "INSUFFICIENT_EVIDENCE",
+          "evidence": "ACCEPTED_PATH_LOWER_BOUND_ONLY"
+        },
+        {
+          "action": "MOVE",
+          "classification": "VALID_NO_ACTION_NEEDED",
+          "evidence": "DERIVED_FROM_FIXTURE_PLUS_RUN"
+        }
+      ]
+    },
+    {
+      "residentId": "d619e1bc-e025-59b4-a103-82cb5945aec6",
+      "sourceIndex": 13,
+      "fixturePosition": 29,
+      "homeLocationKey": "home-unit-06",
+      "employment": "UNEMPLOYED",
+      "role": null,
+      "workplaceKey": null,
+      "foodUnitsInitial": 2,
+      "completed": {
+        "MOVE": 0,
+        "SLEEP": 25,
+        "EAT": 2,
+        "WORK": 0,
+        "TALKInitiator": 16
+      },
+      "workplaceMoveStarts": 0,
+      "workCompletedShiftCount": 0,
+      "talk": {
+        "initiated": 16,
+        "participated": 0,
+        "pairedContactObserved": true
+      },
+      "issues": [
+        {
+          "action": "MOVE",
+          "classification": "VALID_NO_ACTION_NEEDED",
+          "evidence": "DERIVED_FROM_FIXTURE_PLUS_RUN"
+        }
+      ]
+    }
+  ]
+}
