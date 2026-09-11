@@ -287,3 +287,4 @@
 - 决策：SLEEP 当前固定 manifest 保留 30 denominator；EAT 分离 Need eligibility/resource feasibility，5 zero-food 不补资源；TALK participant 计入 resident contact union 但保留 initiator count；MOVE 按 formal necessity；WORK 注册 pre-shift wake 修复并保持 exact 09:00/LATE rejection。
 - 仅注册一个最小后续 `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`，内部包含 Work Preparation Wake Fix 与 read-only funnel evidence extension；未注册 TALK policy fix，未执行生产修复、full rerun、M3-T05 或 M4+。
 - 审计发现 review commit `ded7c6d…` 的 01_BASELINE run-summary hash 有误且 funnel 漏写 `OPPORTUNITY`；保留工作区正确 hash，补齐 funnel/model 与 accepted contract，并保留 run-08 原始 bundle 不变。
+- 治理提交 `0fda99c486694a65c1e05b96ca2aa30a4f827ecc` 已推送到 `gate/m3-lifecycle-story` 并 fast-forward 到 `origin/main`；`foundation-ci` run `34548099657` 为 `success`。

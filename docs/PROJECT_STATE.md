@@ -123,6 +123,7 @@ Last verified main/doc baseline: 590d19d000fc04723028556e267cdbed362b4da8
 - EAT 按 Need episode 与资源 feasibility 分离，zero-food 不触发伪造食物；TALK participant 计入 completed contact union 但保留 initiator 指标；MOVE 按正式 necessity/goal；SLEEP 在当前固定 manifest 保留 30/30；WORK 保持 26 employed、exact 09:00、LATE 不合法。
 - 已注册唯一后续 remediation `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`：包含 Work Preparation Wake Fix 与 EAT/TALK/MOVE/WORK funnel evidence extension；未注册未经证实的 TALK policy fix。本轮没有执行该任务、生产修复、Gate rerun 或 M3-T05。
 - 本轮验证确认 review commit `ded7c6d…` 为 read-only analysis + 23 Markdown/3 JSON；保留工作区既存正确 run-summary SHA-256，并补正 review funnel 的 `OPPORTUNITY` 阶段。验证报告为 `docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-DEFINITION-report.md`。
+- 治理提交 `0fda99c486694a65c1e05b96ca2aa30a4f827ecc` 已推送到 `gate/m3-lifecycle-story` 并 fast-forward 到 `origin/main`；GitHub Actions `foundation-ci` run `34548099657` 为 `success`，本任务正式收口。
 
 ## In progress
 

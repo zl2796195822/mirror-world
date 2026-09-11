@@ -43,6 +43,9 @@ evidence is still insufficient.
   the reviewed baseline document's stale run-summary hash was not promoted.
 - The reconciliation review model was corrected to include the required
   `OPPORTUNITY` stage.
+- Governance commit `0fda99c486694a65c1e05b96ca2aa30a4f827ecc` was pushed to
+  `gate/m3-lifecycle-story` and fast-forwarded to `origin/main`; GitHub Actions
+  `foundation-ci` run `34548099657` completed with `success`.
 
 No full Gate rerun, T05 execution, production implementation, schema change,
 migration, fixture change, or M4+ work was performed.
