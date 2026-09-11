@@ -4,11 +4,11 @@ Date: 2026-09-11
 
 ## Status
 
-`TARGETED_PASS / MAIN_CI_PENDING`
+`TARGETED_PASS / MAIN_CI_PASS`
 
 The registered `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX` is implemented and its
-targeted clean-PostgreSQL DoD is green. Final main-branch CI is pending PR
-integration while this report is prepared.
+targeted clean-PostgreSQL DoD is green. PR #2 is merged and both the feature
+and main-branch CI runs are green.
 
 This is not a Story Gate run. No new Story run ID was created, the immutable
 `20260910-run-08` bundle was not modified, and the full 30-resident ×
@@ -16,17 +16,21 @@ This is not a Story Gate run. No new Story run ID was created, the immutable
 
 ## Baseline and authority
 
-| Field                  | Result                                                       |
-| ---------------------- | ------------------------------------------------------------ |
-| Starting `origin/main` | `85b8cdd7b5a0421e2ac14d7e18d9d81589f4f727`                   |
-| Starting HEAD          | `85b8cdd7b5a0421e2ac14d7e18d9d81589f4f727`                   |
-| Branch                 | `task/m3-lifecycle-story-gate-coverage-fix`                  |
-| Worktree               | `/Users/alin/AI项目/mirror-world-m3-story-gate-coverage-fix` |
-| Implementation commit  | `780e491c6ee2d14bb7d44eaa8114ee2402721de9`                   |
-| Formal task            | `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX`                       |
-| Coverage contract      | `m3-story-gate-coverage-v2`                                  |
-| Historical parent run  | `20260910-run-08`                                            |
-| Historical Gate status | `FAIL` and preserved                                         |
+| Field                  | Result                                                           |
+| ---------------------- | ---------------------------------------------------------------- |
+| Starting `origin/main` | `85b8cdd7b5a0421e2ac14d7e18d9d81589f4f727`                       |
+| Starting HEAD          | `85b8cdd7b5a0421e2ac14d7e18d9d81589f4f727`                       |
+| Branch                 | `task/m3-lifecycle-story-gate-coverage-fix`                      |
+| Worktree               | `/Users/alin/AI项目/mirror-world-m3-story-gate-coverage-fix`     |
+| Implementation commit  | `780e491c6ee2d14bb7d44eaa8114ee2402721de9`                       |
+| PR #2                  | merged into `main` at `66d1863ca2b77f37d535dcf02929d3db617ef13c` |
+| Feature CI             | `34568408286` — `Success`                                        |
+| Main CI                | `34568751236` — `Success`                                        |
+| Final `origin/main`    | `66d1863ca2b77f37d535dcf02929d3db617ef13c`                       |
+| Formal task            | `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX`                           |
+| Coverage contract      | `m3-story-gate-coverage-v2`                                      |
+| Historical parent run  | `20260910-run-08`                                                |
+| Historical Gate status | `FAIL` and preserved                                             |
 
 The accepted authority remains the v2 coverage contract, ADR-0011,
 ADR-0012, the registered fix task, and the frozen lifecycle/story
@@ -144,23 +148,24 @@ fail the evaluator. Six evaluator tests pass; the summary is in
 
 ## Verification evidence
 
-| Check                                        | Result                                                           |
-| -------------------------------------------- | ---------------------------------------------------------------- |
-| Node 24.11.1 frozen install                  | PASS                                                             |
-| Prettier / format                            | PASS                                                             |
-| Root lint                                    | PASS                                                             |
-| Root typecheck                               | PASS                                                             |
-| Root unit tests                              | PASS; 47 contracts, 8 DB, 74 Life Engine, 65 World Kernel, 3 Web |
-| API contract + v2 evaluator tests            | PASS; 12/12                                                      |
-| Coverage Fix PostgreSQL integration          | PASS; 7/7                                                        |
-| Existing API PostgreSQL integration          | PASS; 42/42                                                      |
-| Existing M3 lifecycle replay regression      | PASS; 15/15                                                      |
-| Existing PRE-AL-GATE regression              | PASS; prior 30×30 profile, no Story Gate rerun                   |
-| Clean disposable PostgreSQL setup            | PASS; PostgreSQL 18.6, 12 migrations, fresh seed                 |
-| Official production audit                    | PASS; no known vulnerabilities                                   |
-| HIGH / CRITICAL                              | 0 / 0                                                            |
-| `git diff --check` and forbidden-scope audit | PASS                                                             |
-| Feature-branch CI                            | PENDING PR trigger                                               |
+| Check                                        | Result                                                                |
+| -------------------------------------------- | --------------------------------------------------------------------- |
+| Node 24.11.1 frozen install                  | PASS                                                                  |
+| Prettier / format                            | PASS                                                                  |
+| Root lint                                    | PASS                                                                  |
+| Root typecheck                               | PASS                                                                  |
+| Root unit tests                              | PASS; 47 contracts, 8 DB, 74 Life Engine, 65 World Kernel, 3 Web      |
+| API contract + v2 evaluator tests            | PASS; 12/12                                                           |
+| Coverage Fix PostgreSQL integration          | PASS; 7/7                                                             |
+| Existing API PostgreSQL integration          | PASS; 42/42                                                           |
+| Existing M3 lifecycle replay regression      | PASS; 15/15                                                           |
+| Existing PRE-AL-GATE regression              | PASS; prior 30×30 profile, no Story Gate rerun                        |
+| Clean disposable PostgreSQL setup            | PASS; PostgreSQL 18.6, 12 migrations, fresh seed                      |
+| Official production audit                    | PASS; no known vulnerabilities                                        |
+| HIGH / CRITICAL                              | 0 / 0                                                                 |
+| `git diff --check` and forbidden-scope audit | PASS                                                                  |
+| Feature-branch CI                            | PASS; run `34568408286`                                               |
+| Main-branch CI                               | PASS; run `34568751236` on `66d1863ca2b77f37d535dcf02929d3db617ef13c` |
 
 The disposable database used was `mirror_m3_covfix_20260911`. It is test-only
 and must be dropped after final evidence capture.
@@ -169,7 +174,7 @@ and must be dropped after final evidence capture.
 
 | Field                    | Result                                               |
 | ------------------------ | ---------------------------------------------------- |
-| Coverage Fix             | `PASS` after final main CI confirmation              |
+| Coverage Fix             | `PASS`                                               |
 | Story Gate               | `FAIL / RERUN_REQUIRED`; historical status preserved |
 | M3                       | `IN_PROGRESS`                                        |
 | M3-T05                   | `DEFINED / NOT_STARTED`                              |
@@ -177,5 +182,5 @@ and must be dropped after final evidence capture.
 | Next allowed formal task | new immutable `M3-LIFECYCLE-STORY-GATE` rerun        |
 | M4/M5/M6 and BUY         | not executed                                         |
 
-After PR integration, the final main commit and CI run must be appended here;
-this fix does not promote the Story Gate or M3.
+PR #2 integration and its final main CI are recorded above. This fix does not
+promote the Story Gate or M3.
