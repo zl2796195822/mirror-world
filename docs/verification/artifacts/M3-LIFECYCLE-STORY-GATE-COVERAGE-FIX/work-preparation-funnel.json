@@ -1,0 +1,75 @@
+{
+  "artifactKind": "verification-analysis-not-world-truth",
+  "schemaVersion": "m3-lifecycle-story-gate-coverage-fix-targeted-v1",
+  "task": "M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX",
+  "coverageContractVersion": "m3-story-gate-coverage-v2",
+  "scope": "targeted-clean-postgresql",
+  "fullStoryGateRerun": false,
+  "targetPopulation": {
+    "employedResidents": 26,
+    "unemployedResidents": 4
+  },
+  "stages": {
+    "EMPLOYED": 26,
+    "SCHEDULED_SHIFT": 26,
+    "PRE_SHIFT_WAKE_CREATED": 26,
+    "PRE_SHIFT_WAKE_DUE_BY_08_50": 26,
+    "OBSERVED": 1,
+    "PREP_GOAL": 1,
+    "MOVE_CANDIDATE": 1,
+    "MOVE_SELECTED": 1,
+    "MOVE_REQUESTED": 1,
+    "MOVE_COMMITTED": 1,
+    "ARRIVED_BEFORE_09_STRICT": 0,
+    "ARRIVED_AT_OR_BEFORE_09": 1,
+    "WORK_CANDIDATE": 1,
+    "WORK_STARTED": 1,
+    "WORK_COMPLETED": 1,
+    "LATE_WORK_ACCEPTED": 0
+  },
+  "boundary": {
+    "worldTimeOnly": true,
+    "shiftStart": "2026-09-07T09:00:00.000Z",
+    "preparationWakeTimes": {
+      "15MinuteRoutes": "2026-09-07T08:45:00.000Z",
+      "10MinuteRoutes": "2026-09-07T08:50:00.000Z"
+    },
+    "formalRule": "shiftStart - deterministic travel duration",
+    "arrivalInterpretation": "The frozen WORK rule permits timeUntilStart <= travelDuration; the tested MOVE completes at the exact 09:00 boundary, before the WORK decision, and WORK starts exactly at 09:00."
+  },
+  "routes": {
+    "HOME_to_OFFICE": {
+      "travelDurationWorldMinutes": 15,
+      "preparationWake": "2026-09-07T08:45:00.000Z",
+      "arrival": "2026-09-07T09:00:00.000Z"
+    },
+    "HOME_to_CAFE": {
+      "travelDurationWorldMinutes": 10,
+      "preparationWake": "2026-09-07T08:50:00.000Z",
+      "arrival": "2026-09-07T09:00:00.000Z"
+    },
+    "HOME_to_STORE": {
+      "travelDurationWorldMinutes": 10,
+      "preparationWake": "2026-09-07T08:50:00.000Z",
+      "arrival": "2026-09-07T09:00:00.000Z"
+    }
+  },
+  "behavior": {
+    "weekday": "PASS",
+    "weekend": "PASS",
+    "unemployed": "PASS",
+    "alreadyAtWorkplace": "PASS",
+    "busyResident": "PASS",
+    "pauseMaintenance": "PASS",
+    "restartRequery": "PASS",
+    "dedupe": "PASS",
+    "worldIsolation": "PASS",
+    "staleFence": "PASS"
+  },
+  "sourceTests": [
+    "apps/api/scripts/m3-lifecycle-story-gate-coverage-fix.integration.test.mjs :: bootstrap preparation wakes are wide, durable, restart-safe, and deduped",
+    "apps/api/scripts/m3-lifecycle-story-gate-coverage-fix.integration.test.mjs :: real preparation wake drives MOVE, arrival, exact WORK, and completion",
+    "apps/api/scripts/m3-lifecycle-story-gate-coverage-fix.integration.test.mjs :: 10/15-minute routes meet the same exact shift boundary",
+    "apps/api/scripts/m3-lifecycle-story-gate-coverage-fix.integration.test.mjs :: 09:01 is LATE and cannot start WORK"
+  ]
+}

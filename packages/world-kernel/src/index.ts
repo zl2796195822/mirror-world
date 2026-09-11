@@ -123,6 +123,15 @@ export {
   orderSchedulerWorkItems,
 } from "./scheduler-order.js";
 export {
+  WORK_PREPARATION_POLICY_VERSION,
+  WorkPreparationWakeError,
+  deriveWorkPreparationBoundary,
+  registerNextWorkPreparationWakeInTransaction,
+  registerNextWorkPreparationWakes,
+  type WorkPreparationBoundary,
+  type WorkPreparationWakeDatabase,
+} from "./work-preparation.js";
+export {
   createDeterministicSimulationDriver,
   DeterministicSimulationDriver,
   SimulationDriverError,

@@ -10,6 +10,7 @@ import {
   createDb,
   generateResidentSeed,
   getFirstStreetLocationFixtures,
+  getResidentFoodItemId,
   registerScheduledWake,
 } from "@mirror/db";
 import {
@@ -22,13 +23,20 @@ import {
   canonicalResidentProjectionFromRows,
   createDeterministicSimulationDriver,
   createPostgresObservationQuery,
+  deriveWorkPreparationBoundary,
   executeResidentActionRequest,
   M3_DOMAIN_EVENT_REGISTRY_VERSION,
   M3_DOMAIN_REPLAY_SCHEMA_VERSION,
   projectionHash,
   replayM3ResidentProjection,
   replayM3ResidentProjectionFromCheckpoint,
+  registerNextWorkPreparationWakes,
 } from "@mirror/world-kernel";
+import {
+  COVERAGE_CONTRACT_VERSION,
+  CoverageV2Collector,
+  evaluateCoverageV2,
+} from "./m3-story-gate-coverage-v2.mjs";
 
 const START_TIME = new Date("2026-09-07T00:00:00.000Z");
 const WORLD_DAYS = 30;
@@ -36,7 +44,7 @@ const WORLD_MINUTES = WORLD_DAYS * 24 * 60;
 const TARGET_TIME = new Date(START_TIME.getTime() + WORLD_MINUTES * 60_000);
 const WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v1";
 const DIFFERENT_WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v2";
-const GATE_VERSION = "m3-story-sanity-v1";
+const GATE_VERSION = "m3-story-sanity-v2";
 const LOGICAL_WORLD_ID = "00000000-0000-4000-8000-00000000a300";
 const ACTION_SCOPE = ["MOVE", "SLEEP", "EAT", "WORK", "TALK"];
 const POLICY_VERSIONS = {
@@ -133,13 +141,13 @@ function residentFixtureHash(seed, worldId) {
   );
 }
 
-function resourceFixtureHash(seed) {
+function resourceFixtureHash(seed, worldId) {
   return sha256(
     canonical(
       seed.residents
         .map((resident) => ({
           residentId: resident.residentId,
-          itemId: resident.resources.itemId,
+          itemId: getResidentFoodItemId(worldId, resident.residentId),
           foodUnits: resident.resources.foodUnits,
           version: resident.resources.version,
         }))
@@ -188,6 +196,35 @@ function loopObservation(snapshot, allSnapshots) {
   const activity = available(snapshot.activity).activity;
   const resources = available(snapshot.resources).snapshot;
   const obligation = available(snapshot.workObligation).obligation;
+  const workplace = obligation.workplaceId
+    ? getFirstStreetLocationFixtures(snapshot.worldId).find(
+        ({ id }) => id === obligation.workplaceId,
+      )
+    : null;
+  const workPreparation =
+    snapshot.self.employment.status === "EMPLOYED" &&
+    obligation.status === "NOT_DUE" &&
+    workplace &&
+    workplace.id !== location.locationId
+      ? (() => {
+          const boundary = deriveWorkPreparationBoundary({
+            currentWorldTime: worldWorldTime,
+            currentLocationKind: location.kind,
+            workplaceKind: workplace.kind,
+          });
+          const shiftStartWorldTime = new Date(obligation.startsAtWorldTime);
+          if (
+            boundary.shiftStartWorldTime.getTime() !==
+            shiftStartWorldTime.getTime()
+          ) {
+            return undefined;
+          }
+          return {
+            boundaryWorldTime: boundary.preparationWorldTime,
+            travelDurationWorldMinutes: boundary.travelDurationWorldMinutes,
+          };
+        })()
+      : undefined;
   const nearbyResidents = allSnapshots
     .filter(
       ({ subjectResidentId }) =>
@@ -224,6 +261,7 @@ function loopObservation(snapshot, allSnapshots) {
         : null,
       completedWorkShiftKeys: obligation.completedWorkShiftKeys ?? [],
     },
+    ...(workPreparation ? { workPreparation } : {}),
     eatCapable: location.kind === "HOME" || location.kind === "CAFE",
     workCapable: location.kind === "OFFICE",
     foodItems: [
@@ -284,6 +322,167 @@ function normalizeDecision(value) {
       item instanceof Date ? item.toISOString() : item,
     ),
   );
+}
+
+function coverageDenominators(fixture) {
+  const all = fixture.residents.map(({ residentId }) => residentId);
+  const employed = fixture.residents
+    .filter(({ employment }) => employment.status === "EMPLOYED")
+    .map(({ residentId }) => residentId);
+  return Object.fromEntries(
+    [
+      ["SLEEP", all],
+      ["EAT", all],
+      ["WORK", employed],
+      ["TALK", all],
+      ["MOVE", all],
+    ].map(([action, totalResidentIds]) => [
+      action,
+      {
+        totalResidentIds,
+        eligibleResidentIds:
+          action === "WORK" ? employed : [...totalResidentIds],
+        feasibleResidentIds:
+          action === "EAT"
+            ? fixture.residents
+                .filter(({ resources }) => resources.foodUnits > 0)
+                .map(({ residentId }) => residentId)
+            : action === "WORK" || action === "MOVE"
+              ? employed
+              : action === "TALK"
+                ? []
+                : [...totalResidentIds],
+      },
+    ]),
+  );
+}
+
+function recordCoverageDecision(collector, input) {
+  const {
+    worldId,
+    residentId,
+    worldTime,
+    sourceWorldSeq,
+    observation,
+    result,
+  } = input;
+  const selectedGoal = result.goalEvaluation.selectedGoal;
+  const nearbyResidents = observation.nearbyResidents ?? [];
+  const legalTalkParticipants = nearbyResidents.filter(
+    (participant) =>
+      participant.active &&
+      participant.worldId === worldId &&
+      participant.residentId !== residentId &&
+      participant.locationId === observation.locationId &&
+      participant.activityKind === "IDLE",
+  );
+  const candidateFor = (action) =>
+    result.decision.candidates.find(({ actionType }) => actionType === action);
+  const selectedFor = (action) =>
+    result.decision.selectedCandidate?.actionType === action
+      ? result.decision.selectedCandidate
+      : null;
+  const submissionFor = (action) =>
+    result.submission?.request.actionType === action ? result.submission : null;
+  const evidenceFor = (action) => ({
+    need: {
+      hungerPressure: result.needState.hungerPressure,
+      restPressure: result.needState.restPressure,
+      socialPressure: result.needState.socialPressure,
+    },
+    goalType: selectedGoal?.type ?? null,
+    selectedActionType: result.decision.selectedCandidate?.actionType ?? null,
+    ...(action === "TALK"
+      ? {
+          partnerAvailability: legalTalkParticipants.length,
+          locationId: observation.locationId,
+        }
+      : {}),
+  });
+  const record = (action, details) => {
+    const submission = submissionFor(action);
+    collector.recordActionLoopDecision({
+      worldId,
+      residentId,
+      action,
+      episodeId:
+        submission?.request.id ??
+        `${action}|${residentId}|${result.decisionEpoch}`,
+      worldTime,
+      sourceObservationId: `${worldId}|${residentId}|${sourceWorldSeq}`,
+      policyVersions: POLICY_VERSIONS,
+      decision: result.decision,
+      submission,
+      evidence: evidenceFor(action),
+      ...details,
+    });
+  };
+
+  const talkEligible =
+    result.needState.socialPressure >= 70 ||
+    selectedGoal?.type === "MAKE_SOCIAL_CONTACT";
+  record("TALK", {
+    eligible: talkEligible,
+    feasible: talkEligible && legalTalkParticipants.length > 0,
+    opportunity: talkEligible && legalTalkParticipants.length > 0,
+    ...(talkEligible && legalTalkParticipants.length === 0
+      ? { reason: "NO_LEGAL_OPPORTUNITY" }
+      : {}),
+  });
+
+  const eatEligible =
+    result.needState.hungerPressure >= 80 ||
+    selectedGoal?.type === "SATISFY_HUNGER";
+  const eatFeasible =
+    eatEligible &&
+    observation.eatCapable === true &&
+    (observation.resources?.foodUnits ?? 0) > 0 &&
+    observation.resources?.locationId === observation.locationId;
+  record("EAT", {
+    eligible: eatEligible,
+    feasible: eatFeasible,
+    opportunity: eatFeasible,
+    ...(eatEligible && !eatFeasible ? { reason: "UNAVAILABLE_RESOURCE" } : {}),
+  });
+
+  const workEligible = observation.workplaceId !== null;
+  const workOpportunity =
+    workEligible &&
+    (observation.workPreparation !== undefined ||
+      observation.locationId === observation.workplaceId);
+  record("WORK", {
+    eligible: workEligible,
+    feasible: workEligible,
+    opportunity: workOpportunity,
+    ...(workEligible && !workOpportunity
+      ? { reason: "NO_LEGAL_OPPORTUNITY" }
+      : {}),
+  });
+
+  const moveEligible =
+    observation.workplaceId !== null ||
+    selectedGoal?.type === "RETURN_HOME" ||
+    candidateFor("MOVE") !== undefined;
+  const moveCandidate = candidateFor("MOVE");
+  record("MOVE", {
+    eligible: moveEligible,
+    feasible: moveEligible,
+    opportunity: moveEligible && moveCandidate !== undefined,
+    ...(moveEligible
+      ? moveCandidate === undefined
+        ? { reason: "NO_LEGAL_OPPORTUNITY" }
+        : {}
+      : { reason: "NO_FORMAL_NECESSITY" }),
+  });
+
+  record("SLEEP", {
+    eligible: true,
+    feasible: true,
+    opportunity: true,
+    ...(candidateFor("SLEEP") === undefined && selectedFor("SLEEP") === null
+      ? { reason: "NO_CANDIDATE" }
+      : {}),
+  });
 }
 
 function actionStat() {
@@ -403,7 +602,7 @@ async function makeManifest({
     residentSeedGeneratorVersion: fixture.generatorVersion,
     residentSeedConfigVersion: fixture.configVersion,
     residentFixtureHash: residentFixtureHash(fixture, worldId),
-    resourceFixtureHash: resourceFixtureHash(fixture),
+    resourceFixtureHash: resourceFixtureHash(fixture, worldId),
     initialSnapshotHash: initialSnapshotHash(fixture, worldId),
     policyVersions: POLICY_VERSIONS,
     resourceCapability: "M3_KERNEL_POSTGRES_RESOURCE_CAS",
@@ -422,6 +621,7 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
   const world = worldRecord(worldId, seed);
   await insertWorld(client, world);
   await bootstrapResidentRuntimeStates(db, { worldId });
+  await registerNextWorkPreparationWakes(db, { worldId });
   const fixture = generateResidentSeed({ worldId, seed });
   assert.equal(fixture.residents.length, 30);
   const residentById = new Map(
@@ -429,6 +629,8 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
   );
   const anchors = createResidentNeedAnchorStore();
   fixture.residents.forEach((resident) => seedAnchor(anchors, resident));
+  const coverage = new CoverageV2Collector();
+  const denominators = coverageDenominators(fixture);
   const stats = new Map(
     fixture.residents.map((resident) => [
       resident.residentId,
@@ -579,6 +781,14 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
       decisionEpoch: epoch,
       seed,
     });
+    recordCoverageDecision(coverage, {
+      worldId,
+      residentId,
+      worldTime: worldWorldTime,
+      sourceWorldSeq: result.sourceWorldSeq,
+      observation,
+      result,
+    });
     const need = result.needState;
     const residentStats = stats.get(residentId);
     residentStats.causalEvidenceCount +=
@@ -617,6 +827,7 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
         worldId,
         worldTime: worldWorldTime.toISOString(),
         sourceWorldSeq: result.sourceWorldSeq,
+        sourceObservationId: `${worldId}|${residentId}|${result.sourceWorldSeq}`,
         needState: normalizeDecision(result.needState),
         selectedGoal: normalizeDecision(result.goalEvaluation.selectedGoal),
         candidates: normalizeDecision(result.decision.candidates),
@@ -734,6 +945,21 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     for (const failure of step.failureItems) recovery.failures.push(failure);
     for (const outcome of step.completionOutcomes) {
       const request = pendingActions.get(outcome.requestId);
+      const completionEvents = outcome.eventRefs.length
+        ? await client`
+            select id, type, actor_id, payload, occurred_at
+            from world_events
+            where world_id = ${worldId}
+              and id = any(${client.array(
+                outcome.eventRefs.map(({ eventId }) => eventId),
+                2950,
+              )})
+            order by seq
+          `
+        : [];
+      const completedEvent = completionEvents.find(({ type }) =>
+        type.endsWith("_COMPLETED"),
+      );
       if (request) {
         request.completionOutcome = outcome;
         request.eventRefs = outcome.eventRefs;
@@ -742,6 +968,35 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
           outcome.eventRefs.some(({ type }) => type.endsWith("_COMPLETED"))
             ? 1
             : 0;
+        if (completedEvent) {
+          const participant =
+            actionType === "TALK"
+              ? [...residentById.values()].find(
+                  ({ actorRef }) =>
+                    actorRef.actorId ===
+                    completedEvent.payload?.participantActorId,
+                )
+              : undefined;
+          const participantResidentId = participant?.residentId;
+          coverage.recordCompletion({
+            worldId,
+            residentId: request.residentId,
+            action: actionType,
+            episodeId: request.actionRequest.id,
+            worldTime:
+              completedEvent.payload?.completedAtWorldTime ??
+              completedEvent.occurred_at.toISOString(),
+            sourceObservationId: request.sourceObservationId,
+            policyVersions: POLICY_VERSIONS,
+            actionInstanceId: request.actionRequest.id,
+            ...(actionType === "TALK"
+              ? {
+                  initiatorResidentId: request.residentId,
+                  ...(participantResidentId ? { participantResidentId } : {}),
+                }
+              : {}),
+          });
+        }
         pendingActions.delete(outcome.requestId);
       }
       await applyCompletionEffects({
@@ -866,6 +1121,12 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     suffix: projectionHash(suffixReplay),
     genesis: projectionHash(genesisReplay),
   };
+  const coverageV2 = evaluateCoverageV2({
+    contractVersion: COVERAGE_CONTRACT_VERSION,
+    worldId,
+    rows: coverage.rows(),
+    denominators,
+  });
   const eventTypes = [
     "WORLD_TIME_ADVANCED",
     ...ACTION_SCOPE.flatMap((action) => [
@@ -1008,7 +1269,10 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     hashes,
     storyDigest,
     allCompleted,
-    acceptedActionCoverage: allCompleted && commuteCoverage,
+    coverageV2,
+    coverageRows: coverage.rows(),
+    acceptedActionCoverage:
+      coverageV2.passes && allCompleted && commuteCoverage,
     commuteCoverage,
     endpoint: {
       remainingActiveActivities: Number(remainingActivity.count),
@@ -1079,6 +1343,14 @@ async function writeArtifacts(result) {
   );
   write("resident-summary.json", serializable(result.baseline.stats));
   write("causal-evidence.json", serializable(result.baseline.causalEvidence));
+  write(
+    "coverage-funnel-v2.json",
+    serializable({
+      contractVersion: COVERAGE_CONTRACT_VERSION,
+      rows: result.baseline.coverageRows,
+      summary: result.baseline.coverageV2,
+    }),
+  );
   write(
     "event-summary.json",
     serializable({
@@ -1191,7 +1463,8 @@ async function main() {
       b.fixture.residents.length === 30 &&
         b.manifest.residentFixtureHash ===
           residentFixtureHash(b.fixture, b.worldId) &&
-        b.manifest.resourceFixtureHash === resourceFixtureHash(b.fixture),
+        b.manifest.resourceFixtureHash ===
+          resourceFixtureHash(b.fixture, b.worldId),
     ],
     [3, "Accepted action coverage", b.acceptedActionCoverage],
     [

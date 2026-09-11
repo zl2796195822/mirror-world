@@ -1,0 +1,86 @@
+{
+  "artifactKind": "verification-analysis-not-world-truth",
+  "schemaVersion": "m3-lifecycle-story-gate-coverage-fix-targeted-v1",
+  "task": "M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX",
+  "coverageContractVersion": "m3-story-gate-coverage-v2",
+  "scope": "targeted-instrumentation-and-evaluator",
+  "fullStoryGateRerun": false,
+  "fields": [
+    "need",
+    "goal",
+    "eligible",
+    "feasible",
+    "opportunity",
+    "candidatePresence",
+    "candidateConstraintResult",
+    "candidateScore",
+    "selectedAction",
+    "partnerAvailability",
+    "location",
+    "requestStatus",
+    "outcomeOrDeferReason"
+  ],
+  "cases": {
+    "A_OPPORTUNITY_AND_CANDIDATE": {
+      "eligible": true,
+      "feasible": true,
+      "opportunity": true,
+      "candidateGenerated": true,
+      "selected": true,
+      "terminalReason": null
+    },
+    "B_NO_OPPORTUNITY": {
+      "eligible": true,
+      "feasible": false,
+      "opportunity": false,
+      "candidateGenerated": false,
+      "selected": false,
+      "terminalReason": "NO_LEGAL_OPPORTUNITY"
+    },
+    "C_CANDIDATE_NOT_SELECTED": {
+      "eligible": true,
+      "feasible": true,
+      "opportunity": true,
+      "candidateGenerated": true,
+      "selected": false,
+      "selectedHigherPriorityAction": "EAT",
+      "terminalReason": "CANDIDATE_NOT_SELECTED"
+    },
+    "D_REQUEST_REJECTED": {
+      "eligible": true,
+      "feasible": true,
+      "opportunity": true,
+      "candidateGenerated": true,
+      "selected": true,
+      "requestIssued": true,
+      "kernelOutcome": "REJECTED",
+      "terminalReason": "REQUEST_REJECTED"
+    },
+    "E_COMPLETED_PAIRED_CONTACT": {
+      "actionCount": 1,
+      "uniqueInitiatorCount": 1,
+      "uniqueParticipantCount": 1,
+      "uniqueContactCount": 2,
+      "contactRule": "initiator union participant",
+      "terminalReason": null
+    }
+  },
+  "historicalRun08NoContactResidents": {
+    "count": 6,
+    "classification": "PENDING_FULL_RERUN_CLASSIFICATION",
+    "evidenceStatus": "instrumentation_available; historical artifact unchanged",
+    "policyChanged": false,
+    "followUp": "The next immutable Story Gate run must classify each row as NO_OPPORTUNITY, OPPORTUNITY_NO_CANDIDATE, CANDIDATE_NOT_SELECTED, REQUEST_REJECTED, DEFERRED, or COMPLETED."
+  },
+  "truthBoundary": {
+    "writesWorldEvents": false,
+    "writesResidentTruth": false,
+    "changesDecision": false,
+    "recordsHiddenChainOfThought": false
+  },
+  "sourceTests": [
+    "apps/api/scripts/m3-story-gate-coverage-v2.test.mjs :: Coverage v2 records TALK opportunity and candidate-negative evidence",
+    "apps/api/scripts/m3-story-gate-coverage-v2.test.mjs :: Coverage v2 distinguishes TALK rejection and higher-priority selection",
+    "apps/api/scripts/m3-story-gate-coverage-v2.test.mjs :: Coverage v2 preserves TALK action count and initiator/participant union"
+  ]
+}

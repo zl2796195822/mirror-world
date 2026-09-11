@@ -89,6 +89,17 @@ export type RegisterWorkBoundaryWakeInput = Readonly<{
   decisionEpoch?: number;
 }>;
 
+export type RegisterWorkPreparationWakeInput = Readonly<{
+  worldId: string;
+  worldSeed: string;
+  preparationWorldTime: Date;
+  shiftStartWorldTime: Date;
+  sourceWorldSeq: bigint;
+  residentId: string;
+  sourceStateVersion: number;
+  decisionEpoch?: number;
+}>;
+
 export async function registerScheduledWakeInTransaction(
   transaction: ScheduledWakeTransaction,
   input: ScheduledWakeRegistration,
@@ -234,6 +245,93 @@ export async function registerNextWorkBoundaryWakeInTransaction(
     return toRegistration(updated);
   }
   return registerScheduledWakeInTransaction(transaction, wake);
+}
+
+export async function registerWorkPreparationWakeInTransaction(
+  transaction: ScheduledWakeTransaction,
+  input: RegisterWorkPreparationWakeInput,
+): Promise<ScheduledWakeRegistration | null> {
+  const resident = generateResidentSeed({
+    worldId: input.worldId,
+    seed: input.worldSeed,
+  }).residents.find(({ residentId }) => residentId === input.residentId);
+  if (!resident || resident.employment.status !== "EMPLOYED") return null;
+
+  if (
+    Number.isNaN(input.preparationWorldTime.getTime()) ||
+    Number.isNaN(input.shiftStartWorldTime.getTime()) ||
+    input.preparationWorldTime.getTime() >=
+      input.shiftStartWorldTime.getTime() ||
+    !Number.isInteger(input.sourceStateVersion) ||
+    input.sourceStateVersion < 0 ||
+    input.sourceWorldSeq < 0n
+  ) {
+    throw new ScheduledWakeStoreError(
+      "INVALID_WAKE",
+      "Work preparation wake boundary is invalid",
+    );
+  }
+
+  const dedupeKey = [
+    WORK_BOUNDARY_POLICY_VERSION,
+    "WORK_PREPARATION",
+    input.worldId,
+    input.residentId,
+    input.shiftStartWorldTime.toISOString(),
+  ].join("|");
+  const wake: ScheduledWakeRegistration = {
+    policyVersion: WORK_BOUNDARY_POLICY_VERSION,
+    wakeId: deterministicWakeId(dedupeKey),
+    worldId: input.worldId,
+    residentId: input.residentId,
+    wakeReason: "WORK_BOUNDARY",
+    dueWorldTime: input.preparationWorldTime.toISOString(),
+    sourceStateVersion: input.sourceStateVersion,
+    sourceWorldSeq: input.sourceWorldSeq.toString(),
+    decisionEpoch: input.decisionEpoch ?? 0,
+    dedupeKey,
+  };
+  const [existing] = await transaction
+    .select()
+    .from(scheduledWakeRegistrations)
+    .where(
+      and(
+        eq(scheduledWakeRegistrations.worldId, wake.worldId),
+        eq(scheduledWakeRegistrations.dedupeKey, wake.dedupeKey),
+      ),
+    )
+    .for("update");
+  if (!existing) return registerScheduledWakeInTransaction(transaction, wake);
+
+  const persisted = toRegistration(existing);
+  if (
+    persisted.wakeId !== wake.wakeId ||
+    persisted.residentId !== wake.residentId ||
+    persisted.wakeReason !== wake.wakeReason ||
+    persisted.policyVersion !== wake.policyVersion
+  ) {
+    throw new ScheduledWakeStoreError(
+      "WAKE_REGISTRATION_CONFLICT",
+      `Scheduled wake dedupe key ${wake.dedupeKey} is already registered with different content`,
+    );
+  }
+  const [updated] = await transaction
+    .update(scheduledWakeRegistrations)
+    .set({
+      dueWorldTime: new Date(wake.dueWorldTime),
+      sourceStateVersion: wake.sourceStateVersion,
+      sourceWorldSeq: BigInt(wake.sourceWorldSeq),
+      decisionEpoch: wake.decisionEpoch,
+    })
+    .where(eq(scheduledWakeRegistrations.wakeId, wake.wakeId))
+    .returning();
+  if (!updated) {
+    throw new ScheduledWakeStoreError(
+      "INVALID_WAKE",
+      "Scheduled work preparation wake could not be refreshed",
+    );
+  }
+  return toRegistration(updated);
 }
 
 export async function registerNextWorkBoundaryWakes(

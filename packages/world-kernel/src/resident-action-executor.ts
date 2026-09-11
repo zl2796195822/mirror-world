@@ -50,6 +50,7 @@ import type {
   WorldKernelTransaction,
 } from "./world-events-store.js";
 import type { WorldClockStatus } from "./world-clock.js";
+import { registerNextWorkPreparationWakeInTransaction } from "./work-preparation.js";
 
 export type ResidentActionDatabase = ReturnType<typeof createDb>["db"];
 
@@ -1442,7 +1443,10 @@ export async function completeResidentAction(
           "Resident runtime changed before action completion could commit",
         );
       }
-      if (request.actionType === "WORK" && !isParticipant) {
+      if (
+        !isParticipant &&
+        (request.actionType === "WORK" || request.actionType === "MOVE")
+      ) {
         await registerNextWorkBoundaryWakeInTransaction(transaction, {
           worldId: world.id,
           worldSeed: world.seed,
@@ -1451,6 +1455,16 @@ export async function completeResidentAction(
           residentId,
           sourceStateVersion: current.stateVersion + 1,
         });
+        if (request.actionType === "MOVE") {
+          await registerNextWorkPreparationWakeInTransaction(transaction, {
+            worldId: world.id,
+            worldSeed: world.seed,
+            worldTime: world.worldTime,
+            sourceWorldSeq: BigInt(completedOutcome.worldSeqEnd),
+            residentId,
+            sourceStateVersion: current.stateVersion + 1,
+          });
+        }
       }
     }
     return { disposition: "EXECUTED", outcome: completedOutcome };
