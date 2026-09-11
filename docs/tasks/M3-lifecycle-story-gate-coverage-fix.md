@@ -6,14 +6,14 @@
 | ------------------ | ---------------------------------------------------------------------------------------------------- |
 | Registry key       | `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX`                                                               |
 | Kind               | Formal remediation task                                                                              |
-| Status             | `DEFINED / NOT_STARTED`                                                                              |
+| Status             | `PASS`                                                                                               |
 | Milestone          | M3                                                                                                   |
 | Predecessor        | `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION`                                                    |
 | Accepted contract  | [Hard Gate #3 Coverage Contract v2](../verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md) |
 | Historical failure | `20260910-run-08` remains immutable `FAIL`                                                           |
 
-This task is registered only. It is not executed by the governance task, does
-not rerun the Story Gate, and does not execute M3-T05.
+This task was registered by the governance task and is now complete. It did not
+rerun the Story Gate and did not execute M3-T05.
 
 ## Objective
 

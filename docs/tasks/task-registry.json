@@ -47,12 +47,13 @@
       "id": "M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX",
       "name": "M3 Lifecycle Story Gate Coverage Fix",
       "kind": "FORMAL_REMEDIATION_TASK",
-      "status": "DEFINED / NOT_STARTED",
+      "status": "PASS",
       "nextAllowedFormalTask": false,
       "after": "M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION",
       "definition": "docs/tasks/M3-lifecycle-story-gate-coverage-fix.md",
       "frozenInput": "docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-CONTRACT-v2.md",
-      "executionAuthorization": "EXPLICIT_USER_AUTHORIZATION_REQUIRED"
+      "executionAuthorization": "EXPLICIT_USER_AUTHORIZATION_RECEIVED",
+      "verificationReport": "docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX-report.md"
     },
     {
       "registryKey": "M3-T05",

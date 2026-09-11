@@ -8,7 +8,7 @@ This directory registers formal scope and order; it does not execute a task.
 | `M3-BEHAVIORAL-LIFECYCLE-EXTENSION` — M3 Behavioral Lifecycle Extension | `PASS`                  | [formal task](./M3-behavioral-lifecycle-extension.md)                                       |
 | `M3-LIFECYCLE-STORY-GATE`                                               | `FAIL`                  | [formal gate](./M3-lifecycle-story-gate.md)                                                 |
 | `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION`                       | `PASS`                  | [reconciliation](../verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION/README.md) |
-| `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX`                                  | `DEFINED / NOT_STARTED` | [formal remediation](./M3-lifecycle-story-gate-coverage-fix.md)                             |
+| `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX`                                  | `PASS`                  | [formal remediation](./M3-lifecycle-story-gate-coverage-fix.md)                             |
 | `M3-T05` — Story Sanity Report                                          | `DEFINED / NOT_STARTED` | [clarified task](./M3-T05-story-sanity.md)                                                  |
 
 ## Registration decisions
@@ -26,9 +26,9 @@ This directory registers formal scope and order; it does not execute a task.
   implementation task. It is not executed by registration.
 - The failed Gate's coverage reconciliation is accepted as governance input;
   it changes only Hard Gate #3's measurement contract for future runs.
-- The registered coverage fix is the only next remediation task. Its Work
-  preparation change and funnel evidence extension require explicit user
-  authorization before execution. No TALK policy fix is registered yet.
+- The coverage fix is complete. Its Work preparation change and funnel
+  evidence extension are targeted evidence only; no TALK policy fix is
+  registered. The next task is a new immutable Story Gate rerun.
 
 ## Formal order
 
