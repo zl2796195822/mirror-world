@@ -44,6 +44,7 @@ export {
   type GoalSource,
   type GoalType,
   type GoalWorkObligation,
+  type GoalWorkPreparation,
   type ResidentGoalEvaluationInput,
 } from "./goals.js";
 export {

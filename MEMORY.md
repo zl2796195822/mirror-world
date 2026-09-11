@@ -288,3 +288,10 @@
 - 仅注册一个最小后续 `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`，内部包含 Work Preparation Wake Fix 与 read-only funnel evidence extension；未注册 TALK policy fix，未执行生产修复、full rerun、M3-T05 或 M4+。
 - 审计发现 review commit `ded7c6d…` 的 01_BASELINE run-summary hash 有误且 funnel 漏写 `OPPORTUNITY`；保留工作区正确 hash，补齐 funnel/model 与 accepted contract，并保留 run-08 原始 bundle 不变。
 - 治理提交 `0fda99c486694a65c1e05b96ca2aa30a4f827ecc` 已推送到 `gate/m3-lifecycle-story` 并 fast-forward 到 `origin/main`；`foundation-ci` run `34548099657` 为 `success`。
+
+## 2026-09-11 M3 Story Gate Coverage Fix
+
+- 在独立 worktree `/Users/alin/AI项目/mirror-world-m3-story-gate-coverage-fix`、分支 `task/m3-lifecycle-story-gate-coverage-fix` 完成正式 `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX`，实现提交为 `780e491c6ee2d14bb7d44eaa8114ee2402721de9`；修复为复用 `m3-scheduler-v2` 的 bootstrap-wide World-Time pre-shift preparation wake，并把机会传入既有 Life Engine decision loop，未创建第二 scheduler、未使用 wall clock。
+- Clean disposable PostgreSQL `mirror_m3_covfix_20260911` 上 Node 24 targeted integration 7/7；完整 API integration 42/42，包含既有 M3 lifecycle replay 15/15 与 PRE-AL-GATE 既有 30×30 profile 回归。WORK exact 09:00、09:01/LATE rejection、10/15-minute route、restart/requery/dedupe、weekend/unemployed/workplace/busy/pause/maintenance/stale-fence/isolation 均 PASS。
+- 新增 `m3-story-gate-coverage-v2` collector/evaluator：完整 funnel、`UNKNOWN` fail、EAT feasibility、MOVE necessity、TALK initiator/participant union 与 bounded negative rows；TALK policy、paired lock/topology、EAT/MOVE production semantics、fixture、BUY、migration/schema、Kernel authority 与 run-08 均未改。
+- Targeted artifacts 与正式报告：`docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX/`、`docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX-report.md`。Coverage Fix = PASS pending final main CI；Story Gate 历史 `FAIL / RERUN_REQUIRED`、M3=`IN_PROGRESS`、M3-T05=`DEFINED / NOT_STARTED`；完整 Story Gate rerun 未执行。

@@ -15,11 +15,13 @@ export {
   registerScheduledWake,
   registerNextWorkBoundaryWakeInTransaction,
   registerNextWorkBoundaryWakes,
+  registerWorkPreparationWakeInTransaction,
   registerScheduledWakeInTransaction,
   ScheduledWakeStoreError,
   type ScheduledWakeDatabase,
   type ScheduledWakeRow,
   type ScheduledWakeTransaction,
+  type RegisterWorkPreparationWakeInput,
 } from "./scheduled-wake.js";
 export {
   DUE_ACTIVITY_MAX_BATCH_SIZE,

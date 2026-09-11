@@ -22,6 +22,7 @@ export type GoalReasonCode =
   | "MEAL_WINDOW"
   | "SLEEP_WINDOW"
   | "SOCIAL_WINDOW"
+  | "WORK_PREPARATION"
   | "WORK_OBLIGATION_DUE"
   | "WORK_OBLIGATION_LATE"
   | "RETURN_HOME_REQUIRED"
@@ -52,6 +53,12 @@ export type GoalWorkObligation = Readonly<{
   status: "NOT_DUE" | "DUE" | "LATE" | "COMPLETED";
   workplaceId: string;
   deadline?: Date;
+  startsAtWorldTime?: Date;
+}>;
+
+export type GoalWorkPreparation = Readonly<{
+  boundaryWorldTime: Date;
+  travelDurationWorldMinutes: number;
 }>;
 
 export type GoalContext = Readonly<{
@@ -137,6 +144,7 @@ export type GoalEvaluationInput = Readonly<{
   resident: GoalResident;
   needs: NeedState;
   obligation?: GoalWorkObligation;
+  workPreparation?: GoalWorkPreparation;
   context?: GoalContext;
   activeGoal?: ActiveGoal;
   policy?: GoalPolicy;
@@ -154,6 +162,7 @@ export type ResidentGoalEvaluationInput = Readonly<{
   resident: GoalResident;
   needs: NeedState;
   obligation?: GoalWorkObligation;
+  workPreparation?: GoalWorkPreparation;
   context?: GoalContext;
   activeGoal?: ActiveGoal;
 }>;
@@ -363,6 +372,31 @@ function validateInput(input: GoalEvaluationInput, policy: GoalPolicy): void {
   if (input.obligation?.deadline) {
     assertValidDate(input.obligation.deadline, "obligation.deadline");
   }
+  if (input.obligation?.startsAtWorldTime) {
+    assertValidDate(
+      input.obligation.startsAtWorldTime,
+      "obligation.startsAtWorldTime",
+    );
+  }
+  if (input.workPreparation) {
+    assertValidDate(
+      input.workPreparation.boundaryWorldTime,
+      "workPreparation.boundaryWorldTime",
+    );
+    if (
+      !Number.isInteger(input.workPreparation.travelDurationWorldMinutes) ||
+      input.workPreparation.travelDurationWorldMinutes <= 0
+    ) {
+      throw new Error("workPreparation travel duration is invalid");
+    }
+    if (
+      input.obligation?.startsAtWorldTime &&
+      input.workPreparation.boundaryWorldTime.getTime() >=
+        input.obligation.startsAtWorldTime.getTime()
+    ) {
+      throw new Error("workPreparation must precede the work obligation");
+    }
+  }
   validatePolicy(policy);
 }
 
@@ -486,11 +520,35 @@ function addObligationCandidate(
   if (
     input.resident.employment.status !== "EMPLOYED" ||
     !input.resident.employment.workplaceId ||
-    !obligation ||
-    (obligation.status !== "DUE" && obligation.status !== "LATE")
+    !obligation
   ) {
     return;
   }
+  if (obligation.status === "NOT_DUE") {
+    const preparation = input.workPreparation;
+    if (
+      !preparation ||
+      !obligation.startsAtWorldTime ||
+      input.currentWorldTime.getTime() <
+        preparation.boundaryWorldTime.getTime() ||
+      input.currentWorldTime.getTime() >= obligation.startsAtWorldTime.getTime()
+    ) {
+      return;
+    }
+    candidates.push(
+      makeCandidate(input, {
+        type: "FULFILL_WORK_OBLIGATION",
+        source: "OBLIGATION",
+        reasonCode: "WORK_PREPARATION",
+        priority: policy.priorities.obligation,
+        urgency: NEED_SCORE_RANGE,
+        deadline: obligation.deadline,
+        targetLocationId: obligation.workplaceId,
+      }),
+    );
+    return;
+  }
+  if (obligation.status !== "DUE" && obligation.status !== "LATE") return;
   const late = obligation.status === "LATE";
   candidates.push(
     makeCandidate(input, {
@@ -622,18 +680,20 @@ export function evaluateResidentsGoals(
           ? 1
           : 0,
     )
-    .map(({ resident, needs, obligation, context, activeGoal }) =>
-      evaluateGoals({
-        worldId: input.worldId,
-        seed: input.seed,
-        currentWorldTime: input.currentWorldTime,
-        status: input.status,
-        resident,
-        needs,
-        obligation,
-        context,
-        activeGoal,
-        policy: input.policy,
-      }),
+    .map(
+      ({ resident, needs, obligation, workPreparation, context, activeGoal }) =>
+        evaluateGoals({
+          worldId: input.worldId,
+          seed: input.seed,
+          currentWorldTime: input.currentWorldTime,
+          status: input.status,
+          resident,
+          needs,
+          obligation,
+          workPreparation,
+          context,
+          activeGoal,
+          policy: input.policy,
+        }),
     );
 }

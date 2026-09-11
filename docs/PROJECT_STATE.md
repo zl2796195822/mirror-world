@@ -1,10 +1,10 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION (completed)
-Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 Behavioral Lifecycle Extension = PASS; M3-LIFECYCLE-STORY-GATE = FAIL; coverage reconciliation = PASS; coverage fix = DEFINED / NOT_STARTED; M3 remains IN_PROGRESS
-Last verified implementation commit: 96a9576b17fe80615c9e664012e2fa0cdcb4f5b0
-Last verified main/doc baseline: 590d19d000fc04723028556e267cdbed362b4da8
+Current task: M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX (completed; main CI pending)
+Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 Behavioral Lifecycle Extension = PASS; M3-LIFECYCLE-STORY-GATE = FAIL / RERUN_REQUIRED; coverage reconciliation = PASS; coverage fix = PASS / MAIN_CI_PENDING; M3 remains IN_PROGRESS
+Last verified implementation commit: 780e491c6ee2d14bb7d44eaa8114ee2402721de9
+Last verified main/doc baseline: 85b8cdd7b5a0421e2ac14d7e18d9d81589f4f727
 
 ## Completed
 
@@ -125,6 +125,14 @@ Last verified main/doc baseline: 590d19d000fc04723028556e267cdbed362b4da8
 - 本轮验证确认 review commit `ded7c6d…` 为 read-only analysis + 23 Markdown/3 JSON；保留工作区既存正确 run-summary SHA-256，并补正 review funnel 的 `OPPORTUNITY` 阶段。验证报告为 `docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-DEFINITION-report.md`。
 - 治理提交 `0fda99c486694a65c1e05b96ca2aa30a4f827ecc` 已推送到 `gate/m3-lifecycle-story` 并 fast-forward 到 `origin/main`；GitHub Actions `foundation-ci` run `34548099657` 为 `success`，本任务正式收口。
 
+## 2026-09-11 M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX
+
+- 已完成正式 `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX` 的最小生产修复：复用 `m3-scheduler-v2` 增加 bootstrap-wide、World-Time-only 的 WORK pre-shift preparation wake；26 名 employed resident 均可注册 preparation wake，精确 09:00 WORK 与 09:01/LATE rejection 保持不变。
+- WORK targeted clean PostgreSQL 证据覆盖 wake → Observation → `WORK_PREPARATION` Goal → MOVE → Kernel completion → workplace arrival at the exact boundary → WORK → 17:00 completion；10/15-minute route、restart/requery、dedupe、weekend、unemployed、already-at-workplace、busy、pause/maintenance、stale fence 与 world isolation 均通过。
+- 已将既有 Story Gate harness 接入 `m3-story-gate-coverage-v2` funnel/negative evidence collector/evaluator；TALK A/B/C/D/E cases、initiator/participant union、EAT unavailable-resource、MOVE necessity 与 `UNKNOWN = fail` 均有机器测试。证据 artifacts 位于 `docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX/`。
+- EAT、MOVE、TALK policy/paired-lock/topology、fixture、BUY、Kernel authority、migration/schema 与 immutable `20260910-run-08` 均未修改；没有创建新的 Story run，没有执行 M3-T05 或后续里程碑。正式报告为 `docs/verification/M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX-report.md`。
+- Node 24 本地 frozen install、format/lint/typecheck/unit/build、official production audit、clean disposable PostgreSQL targeted 7/7 与完整 API integration 42/42 均通过；实现提交为 `780e491c6ee2d14bb7d44eaa8114ee2402721de9`，feature/main CI 待 PR 集成后补录。
+
 ## In progress
 
 - M3-T01/T02/T03/T04 已 PASS；`ADR-M3-001 = PASS / ACCEPTED`；M3 仍为 `IN_PROGRESS`。
@@ -134,7 +142,7 @@ Last verified main/doc baseline: 590d19d000fc04723028556e267cdbed362b4da8
 ## Blocked
 
 - `PRE-AL-GATE = PASS`；`M3-LIFECYCLE-STORY-GATE = FAIL`，Hard Gate #3 未通过，M3 不得关闭。
-- `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`；必须由用户明确授权后执行，完成 targeted clean-PostgreSQL DoD 后才可申请新的 immutable Gate run。
+- `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = PASS / MAIN_CI_PENDING`；targeted DoD 已完成，待最终 main CI GREEN 后才可申请新的 immutable Gate run。
 - `M3 = IN_PROGRESS` 保持；M3-T05 已由冻结规格 reconciliation 正式定义为 `DEFINED / NOT_STARTED`，不得据此执行 T05 或自动开始 M4+。
 
 ## P0/P1
@@ -249,6 +257,6 @@ Last verified main/doc baseline: 590d19d000fc04723028556e267cdbed362b4da8
 - `M3-LIFECYCLE-ADR-FORMALIZATION = PASS`；`M3 = IN_PROGRESS` remains.
 - `M3 Behavioral Lifecycle Extension`（正式 ID：`FORMAL_TASK_REGISTERED_WITHOUT_NUMERIC_ID`）保持 `PASS`；PR #1 已合并到 main。
 - `M3-LIFECYCLE-STORY-GATE = FAIL`；不存在自动下一任务。必须先由独立任务处理 Gate contract/fixture/policy coverage mismatch，再由用户明确授权新的 immutable Gate run。
-- `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION = PASS`；v2 contract 已接受，下一注册任务为 `M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = DEFINED / NOT_STARTED`，当前不执行。
+- `M3-LIFECYCLE-STORY-GATE-COVERAGE-RECONCILIATION = PASS`；v2 contract 已接受，`M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX = PASS / MAIN_CI_PENDING`，下一允许任务为新的 immutable Story Gate rerun。
 - `M3-T05 = DEFINED / NOT_STARTED`、M3 Final Status Review #2 与 M4+ 均未开始，不能因本 Gate 失败而自动进入。
 - 不执行 M4/M5/M6/M7/M8/M9/M10，不修改冻结 research worktree，不把本 Gate 扩展为 Economy/Memory/Relationship/AI/3D 或规模验收。

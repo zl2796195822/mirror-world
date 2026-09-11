@@ -1,0 +1,60 @@
+{
+  "artifactKind": "verification-analysis-not-world-truth",
+  "schemaVersion": "m3-lifecycle-story-gate-coverage-fix-targeted-v1",
+  "task": "M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX",
+  "contractVersion": "m3-story-gate-coverage-v2",
+  "funnelStages": [
+    "TOTAL",
+    "ELIGIBLE",
+    "FEASIBLE",
+    "OPPORTUNITY",
+    "CANDIDATE_GENERATED",
+    "SELECTED",
+    "REQUESTED",
+    "COMMITTED",
+    "COMPLETED"
+  ],
+  "evaluatorTests": {
+    "passed": 6,
+    "failed": 0,
+    "unknownRowsFail": true,
+    "actionCountSeparated": true,
+    "uniqueResidentSemantics": true,
+    "talkParticipantUnion": true,
+    "eatFeasibilityDenominator": true,
+    "moveNecessityDenominator": true,
+    "workUniqueCoverage": true
+  },
+  "targetedPredicates": {
+    "EAT": {
+      "positiveResourcePath": "COMPLETED",
+      "zeroResourcePath": "UNAVAILABLE_RESOURCE",
+      "zeroResourceInFeasibleDenominator": false,
+      "fixtureChanged": false
+    },
+    "MOVE": {
+      "formalNecessityPath": "eligible/feasible funnel",
+      "noNecessityPath": "NO_FORMAL_NECESSITY",
+      "randomTravelAdded": false
+    },
+    "WORK": {
+      "eligibleResidents": 26,
+      "uniqueCompletedResidentsInTargetedPath": 1,
+      "exactStart": "2026-09-07T09:00:00.000Z",
+      "lateAccepted": 0
+    },
+    "TALK": {
+      "actionCount": 1,
+      "uniqueInitiators": 1,
+      "uniqueParticipants": 1,
+      "uniqueContacts": 2,
+      "pairedLockChanged": false
+    }
+  },
+  "status": {
+    "targetedEvaluator": "PASS",
+    "historicalRun08": "FAIL_PRESERVED",
+    "fullStoryGateRerun": "NOT_EXECUTED"
+  },
+  "sourceTest": "apps/api/scripts/m3-story-gate-coverage-v2.test.mjs"
+}

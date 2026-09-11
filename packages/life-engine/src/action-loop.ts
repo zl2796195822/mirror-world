@@ -18,6 +18,7 @@ import {
   type ActiveGoal,
   type GoalEvaluation,
   type GoalWorkObligation,
+  type GoalWorkPreparation,
 } from "./goals.js";
 import {
   decideReplan,
@@ -57,7 +58,8 @@ export type ActionLoopObservation = Readonly<{
   locationId: string;
   locationKind: DecisionLocationRef["kind"];
   activityKind: DecisionRuntimeActivityKind;
-  obligation?: GoalWorkObligation & Readonly<{ startsAtWorldTime?: Date }>;
+  obligation?: GoalWorkObligation;
+  workPreparation?: GoalWorkPreparation;
   eatCapable?: boolean;
   workCapable?: boolean;
   foodItems?: readonly DecisionFoodItem[];
@@ -422,6 +424,7 @@ export type ActionLoopObservationV2 = Omit<
 > & {
   activityKind: DecisionRuntimeActivityKind;
   obligation?: DecisionWorkObligationV2;
+  workPreparation?: GoalWorkPreparation;
   resources?: DecisionResourceObservation;
 };
 
@@ -531,6 +534,9 @@ function toGoalWorkObligation(
   return {
     status: obligation.status,
     workplaceId: obligation.workplaceId,
+    ...(obligation.startsAtWorldTime
+      ? { startsAtWorldTime: obligation.startsAtWorldTime }
+      : {}),
     ...(obligation.deadline ? { deadline: obligation.deadline } : {}),
   };
 }
@@ -602,6 +608,9 @@ export async function runResidentActionLoopStepV2(
     },
     needs: needState,
     ...(goalObligation ? { obligation: goalObligation } : {}),
+    ...(observation.workPreparation
+      ? { workPreparation: observation.workPreparation }
+      : {}),
     ...(input.activeGoal ? { activeGoal: input.activeGoal } : {}),
   });
   const decision = evaluateRuleDecisionV2({
