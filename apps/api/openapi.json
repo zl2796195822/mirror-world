@@ -639,6 +639,706 @@
         }
       }
     },
+    "/api/v1/client/v0/contract": {
+      "get": {
+        "tags": ["client-projection"],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["data", "requestId"],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "schemaVersion",
+                        "capabilities",
+                        "transport",
+                        "realtime"
+                      ],
+                      "properties": {
+                        "schemaVersion": {
+                          "type": "string"
+                        },
+                        "capabilities": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "transport": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "realtime": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/client/v0/worlds/{worldId}/snapshot": {
+      "get": {
+        "tags": ["client-projection"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "worldId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["data", "requestId"],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["snapshot"],
+                      "properties": {
+                        "snapshot": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "schemaVersion",
+                            "worldId",
+                            "worldTime",
+                            "worldSeq",
+                            "worldStatus",
+                            "places",
+                            "residents"
+                          ],
+                          "properties": {
+                            "schemaVersion": {
+                              "type": "string"
+                            },
+                            "worldId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "worldTime": {
+                              "type": "string"
+                            },
+                            "worldSeq": {
+                              "type": "string"
+                            },
+                            "worldStatus": {
+                              "type": "string"
+                            },
+                            "generatedAt": {
+                              "type": "string"
+                            },
+                            "places": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "placeId",
+                                  "placeKey",
+                                  "placeType",
+                                  "displayName",
+                                  "parentPlaceId",
+                                  "residentCount"
+                                ],
+                                "properties": {
+                                  "placeId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "placeKey": {
+                                    "type": "string"
+                                  },
+                                  "placeType": {
+                                    "type": "string"
+                                  },
+                                  "displayName": {
+                                    "type": "string"
+                                  },
+                                  "parentPlaceId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "residentCount": {
+                                    "type": "integer"
+                                  }
+                                }
+                              }
+                            },
+                            "residents": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "residentId",
+                                  "displayName",
+                                  "placeId",
+                                  "placeKey",
+                                  "placeKind",
+                                  "activity",
+                                  "activityInstanceId",
+                                  "activityStartedAtWorldTime",
+                                  "activityDueAtWorldTime",
+                                  "targetPlaceId",
+                                  "participantId",
+                                  "employmentStatus",
+                                  "workplaceId",
+                                  "projectionSeq"
+                                ],
+                                "properties": {
+                                  "residentId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "displayName": {
+                                    "type": "string"
+                                  },
+                                  "placeId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "placeKey": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "placeKind": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "activity": {
+                                    "type": "string"
+                                  },
+                                  "activityInstanceId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "activityStartedAtWorldTime": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "activityDueAtWorldTime": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "targetPlaceId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "participantId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "employmentStatus": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "workplaceId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "projectionSeq": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/client/v0/worlds/{worldId}/events": {
+      "get": {
+        "tags": ["client-projection"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "in": "query",
+            "name": "afterSeq",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "query",
+            "name": "residentId",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "worldId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["data", "requestId"],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["feed"],
+                      "properties": {
+                        "feed": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "schemaVersion",
+                            "worldId",
+                            "worldSeq",
+                            "events",
+                            "nextAfterSeq"
+                          ],
+                          "properties": {
+                            "schemaVersion": {
+                              "type": "string"
+                            },
+                            "worldId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "worldSeq": {
+                              "type": "string"
+                            },
+                            "events": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "eventId",
+                                  "worldSeq",
+                                  "eventType",
+                                  "occurredAtWorldTime",
+                                  "residentId",
+                                  "participantId",
+                                  "placeId",
+                                  "targetPlaceId"
+                                ],
+                                "properties": {
+                                  "eventId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "worldSeq": {
+                                    "type": "string"
+                                  },
+                                  "eventType": {
+                                    "type": "string"
+                                  },
+                                  "occurredAtWorldTime": {
+                                    "type": "string"
+                                  },
+                                  "residentId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "participantId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "placeId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "targetPlaceId": {
+                                    "type": ["null", "string"]
+                                  },
+                                  "payloadSummary": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                  }
+                                }
+                              }
+                            },
+                            "nextAfterSeq": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/client/v0/worlds/{worldId}/residents/{residentId}": {
+      "get": {
+        "tags": ["client-projection"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "worldId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "residentId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["data", "requestId"],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["resident"],
+                      "properties": {
+                        "resident": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "residentId",
+                            "displayName",
+                            "placeId",
+                            "placeKey",
+                            "placeKind",
+                            "activity",
+                            "activityInstanceId",
+                            "activityStartedAtWorldTime",
+                            "activityDueAtWorldTime",
+                            "targetPlaceId",
+                            "participantId",
+                            "employmentStatus",
+                            "workplaceId",
+                            "projectionSeq"
+                          ],
+                          "properties": {
+                            "residentId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "placeId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "placeKey": {
+                              "type": ["null", "string"]
+                            },
+                            "placeKind": {
+                              "type": ["null", "string"]
+                            },
+                            "activity": {
+                              "type": "string"
+                            },
+                            "activityInstanceId": {
+                              "type": ["null", "string"]
+                            },
+                            "activityStartedAtWorldTime": {
+                              "type": ["null", "string"]
+                            },
+                            "activityDueAtWorldTime": {
+                              "type": ["null", "string"]
+                            },
+                            "targetPlaceId": {
+                              "type": ["null", "string"]
+                            },
+                            "participantId": {
+                              "type": ["null", "string"]
+                            },
+                            "employmentStatus": {
+                              "type": ["null", "string"]
+                            },
+                            "workplaceId": {
+                              "type": ["null", "string"]
+                            },
+                            "projectionSeq": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/openapi.json": {
       "get": {
         "tags": ["operations"],
@@ -666,6 +1366,10 @@
     {
       "name": "worlds",
       "description": "Read-only world metadata"
+    },
+    {
+      "name": "client-projection",
+      "description": "Temporary read-only client projection (client-projection-v0)"
     }
   ]
 }

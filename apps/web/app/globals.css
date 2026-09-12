@@ -645,3 +645,242 @@ h1 {
     gap: 8px;
   }
 }
+
+.observer {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  padding-bottom: 24px;
+}
+
+.observer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 0 4px;
+}
+
+.observer__clock {
+  margin: 10px 0 0;
+  color: var(--accent);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+.observer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.observer__badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.observer__badge--live {
+  border-color: rgba(197, 214, 167, 0.45);
+  color: var(--accent);
+}
+
+.observer__badge--stale {
+  border-color: rgba(220, 160, 120, 0.45);
+  color: #dca078;
+}
+
+.observer__panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(27, 30, 26, 0.72);
+}
+
+.observer__panel-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.observer__panel-heading h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.observer__panel-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.observer__stat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.observer__stat {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(13, 15, 13, 0.45);
+}
+
+.observer__stat span {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.observer__stat strong {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.observer__places {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.observer__places li {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.observer__places span {
+  font-size: 13px;
+}
+
+.observer__places strong {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.observer__places small {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.observer__events,
+.observer__events--full {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.observer__events li {
+  display: grid;
+  grid-template-columns: 64px 88px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.observer__events--full li {
+  grid-template-columns: 180px 88px minmax(0, 1fr) 80px;
+}
+
+.observer__events time,
+.observer__events span,
+.observer__events small {
+  color: var(--muted);
+}
+
+.observer__events code {
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+}
+
+.observer__empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.observer__table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.observer__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.observer__table th,
+.observer__table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.observer__table th {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.observer__table td {
+  display: table-cell;
+}
+
+.observer__table td strong {
+  display: block;
+  font-size: 13px;
+}
+
+.observer__table td small {
+  color: var(--muted);
+}
+
+.observer__table code {
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (max-width: 860px) {
+  .observer__stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .observer__events li,
+  .observer__events--full li {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
