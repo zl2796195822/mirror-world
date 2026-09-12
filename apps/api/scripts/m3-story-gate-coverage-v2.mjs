@@ -271,8 +271,12 @@ export class CoverageV2Collector {
     });
   }
 
-  rows() {
-    return this.#rows.map((row) => structuredClone(row));
+  rows({ clone = true } = {}) {
+    return clone ? this.#rows.map((row) => structuredClone(row)) : this.#rows;
+  }
+
+  clear() {
+    this.#rows = [];
   }
 }
 
@@ -377,7 +381,9 @@ export function evaluateCoverageV2(input) {
   if (input.contractVersion !== COVERAGE_CONTRACT_VERSION) {
     throw new Error("Coverage evaluator requires Contract v2");
   }
-  const rows = input.rows.map(createCoverageRow);
+  const rows = input.rowsAreNormalized
+    ? input.rows
+    : input.rows.map(createCoverageRow);
   const actions = Object.fromEntries(
     ACTIONS.map((action) => [
       action,

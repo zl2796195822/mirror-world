@@ -2,7 +2,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync } from "node:fs";
 import {
   acknowledgeScheduledWake,
   acquireSimulationDriverLease,
@@ -37,14 +36,33 @@ import {
   CoverageV2Collector,
   evaluateCoverageV2,
 } from "./m3-story-gate-coverage-v2.mjs";
+import {
+  DEFAULT_NODE_HEAP_MB,
+  SCENARIO_ARTIFACTS,
+  assertNewRunId,
+  hashJsonArray,
+  jsonReplacer,
+  validateJsonArtifacts,
+  writeJsonArrayObjectAtomic,
+  writeJsonAtomic,
+} from "./m3-story-gate-runner-infra.mjs";
 
 const START_TIME = new Date("2026-09-07T00:00:00.000Z");
-const WORLD_DAYS = 30;
-const WORLD_MINUTES = WORLD_DAYS * 24 * 60;
+const REDUCED_SCENARIO = process.env.GATE_REDUCED_SCENARIO === "1";
+const WORLD_DAYS = REDUCED_SCENARIO
+  ? Number(process.env.GATE_WORLD_DAYS ?? 1)
+  : 30;
+const WORLD_MINUTES = REDUCED_SCENARIO
+  ? Number(process.env.GATE_WORLD_MINUTES ?? WORLD_DAYS * 24 * 60)
+  : WORLD_DAYS * 24 * 60;
+assert.ok(Number.isInteger(WORLD_DAYS) && WORLD_DAYS > 0);
+assert.ok(Number.isInteger(WORLD_MINUTES) && WORLD_MINUTES > 0);
 const TARGET_TIME = new Date(START_TIME.getTime() + WORLD_MINUTES * 60_000);
 const WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v1";
 const DIFFERENT_WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v2";
 const GATE_VERSION = "m3-story-sanity-v2";
+const RUN_ID = process.env.GATE_RUN_ID ?? "20260912-run-15";
+const PARENT_RUN_ID = "20260911-run-14";
 const LOGICAL_WORLD_ID = "00000000-0000-4000-8000-00000000a300";
 const ACTION_SCOPE = ["MOVE", "SLEEP", "EAT", "WORK", "TALK"];
 const POLICY_VERSIONS = {
@@ -190,7 +208,7 @@ function available(value) {
   return value;
 }
 
-function loopObservation(snapshot, allSnapshots) {
+function loopObservation(snapshot, allSnapshots, worldTime) {
   const actorRef = available(snapshot.actorRef).actorRef;
   const location = available(snapshot.location).location;
   const activity = available(snapshot.activity).activity;
@@ -208,7 +226,7 @@ function loopObservation(snapshot, allSnapshots) {
     workplace.id !== location.locationId
       ? (() => {
           const boundary = deriveWorkPreparationBoundary({
-            currentWorldTime: worldWorldTime,
+            currentWorldTime: worldTime,
             currentLocationKind: location.kind,
             workplaceKind: workplace.kind,
           });
@@ -408,7 +426,7 @@ function recordCoverageDecision(collector, input) {
       episodeId:
         submission?.request.id ??
         `${action}|${residentId}|${result.decisionEpoch}`,
-      worldTime,
+      worldTime: new Date(worldTime).toISOString(),
       sourceObservationId: `${worldId}|${residentId}|${sourceWorldSeq}`,
       policyVersions: POLICY_VERSIONS,
       decision: result.decision,
@@ -589,11 +607,27 @@ async function makeManifest({
 }) {
   const fixture = generateResidentSeed({ worldId, seed });
   const input = {
+    runId: RUN_ID,
+    previousRun: PARENT_RUN_ID,
+    parentRunId: PARENT_RUN_ID,
+    previousStatus: "INFRA_FAILURE",
+    remediation: "M3 Story Gate runner infrastructure remediation",
+    infraRemediationVersion: "m3-story-gate-runner-infra-v1",
+    runnerStrategy: "serial-child-process-per-scenario",
+    serializationStrategy: "per-artifact-atomic-json-summary-finalizer",
+    heapProfile: {
+      previousMaxOldSpaceSizeMb: 8192,
+      newMaxOldSpaceSizeMb: Number(
+        process.env.GATE_HEAP_MB ?? DEFAULT_NODE_HEAP_MB,
+      ),
+      scope: "one-scenario-child",
+    },
     manifestVersion: "m3-simulation-manifest-v1",
     scenarioId: "m3-30x30-lifecycle-story",
     logicalWorldId: LOGICAL_WORLD_ID,
     worldId,
     worldSeed: seed,
+    startWorldTime: START_TIME.toISOString(),
     initialWorldTime: START_TIME.toISOString(),
     targetWorldTime: TARGET_TIME.toISOString(),
     durationWorldMinutes: WORLD_MINUTES,
@@ -607,6 +641,12 @@ async function makeManifest({
     policyVersions: POLICY_VERSIONS,
     resourceCapability: "M3_KERNEL_POSTGRES_RESOURCE_CAS",
     actionScope: ACTION_SCOPE,
+    coverageContractVersion: COVERAGE_CONTRACT_VERSION,
+    storySanityVersion: GATE_VERSION,
+    schedulerWakeVersion: POLICY_VERSIONS.scheduler,
+    actionSemanticsVersion: POLICY_VERSIONS.actionSemantics,
+    eventRegistryVersion: M3_DOMAIN_EVENT_REGISTRY_VERSION,
+    migrationVersion: "12",
     faultProfile,
     codeCommit,
     dbSchemaVersion: 12,
@@ -675,7 +715,6 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     fixture.residents.map((resident) => [resident.residentId, 0]),
   );
   let iterations = 0;
-  const stepTrace = [];
 
   const reload = async () => {
     const all = await query.getResidentObservations({
@@ -754,7 +793,7 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     );
     const resident = residentById.get(residentId);
     assert.ok(snapshot && resident);
-    const observation = loopObservation(snapshot, all);
+    const observation = loopObservation(snapshot, all, worldWorldTime);
     const stateVersion = state.stateVersions.get(residentId) ?? 0;
     const anchor = anchors.store.get(residentId);
     assert.ok(anchor);
@@ -932,16 +971,6 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     const target = next && next < TARGET_TIME ? next : TARGET_TIME;
     const step = await driver.runUntil(worldId, target);
     worldWorldTime = new Date(step.toWorldTime);
-    stepTrace.push({
-      fromWorldTime: step.fromWorldTime,
-      toWorldTime: step.toWorldTime,
-      fromWorldSeq: step.fromWorldSeq,
-      toWorldSeq: step.toWorldSeq,
-      processedWork: step.processedWork,
-      completedActivities: step.completedActivities,
-      wakeCount: step.wakeItems.length,
-      failures: step.failureItems,
-    });
     for (const failure of step.failureItems) recovery.failures.push(failure);
     for (const outcome of step.completionOutcomes) {
       const request = pendingActions.get(outcome.requestId);
@@ -1014,6 +1043,7 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
       await decideResident(wake.residentId, wake);
     }
     if (worldWorldTime >= TARGET_TIME) {
+      if (REDUCED_SCENARIO) break;
       const [remainingActivity] = await client`
         select count(*)::int as count from resident_runtime_states
         where world_id = ${worldId} and current_activity <> 'IDLE'
@@ -1023,6 +1053,11 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
         where world_id = ${worldId} and due_world_time <= ${TARGET_TIME.toISOString()}
       `;
       if (remainingActivity.count === 0 && remainingWake.count === 0) break;
+      if (!next || next >= TARGET_TIME) {
+        throw new Error(
+          `M3 story gate endpoint could not settle before target: active=${remainingActivity.count}, dueWakes=${remainingWake.count}, next=${next?.toISOString() ?? "none"}`,
+        );
+      }
     }
   }
 
@@ -1121,12 +1156,17 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     suffix: projectionHash(suffixReplay),
     genesis: projectionHash(genesisReplay),
   };
+  // The collector owns already-normalized rows. Avoid a second full deep clone
+  // at the peak of the scenario while retaining the public clone-by-default API.
+  const coverageRows = coverage.rows({ clone: false });
   const coverageV2 = evaluateCoverageV2({
     contractVersion: COVERAGE_CONTRACT_VERSION,
     worldId,
-    rows: coverage.rows(),
+    rows: coverageRows,
+    rowsAreNormalized: true,
     denominators,
   });
+  coverage.clear();
   const eventTypes = [
     "WORLD_TIME_ADVANCED",
     ...ACTION_SCOPE.flatMap((action) => [
@@ -1168,9 +1208,10 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
       participantActorId: event.payload?.participantActorId ?? null,
     },
   }));
+  const manifest = await makeManifest({ worldId, seed, codeCommit });
   const storyDigest = sha256(
     canonical({
-      manifest: await makeManifest({ worldId, seed, codeCommit }),
+      manifest,
       hashes,
       normalizedEvents,
       causal: causalEvidence.map((evidence) => ({
@@ -1251,14 +1292,13 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
   return {
     worldId,
     seed,
-    manifest: await makeManifest({ worldId, seed, codeCommit }),
+    manifest,
     fixture,
     stats: [...stats.values()].sort((left, right) =>
       left.residentId.localeCompare(right.residentId),
     ),
     causalEvidence,
     recovery,
-    stepTrace,
     events,
     eventCounts,
     finalWorld,
@@ -1268,11 +1308,9 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
     genesisReplay,
     hashes,
     storyDigest,
-    allCompleted,
     coverageV2,
-    coverageRows: coverage.rows(),
-    acceptedActionCoverage:
-      coverageV2.passes && allCompleted && commuteCoverage,
+    coverageRows,
+    acceptedActionCoverage: coverageV2.passes && commuteCoverage,
     commuteCoverage,
     endpoint: {
       remainingActiveActivities: Number(remainingActivity.count),
@@ -1291,193 +1329,133 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
   };
 }
 
-async function writeArtifacts(result) {
+async function writeScenarioArtifacts(scenario) {
   const root = process.env.GATE_ARTIFACT_DIR;
-  if (!root) return;
-  mkdirSync(root, { recursive: true });
-  const write = (name, value) =>
-    writeFileSync(`${root}/${name}`, `${JSON.stringify(value, null, 2)}\n`);
-  const serializable = (value) =>
-    JSON.parse(
-      JSON.stringify(value, (_key, item) => {
-        if (typeof item === "bigint") return item.toString();
-        if (item instanceof Date) return item.toISOString();
-        return item;
-      }),
-    );
-  write("manifest.json", result.baseline.manifest);
-  write(
-    "run-summary.json",
-    serializable({
-      status: result.hardGates.every(({ result: value }) => value === "PASS")
-        ? "PASS"
-        : "FAIL",
-      worldTimeReached: result.baseline.finalWorld.world_time,
-      worldMinutesReached: WORLD_MINUTES,
-      finalWorldSeq: result.baseline.finalWorld.world_seq,
-      actionAttempts: result.baseline.recovery.attempts,
-      committed: result.baseline.recovery.committed,
-      rejected: result.baseline.recovery.rejected,
-      conflicts: result.baseline.recovery.conflicts,
-      replans: result.baseline.recovery.replans,
-      deferred: result.baseline.recovery.deferred,
-      acceptedActionCoverage: result.baseline.acceptedActionCoverage,
-      commuteCoverage: result.baseline.commuteCoverage,
-      endpoint: result.baseline.endpoint,
-      liveProjectionHash: result.baseline.hashes.live,
-      fullReplayProjectionHash: result.baseline.hashes.full,
-      suffixReplayProjectionHash: result.baseline.hashes.suffix,
-      genesisRebuildProjectionHash: result.baseline.hashes.genesis,
-      deterministicDigest: result.baseline.storyDigest,
-      repeatDeterministicDigest: result.repeat?.storyDigest ?? null,
-    }),
-  );
+  assert.ok(root, "GATE_ARTIFACT_DIR is required for a scenario child");
+  const write = (name, value) => writeJsonAtomic(`${root}/${name}`, value);
+  write("manifest.json", scenario.manifest);
+  write("run-summary.json", {
+    status: "SCENARIO_COMPLETE",
+    role: process.env.GATE_SINGLE_ROLE,
+    runId: scenario.manifest.runId,
+    parentRunId: scenario.manifest.parentRunId,
+    worldTimeReached: scenario.finalWorld.world_time,
+    worldMinutesReached: WORLD_MINUTES,
+    finalWorldSeq: scenario.finalWorld.world_seq,
+    actionAttempts: scenario.recovery.attempts,
+    committed: scenario.recovery.committed,
+    rejected: scenario.recovery.rejected,
+    conflicts: scenario.recovery.conflicts,
+    replans: scenario.recovery.replans,
+    deferred: scenario.recovery.deferred,
+    acceptedActionCoverage: scenario.acceptedActionCoverage,
+    commuteCoverage: scenario.commuteCoverage,
+    endpoint: scenario.endpoint,
+    liveProjectionHash: scenario.hashes.live,
+    fullReplayProjectionHash: scenario.hashes.full,
+    suffixReplayProjectionHash: scenario.hashes.suffix,
+    genesisRebuildProjectionHash: scenario.hashes.genesis,
+    deterministicDigest: scenario.storyDigest,
+    repeatDeterministicDigest: null,
+  });
   write(
     "action-statistics.json",
-    serializable(
-      result.baseline.stats.map(({ residentId, actionsByType }) => ({
-        residentId,
-        actionsByType,
-      })),
+    scenario.stats.map(({ residentId, actionsByType }) => ({
+      residentId,
+      actionsByType,
+    })),
+  );
+  write("resident-summary.json", scenario.stats);
+  await writeJsonArrayObjectAtomic(`${root}/causal-evidence.json`, {
+    prefix: "[",
+    items: scenario.causalEvidence,
+    suffix: "]\n",
+  });
+  await writeJsonArrayObjectAtomic(`${root}/coverage-funnel-v2.json`, {
+    prefix: `{"contractVersion":${JSON.stringify(COVERAGE_CONTRACT_VERSION)},"rows":[`,
+    items: scenario.coverageRows,
+    suffix: `],"summary":${JSON.stringify(scenario.coverageV2, jsonReplacer, 2)}}\n`,
+  });
+  write("event-summary.json", {
+    total: scenario.events.length,
+    byType: scenario.eventCounts,
+    actionRequestToEventRefs: Object.fromEntries(
+      scenario.causalEvidence.map((evidence) => [
+        evidence.actionRequest.id,
+        evidence.eventRefs,
+      ]),
     ),
-  );
-  write("resident-summary.json", serializable(result.baseline.stats));
-  write("causal-evidence.json", serializable(result.baseline.causalEvidence));
-  write(
-    "coverage-funnel-v2.json",
-    serializable({
-      contractVersion: COVERAGE_CONTRACT_VERSION,
-      rows: result.baseline.coverageRows,
-      summary: result.baseline.coverageV2,
+    finalWorldSeq: scenario.finalWorld.world_seq,
+  });
+  write("replay-summary.json", {
+    hashes: scenario.hashes,
+    checkpointDeleted: true,
+    fullEventCount: scenario.events.length,
+  });
+  write("determinism-comparison.json", {
+    role: process.env.GATE_SINGLE_ROLE,
+    runA: scenario.storyDigest,
+    runB: null,
+    sameSeedEqual: null,
+    differentSeed: null,
+  });
+  write("failure-recovery-summary.json", scenario.recovery);
+  write("diagnostics.json", scenario.diagnostics);
+  write("hard-gates.json", []);
+  write("checksums.json", {
+    manifestHash: scenario.manifest.manifestHash,
+    fixtureHash: scenario.manifest.residentFixtureHash,
+    resourceFixtureHash: scenario.manifest.resourceFixtureHash,
+    initialSnapshotHash: scenario.manifest.initialSnapshotHash,
+    historyHash: hashJsonArray(scenario.events, (key, value) => {
+      if (key === "id") return undefined;
+      return jsonReplacer(key, value);
     }),
-  );
-  write(
-    "event-summary.json",
-    serializable({
-      total: result.baseline.events.length,
-      byType: result.baseline.eventCounts,
-      actionRequestToEventRefs: Object.fromEntries(
-        result.baseline.causalEvidence.map((evidence) => [
-          evidence.actionRequest.id,
-          evidence.eventRefs,
-        ]),
-      ),
-      finalWorldSeq: result.baseline.finalWorld.world_seq,
-    }),
-  );
-  write(
-    "replay-summary.json",
-    serializable({
-      hashes: result.baseline.hashes,
-      checkpointDeleted: true,
-      fullEventCount: result.baseline.events.length,
-    }),
-  );
-  write(
-    "determinism-comparison.json",
-    serializable({
-      runA: result.baseline.storyDigest,
-      runB: result.repeat?.storyDigest ?? null,
-      sameSeedEqual: result.sameSeedEqual,
-      differentSeed: result.differentSeed,
-    }),
-  );
-  write(
-    "failure-recovery-summary.json",
-    serializable(result.baseline.recovery),
-  );
-  write("diagnostics.json", serializable(result.baseline.diagnostics));
-  write("hard-gates.json", serializable(result.hardGates));
-  write(
-    "checksums.json",
-    serializable({
-      manifestHash: result.baseline.manifest.manifestHash,
-      fixtureHash: result.baseline.manifest.residentFixtureHash,
-      resourceFixtureHash: result.baseline.manifest.resourceFixtureHash,
-      initialSnapshotHash: result.baseline.manifest.initialSnapshotHash,
-      historyHash: sha256(
-        canonical(
-          result.baseline.events.map((event) =>
-            JSON.parse(
-              JSON.stringify(event, (key, value) => {
-                if (key === "id") return undefined;
-                if (typeof value === "bigint") return value.toString();
-                return value;
-              }),
-            ),
-          ),
-        ),
-      ),
-      liveProjectionHash: result.baseline.hashes.live,
-      replayProjectionHash: result.baseline.hashes.full,
-      storyDigest: result.baseline.storyDigest,
-    }),
-  );
+    liveProjectionHash: scenario.hashes.live,
+    replayProjectionHash: scenario.hashes.full,
+    storyDigest: scenario.storyDigest,
+  });
+  const summary = createScenarioSummary(scenario);
+  write("scenario-summary.json", summary);
+  return summary;
 }
 
-async function main() {
-  const codeCommit = execFileSync("git", ["rev-parse", "HEAD"], {
-    encoding: "utf8",
-  }).trim();
-  const worldId = LOGICAL_WORLD_ID;
-  const databaseUrls = [
-    process.env.GATE_BASELINE_DATABASE_URL,
-    process.env.GATE_REPEAT_DATABASE_URL,
-    process.env.GATE_DIFFERENT_DATABASE_URL,
-  ];
-  if (databaseUrls.some((value) => !value)) {
-    throw new Error(
-      "M3 story gate requires three clean PostgreSQL URLs: baseline, repeat, and different",
-    );
-  }
-  const runInDatabase = async (databaseUrl, seed) => {
-    const { db, client } = createDb(databaseUrl);
-    try {
-      return await runScenario({ db, client, worldId, seed, codeCommit });
-    } finally {
-      await client.end({ timeout: 5 });
-    }
-  };
-  const baseline = await runInDatabase(databaseUrls[0], WORLD_SEED);
-  const repeat = await runInDatabase(databaseUrls[1], WORLD_SEED);
-  const different = await runInDatabase(databaseUrls[2], DIFFERENT_WORLD_SEED);
-  const sameSeedEqual = baseline.storyDigest === repeat.storyDigest;
-  const differentSeed =
-    baseline.storyDigest !== different.storyDigest &&
-    baseline.manifest.residentFixtureHash !==
-      different.manifest.residentFixtureHash;
-  const b = baseline;
-  const hardGates = [
-    [
-      1,
-      "Run endpoint",
-      new Date(b.finalWorld.world_time).toISOString() ===
-        TARGET_TIME.toISOString() &&
-        b.finalWorld.world_seq !== null &&
-        b.endpoint.remainingActiveActivities === 0 &&
-        b.endpoint.remainingDueWakes === 0,
-    ],
-    [
-      2,
-      "Fixture integrity",
-      b.fixture.residents.length === 30 &&
-        b.manifest.residentFixtureHash ===
-          residentFixtureHash(b.fixture, b.worldId) &&
-        b.manifest.resourceFixtureHash ===
-          resourceFixtureHash(b.fixture, b.worldId),
-    ],
-    [3, "Accepted action coverage", b.acceptedActionCoverage],
-    [
-      4,
-      "Causal chain",
-      b.causalEvidence.length === b.recovery.committed &&
-        b.causalEvidence.every(({ nextObservation }) => nextObservation),
-    ],
-    [5, "Need response", b.causalEvidence.length > 0],
-    [
-      6,
-      "Need effect",
-      b.events
+function createScenarioSummary(scenario) {
+  const completionEvents = scenario.events.filter(({ type }) =>
+    type.endsWith("_COMPLETED"),
+  );
+  const unemployedResidentIds = scenario.fixture.residents
+    .filter(({ employment }) => employment.status === "UNEMPLOYED")
+    .map(({ residentId }) => residentId)
+    .sort();
+  return {
+    schemaVersion: "m3-story-gate-scenario-summary-v1",
+    role: process.env.GATE_SINGLE_ROLE ?? "baseline",
+    worldId: scenario.worldId,
+    seed: scenario.seed,
+    manifest: scenario.manifest,
+    fixtureResidentCount: scenario.fixture.residents.length,
+    fixtureHashVerified:
+      scenario.manifest.residentFixtureHash ===
+      residentFixtureHash(scenario.fixture, scenario.worldId),
+    resourceFixtureHashVerified:
+      scenario.manifest.resourceFixtureHash ===
+      resourceFixtureHash(scenario.fixture, scenario.worldId),
+    unemployedResidentIds,
+    finalWorld: scenario.finalWorld,
+    endpoint: scenario.endpoint,
+    acceptedActionCoverage: scenario.acceptedActionCoverage,
+    commuteCoverage: scenario.commuteCoverage,
+    hashes: scenario.hashes,
+    storyDigest: scenario.storyDigest,
+    recovery: scenario.recovery,
+    stats: scenario.stats,
+    causalEvidenceCount: scenario.causalEvidence.length,
+    causalEvidenceWithNextObservation: scenario.causalEvidence.filter(
+      ({ nextObservation }) => Boolean(nextObservation),
+    ).length,
+    eventChecks: {
+      needEffectPolicyValid: scenario.events
         .filter(
           ({ type }) =>
             type === "RESIDENT_EAT_COMPLETED" ||
@@ -1487,114 +1465,63 @@ async function main() {
           ({ payload }) =>
             payload.needEffect?.policyVersion === POLICY_VERSIONS.needEffects,
         ),
-    ],
-    [
-      7,
-      "Work obligation",
-      b.events
+      workAttendanceValid: scenario.events
         .filter(({ type }) => type === "RESIDENT_WORK_COMPLETED")
-        .every(({ payload }) => payload.attendanceMinutes === 480) &&
-        b.stats
-          .filter(
-            ({ residentId }) =>
-              b.fixture.residents.find(
-                (resident) => resident.residentId === residentId,
-              )?.employment.status === "UNEMPLOYED",
-          )
-          .every(({ actionsByType }) => actionsByType.WORK.committed === 0),
-    ],
-    [
-      8,
-      "Resource conservation",
-      b.resourceRows.every(({ foodUnits }) => Number(foodUnits) >= 0) &&
-        b.finalFoodUnits <= b.initialFoodUnits,
-    ],
-    [
-      9,
-      "TALK legality / atomicity",
-      b.events
+        .every(({ payload }) => payload.attendanceMinutes === 480),
+      talkParticipantsPresent: scenario.events
         .filter(({ type }) => type === "RESIDENT_TALK_COMPLETED")
-        .every(({ payload }) => payload.participantActorId),
-    ],
-    [
-      10,
-      "Bounded recovery",
-      b.recovery.replans <= 2 * 30 && b.recovery.stop >= 0,
-    ],
-    [
-      11,
-      "Liveness",
-      b.events.some(({ type }) => type.endsWith("_COMPLETED")) &&
-        b.finalWorld.world_time.toISOString() === TARGET_TIME.toISOString(),
-    ],
-    [12, "Spatial / activity safety", b.hashes.live === b.hashes.full],
-    [13, "Replay equivalence", new Set(Object.values(b.hashes)).size === 1],
-    [14, "Determinism", sameSeedEqual && differentSeed],
-    [
-      15,
-      "Isolation / scope",
-      b.diagnostics.UNEXPECTED_BUY_EXECUTION === 0 &&
-        b.diagnostics.LLM_PATH_USED === 0 &&
-        b.diagnostics.ISOLATION_VIOLATION === 0,
-    ],
-  ].map(([number, name, passed]) => ({
-    number,
-    name,
-    result: passed ? "PASS" : "FAIL",
-  }));
-  const result = {
-    baseline,
-    repeat,
-    different,
-    sameSeedEqual,
-    differentSeed,
-    hardGates,
+        .every(({ payload }) => Boolean(payload.participantActorId)),
+      hasCompletedAction: completionEvents.length > 0,
+    },
+    resourceRows: scenario.resourceRows,
+    initialFoodUnits: scenario.initialFoodUnits,
+    finalFoodUnits: scenario.finalFoodUnits,
+    diagnostics: scenario.diagnostics,
   };
-  await writeArtifacts(result);
-  console.log(
-    JSON.stringify(
-      {
-        status: hardGates.every(({ result: value }) => value === "PASS")
-          ? "PASS"
-          : "FAIL",
-        worldId,
-        runId: baseline.manifest.manifestHash,
-        manifestHash: baseline.manifest.manifestHash,
-        finalWorldTime: baseline.finalWorld.world_time,
-        finalWorldSeq: baseline.finalWorld.world_seq,
-        actionAttempts: baseline.recovery.attempts,
-        committed: baseline.recovery.committed,
-        rejected: baseline.recovery.rejected,
-        conflicts: baseline.recovery.conflicts,
-        actions: Object.fromEntries(
-          ACTION_SCOPE.map((action) => [
-            action,
-            baseline.stats.reduce(
-              (total, resident) => ({
-                attempts:
-                  total.attempts + resident.actionsByType[action].attempts,
-                committed:
-                  total.committed + resident.actionsByType[action].committed,
-                completed:
-                  total.completed + resident.actionsByType[action].completed,
-              }),
-              { attempts: 0, committed: 0, completed: 0 },
-            ),
-          ]),
-        ),
-        hashes: baseline.hashes,
-        storyDigest: baseline.storyDigest,
-        sameSeedEqual,
-        differentSeed,
-        diagnostics: baseline.diagnostics,
-        hardGates,
-      },
-      null,
-      2,
-    ),
-  );
-  if (hardGates.some(({ result: value }) => value !== "PASS"))
-    process.exitCode = 1;
+}
+
+async function main() {
+  const role = process.env.GATE_SINGLE_ROLE;
+  const roleSeeds = {
+    baseline: WORLD_SEED,
+    repeat: WORLD_SEED,
+    different: DIFFERENT_WORLD_SEED,
+  };
+  const databaseUrl = process.env.GATE_SINGLE_DATABASE_URL;
+  if (!role || !roleSeeds[role] || !databaseUrl) {
+    throw new Error(
+      "Story Gate scenario child requires GATE_SINGLE_ROLE, GATE_SINGLE_DATABASE_URL, and GATE_ARTIFACT_DIR",
+    );
+  }
+  assertNewRunId(RUN_ID);
+  const codeCommit = execFileSync("git", ["rev-parse", "HEAD"], {
+    encoding: "utf8",
+  }).trim();
+  const { db, client } = createDb(databaseUrl);
+  let scenario;
+  try {
+    scenario = await runScenario({
+      db,
+      client,
+      worldId: LOGICAL_WORLD_ID,
+      seed: roleSeeds[role],
+      codeCommit,
+    });
+    const summary = await writeScenarioArtifacts(scenario);
+    scenario = null;
+    validateJsonArtifacts(process.env.GATE_ARTIFACT_DIR, SCENARIO_ARTIFACTS);
+    console.log(
+      JSON.stringify({
+        status: "SCENARIO_COMPLETE",
+        role,
+        runId: RUN_ID,
+        storyDigest: summary.storyDigest,
+        artifactDir: process.env.GATE_ARTIFACT_DIR,
+      }),
+    );
+  } finally {
+    await client.end({ timeout: 5 });
+  }
 }
 
 await main();
