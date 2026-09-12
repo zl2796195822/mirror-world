@@ -12,3 +12,12 @@ pnpm-lock.yaml
 *.docx
 *.jpg
 *.png
+
+# Immutable machine evidence: validate JSON/schema/hash separately; never rewrite
+# formal Story Gate bytes with source formatting.
+docs/verification/artifacts/M3-LIFECYCLE-STORY-GATE/
+
+# Local orchestration checkpoints and generated task output are not source.
+.workbuddy-ai/
+output/
+docs/DEVELOPMENT_PLAN.md
