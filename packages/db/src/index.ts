@@ -1,5 +1,12 @@
 export { createDb } from "./client.js";
 export {
+  readWorldById,
+  readWorldEventsAfterSeq,
+  type WorldEventReadDatabase,
+  type WorldEventRow,
+  type WorldRecord,
+} from "./client-projection-read.js";
+export {
   bootstrapResidentRuntimeStates,
   readResidentRuntimeStateRows,
   ResidentRuntimeStateBootstrapError,

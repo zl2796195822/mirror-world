@@ -20,6 +20,9 @@ importers:
       '@fastify/swagger':
         specifier: 9.8.1
         version: 9.8.1
+      '@mirror/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@mirror/db':
         specifier: workspace:*
         version: link:../../packages/db

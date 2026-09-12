@@ -5,22 +5,23 @@ import { URL } from "node:url";
 
 const pagePath = new URL("../app/world/page.tsx", import.meta.url);
 
-test("World Overview keeps M1-T03 data honest and complete", async () => {
+test("Observer V0 world page keeps LIVE projection honest", async () => {
   const source = await readFile(pagePath, "utf8");
 
   for (const requiredText of [
-    "世界时间",
-    "运行状态",
-    "30 个占位",
-    "最近事件",
-    "未接入",
+    "LIVE",
+    "WORLD STATUS",
+    "FIRST STREET LIVE",
+    "LIVE WORLD EVENTS",
+    "loadClientObserverBundle",
+    "Client Projection 暂不可用",
   ]) {
     assert.ok(
       source.includes(requiredText),
-      `World Overview must include ${requiredText}`,
+      `World Observer must include ${requiredText}`,
     );
   }
 
   assert.match(source, /requireUser\(\)/);
-  assert.doesNotMatch(source, /居民正在|事件已经发生|世界正在运行/);
+  assert.doesNotMatch(source, /居民正在吃|伪造事件|模拟世界已启动/);
 });

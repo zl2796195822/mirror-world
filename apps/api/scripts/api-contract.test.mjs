@@ -72,7 +72,40 @@ test("openapi is generated from the registered routes", async () => {
   assert.ok(document.paths["/api/v1/worlds"]);
   assert.ok(document.paths["/api/v1/worlds/{worldId}"]);
   assert.ok(document.paths["/api/v1/worlds/{worldId}/admin/time"]);
+  assert.ok(document.paths["/api/v1/client/v0/contract"]);
+  assert.ok(document.paths["/api/v1/client/v0/worlds/{worldId}/snapshot"]);
+  assert.ok(document.paths["/api/v1/client/v0/worlds/{worldId}/events"]);
+  assert.ok(
+    document.paths["/api/v1/client/v0/worlds/{worldId}/residents/{residentId}"],
+  );
   assert.equal(document.paths["/health"], undefined);
+});
+
+test("client projection contract is available without a database", async () => {
+  const response = await app.inject({
+    method: "GET",
+    url: "/api/v1/client/v0/contract",
+  });
+  const body = response.json();
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(body.data.schemaVersion, "client-projection-v0");
+  assert.equal(body.data.realtime, "unavailable");
+  assert.ok(body.data.capabilities.includes("world_snapshot"));
+});
+
+test("client projection data routes fail closed without a database", async () => {
+  const worldId = "00000000-0000-4000-8000-000000000002";
+  const residentId = "00000000-0000-4000-8000-000000000003";
+  for (const url of [
+    `/api/v1/client/v0/worlds/${worldId}/snapshot`,
+    `/api/v1/client/v0/worlds/${worldId}/events`,
+    `/api/v1/client/v0/worlds/${worldId}/residents/${residentId}`,
+  ]) {
+    const response = await app.inject({ method: "GET", url });
+    assert.equal(response.statusCode, 503);
+    assert.equal(response.json().error.code, "WORLD_DATA_UNAVAILABLE");
+  }
 });
 
 test("world clock routes fail closed without a database", async () => {

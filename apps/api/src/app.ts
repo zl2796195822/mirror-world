@@ -14,6 +14,15 @@ import {
   type WorldClockScale,
   type WorldClockStatus,
 } from "@mirror/world-kernel";
+import {
+  buildClientEventFeed,
+  buildClientResidentDetail,
+  buildClientWorldSnapshot,
+  CLIENT_PROJECTION_CAPABILITIES,
+  CLIENT_PROJECTION_TRANSPORT,
+  ClientProjectionError,
+} from "./client-projection.js";
+import { CLIENT_PROJECTION_SCHEMA_VERSION } from "@mirror/contracts";
 
 type Database = ReturnType<typeof createDb>;
 
@@ -365,6 +374,126 @@ export async function buildApp(
     }
   };
 
+  const requireDatabase = (
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ): Database | null => {
+    if (!database) {
+      failure(
+        request,
+        reply,
+        503,
+        "WORLD_DATA_UNAVAILABLE",
+        "World data is not available",
+      );
+      return null;
+    }
+    return database;
+  };
+
+  const clientContractHandler = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ) =>
+    success(request, reply, {
+      schemaVersion: CLIENT_PROJECTION_SCHEMA_VERSION,
+      capabilities: [...CLIENT_PROJECTION_CAPABILITIES],
+      transport: [...CLIENT_PROJECTION_TRANSPORT],
+      realtime: "unavailable",
+    });
+
+  const clientSnapshotHandler = async (
+    request: FastifyRequest<{ Params: WorldParams }>,
+    reply: FastifyReply,
+  ) => {
+    const activeDatabase = requireDatabase(request, reply);
+    if (!activeDatabase) return reply;
+
+    try {
+      const snapshot = await buildClientWorldSnapshot(
+        activeDatabase.db,
+        request.params.worldId,
+      );
+      return success(request, reply, { snapshot });
+    } catch (error) {
+      if (error instanceof ClientProjectionError) {
+        return failure(request, reply, 404, error.code, error.message);
+      }
+      return failure(
+        request,
+        reply,
+        503,
+        "WORLD_DATA_UNAVAILABLE",
+        "Client projection is unavailable",
+      );
+    }
+  };
+
+  const clientEventsHandler = async (
+    request: FastifyRequest<{
+      Params: WorldParams;
+      Querystring: {
+        afterSeq?: string;
+        limit?: number;
+        residentId?: string;
+      };
+    }>,
+    reply: FastifyReply,
+  ) => {
+    const activeDatabase = requireDatabase(request, reply);
+    if (!activeDatabase) return reply;
+
+    try {
+      const feed = await buildClientEventFeed(activeDatabase.db, {
+        worldId: request.params.worldId,
+        afterSeq: request.query.afterSeq,
+        limit: request.query.limit,
+        residentId: request.query.residentId,
+      });
+      return success(request, reply, { feed });
+    } catch (error) {
+      if (error instanceof ClientProjectionError) {
+        return failure(request, reply, 404, error.code, error.message);
+      }
+      return failure(
+        request,
+        reply,
+        503,
+        "WORLD_DATA_UNAVAILABLE",
+        "Client event feed is unavailable",
+      );
+    }
+  };
+
+  const clientResidentHandler = async (
+    request: FastifyRequest<{
+      Params: WorldParams & { residentId: string };
+    }>,
+    reply: FastifyReply,
+  ) => {
+    const activeDatabase = requireDatabase(request, reply);
+    if (!activeDatabase) return reply;
+
+    try {
+      const resident = await buildClientResidentDetail(activeDatabase.db, {
+        worldId: request.params.worldId,
+        residentId: request.params.residentId,
+      });
+      return success(request, reply, { resident });
+    } catch (error) {
+      if (error instanceof ClientProjectionError) {
+        return failure(request, reply, 404, error.code, error.message);
+      }
+      return failure(
+        request,
+        reply,
+        503,
+        "WORLD_DATA_UNAVAILABLE",
+        "Client resident projection is unavailable",
+      );
+    }
+  };
+
   const healthSchema = {
     tags: ["operations"],
     response: {
@@ -435,6 +564,212 @@ export async function buildApp(
     },
   };
 
+  const clientPlaceSchema = {
+    type: "object",
+    additionalProperties: false,
+    required: [
+      "placeId",
+      "placeKey",
+      "placeType",
+      "displayName",
+      "parentPlaceId",
+      "residentCount",
+    ],
+    properties: {
+      placeId: { type: "string", format: "uuid" },
+      placeKey: { type: "string" },
+      placeType: { type: "string" },
+      displayName: { type: "string" },
+      parentPlaceId: { type: ["string", "null"] },
+      residentCount: { type: "integer" },
+    },
+  } as const;
+
+  const clientResidentSchema = {
+    type: "object",
+    additionalProperties: false,
+    required: [
+      "residentId",
+      "displayName",
+      "placeId",
+      "placeKey",
+      "placeKind",
+      "activity",
+      "activityInstanceId",
+      "activityStartedAtWorldTime",
+      "activityDueAtWorldTime",
+      "targetPlaceId",
+      "participantId",
+      "employmentStatus",
+      "workplaceId",
+      "projectionSeq",
+    ],
+    properties: {
+      residentId: { type: "string", format: "uuid" },
+      displayName: { type: "string" },
+      placeId: { type: "string", format: "uuid" },
+      placeKey: { type: ["string", "null"] },
+      placeKind: { type: ["string", "null"] },
+      activity: { type: "string" },
+      activityInstanceId: { type: ["string", "null"] },
+      activityStartedAtWorldTime: { type: ["string", "null"] },
+      activityDueAtWorldTime: { type: ["string", "null"] },
+      targetPlaceId: { type: ["string", "null"] },
+      participantId: { type: ["string", "null"] },
+      employmentStatus: { type: ["string", "null"] },
+      workplaceId: { type: ["string", "null"] },
+      projectionSeq: { type: "string" },
+    },
+  } as const;
+
+  const clientEventSchema = {
+    type: "object",
+    additionalProperties: false,
+    required: [
+      "eventId",
+      "worldSeq",
+      "eventType",
+      "occurredAtWorldTime",
+      "residentId",
+      "participantId",
+      "placeId",
+      "targetPlaceId",
+    ],
+    properties: {
+      eventId: { type: "string", format: "uuid" },
+      worldSeq: { type: "string" },
+      eventType: { type: "string" },
+      occurredAtWorldTime: { type: "string" },
+      residentId: { type: ["string", "null"] },
+      participantId: { type: ["string", "null"] },
+      placeId: { type: ["string", "null"] },
+      targetPlaceId: { type: ["string", "null"] },
+      payloadSummary: { type: "object", additionalProperties: true },
+    },
+  } as const;
+
+  const clientContractSchema = {
+    tags: ["client-projection"],
+    response: {
+      200: successResponseSchema({
+        type: "object",
+        additionalProperties: false,
+        required: ["schemaVersion", "capabilities", "transport", "realtime"],
+        properties: {
+          schemaVersion: { type: "string" },
+          capabilities: { type: "array", items: { type: "string" } },
+          transport: { type: "array", items: { type: "string" } },
+          realtime: { type: "string" },
+        },
+      }),
+    },
+  };
+
+  const clientSnapshotSchema = {
+    tags: ["client-projection"],
+    params: worldSchemaResponse.params,
+    response: {
+      200: successResponseSchema({
+        type: "object",
+        additionalProperties: false,
+        required: ["snapshot"],
+        properties: {
+          snapshot: {
+            type: "object",
+            additionalProperties: false,
+            required: [
+              "schemaVersion",
+              "worldId",
+              "worldTime",
+              "worldSeq",
+              "worldStatus",
+              "places",
+              "residents",
+            ],
+            properties: {
+              schemaVersion: { type: "string" },
+              worldId: { type: "string", format: "uuid" },
+              worldTime: { type: "string" },
+              worldSeq: { type: "string" },
+              worldStatus: { type: "string" },
+              generatedAt: { type: "string" },
+              places: { type: "array", items: clientPlaceSchema },
+              residents: { type: "array", items: clientResidentSchema },
+            },
+          },
+        },
+      }),
+      404: errorResponseSchema,
+      503: errorResponseSchema,
+    },
+  };
+
+  const clientEventsSchema = {
+    tags: ["client-projection"],
+    params: worldSchemaResponse.params,
+    querystring: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        afterSeq: { type: "string", pattern: "^\\d+$" },
+        limit: { type: "integer", minimum: 1, maximum: 200 },
+        residentId: { type: "string", format: "uuid" },
+      },
+    },
+    response: {
+      200: successResponseSchema({
+        type: "object",
+        additionalProperties: false,
+        required: ["feed"],
+        properties: {
+          feed: {
+            type: "object",
+            additionalProperties: false,
+            required: [
+              "schemaVersion",
+              "worldId",
+              "worldSeq",
+              "events",
+              "nextAfterSeq",
+            ],
+            properties: {
+              schemaVersion: { type: "string" },
+              worldId: { type: "string", format: "uuid" },
+              worldSeq: { type: "string" },
+              events: { type: "array", items: clientEventSchema },
+              nextAfterSeq: { type: "string" },
+            },
+          },
+        },
+      }),
+      404: errorResponseSchema,
+      503: errorResponseSchema,
+    },
+  };
+
+  const clientResidentSchemaResponse = {
+    tags: ["client-projection"],
+    params: {
+      type: "object",
+      additionalProperties: false,
+      required: ["worldId", "residentId"],
+      properties: {
+        worldId: { type: "string", format: "uuid" },
+        residentId: { type: "string", format: "uuid" },
+      },
+    },
+    response: {
+      200: successResponseSchema({
+        type: "object",
+        additionalProperties: false,
+        required: ["resident"],
+        properties: { resident: clientResidentSchema },
+      }),
+      404: errorResponseSchema,
+      503: errorResponseSchema,
+    },
+  };
+
   await app.register(swagger, {
     openapi: {
       openapi: "3.0.3",
@@ -447,6 +782,11 @@ export async function buildApp(
       tags: [
         { name: "operations", description: "Process and dependency status" },
         { name: "worlds", description: "Read-only world metadata" },
+        {
+          name: "client-projection",
+          description:
+            "Temporary read-only client projection (client-projection-v0)",
+        },
       ],
     },
   });
@@ -463,6 +803,26 @@ export async function buildApp(
     "/api/v1/worlds/:worldId/admin/time",
     { schema: worldTimeControlSchema },
     worldTimeControlHandler,
+  );
+  app.get(
+    "/api/v1/client/v0/contract",
+    { schema: clientContractSchema },
+    clientContractHandler,
+  );
+  app.get(
+    "/api/v1/client/v0/worlds/:worldId/snapshot",
+    { schema: clientSnapshotSchema },
+    clientSnapshotHandler,
+  );
+  app.get(
+    "/api/v1/client/v0/worlds/:worldId/events",
+    { schema: clientEventsSchema },
+    clientEventsHandler,
+  );
+  app.get(
+    "/api/v1/client/v0/worlds/:worldId/residents/:residentId",
+    { schema: clientResidentSchemaResponse },
+    clientResidentHandler,
   );
 
   // Keep the task's short operational paths usable while the versioned contract is canonical.
