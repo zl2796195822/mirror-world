@@ -1,6 +1,6 @@
 # Mirror World Client V0 — 文档索引
 
-状态：`C2 DESIGN COMPLETE ON FEATURE BRANCH`（`task/client-v0-first-street-c2`）
+状态：`C3 BLOCKED_BY_UE_ENVIRONMENT`（`task/client-v0-first-street-c2`）
 
 本目录属于镜界客户端 / 世界可视化轨道。当前主线 `origin/main = b774533`，`M3 Life Engine v1 = IN_PROGRESS`，因此 production implementation 不得合入主线。
 
@@ -11,7 +11,13 @@
 - C1.1 real-lifecycle verification
 - C2 First Street static 3D design / mapping
 
-C2 设计目录：`docs/client/first-street/`
+当前：
+
+- C3 First Street UE Greybox = `BLOCKED_BY_UE_ENVIRONMENT`
+- 本机未安装 Unreal Engine；未静默下载、未创建 UE project
+
+C2 设计目录：`docs/client/first-street/`  
+C3 环境门禁报告：`docs/client/CLIENT-C3-FIRST-STREET-UE-GREYBOX-verification-report.md`
 
 ## 一句话边界
 
