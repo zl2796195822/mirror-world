@@ -1,7 +1,7 @@
 # M3 Story Gate Runner Infrastructure Remediation
 
 Date: 2026-09-12
-Status: `LOCAL_INFRA_REMEDIATION_PASS / CI_PENDING`
+Status: `LOCAL_INFRA_REMEDIATION_PASS / REMOTE_CI_NOT_EXECUTED`
 Milestone: `M3 = IN_PROGRESS`
 
 ## Outcome and boundary
@@ -21,12 +21,18 @@ task remains a new immutable `M3-LIFECYCLE-STORY-GATE` run with a new run ID.
 | Starting `origin/main` | `71e3f1b9f05c0d0273d4117e83c513ef547f38ab`                                               |
 | Working branch         | `gate/m3-lifecycle-story`                                                                |
 | Starting `HEAD`        | `71e3f1b9f05c0d0273d4117e83c513ef547f38ab`                                               |
+| Remediation commits    | `2f9a81f`, `28ef136`                                                                     |
+| Final branch `HEAD`    | `28ef136d10a2061cd7e87b747476e5ae6b245208`                                               |
+| Final `origin/main`    | `71e3f1b9f05c0d0273d4117e83c513ef547f38ab`                                               |
 | Project state          | `M3 = IN_PROGRESS`; Story Gate `FAIL / RERUN_REQUIRED`; `M3-T05 = DEFINED / NOT_STARTED` |
 | Coverage contract      | `m3-story-gate-coverage-v2`                                                              |
 | Story Sanity contract  | `m3-story-sanity-v2`                                                                     |
 | Node                   | 24.x; local run used Node `v24.11.1`                                                     |
 
 `git fetch origin` was run before the audit. `origin/main` was unchanged.
+The branch was pushed, but the repository workflow runs only on `main` pushes
+and Pull Requests; this branch has no Pull Request, and the available GitHub
+session is not authenticated. No remote CI result is therefore claimed.
 
 ## Root-cause analysis: run-14
 
@@ -161,7 +167,7 @@ not enter World decision inputs.
 | `pnpm test`                                    | `PASS`                                                                                                                                    |
 | `pnpm build`                                   | `PASS`                                                                                                                                    |
 | Official npm production audit                  | `PASS`; HIGH=0, CRITICAL=0                                                                                                                |
-| `git diff --check`                             | pending final commit                                                                                                                      |
+| `git diff --check`                             | `PASS` on the remediation commits                                                                                                         |
 
 The disposable PostgreSQL containers and their anonymous volumes were removed
 after the reduced run and integration suite. Existing compose services and
@@ -189,6 +195,7 @@ required.
 failure. `M3-T05` remains `DEFINED / NOT_STARTED`. No new full Story Gate,
 M3-T05, Final Status Review #2, or M4+ work was started.
 
-After remote CI closes this remediation, the next allowed formal task is a
-new immutable `M3-LIFECYCLE-STORY-GATE` rerun with a new run ID. This report
-does not authorize that rerun.
+Remote CI execution remains the only unverified acceptance item for this
+remediation. After it closes, the next allowed formal task is a new immutable
+`M3-LIFECYCLE-STORY-GATE` rerun with a new run ID. This report does not
+authorize that rerun.
