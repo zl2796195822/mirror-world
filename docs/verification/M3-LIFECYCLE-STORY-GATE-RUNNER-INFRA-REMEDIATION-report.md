@@ -64,7 +64,7 @@ also built cloned coverage rows and later attempted whole-result serialization.
 
 The historical `20260910-run-08 = FAIL` evidence remains unchanged. Its
 manifest SHA-256 is
-`8c7758e9d90c654594f79370ecf500699c98413715e2e3ec58d6b81248c62` and its
+`8c7758e9d90c654594f79370ecf500699c98413789315e2e3ec58d6b81248c62` and its
 recorded `run-summary.json` SHA-256 is
 `ca5ffaa7d36bdcec9c9c6e06f5dc55c41c8476daa2f08967afe89a7acd911c90`.
 
