@@ -1,8 +1,17 @@
 # Mirror World Client V0 — 文档索引
 
-状态：`C0/C1 IMPLEMENTATION ON FEATURE BRANCH`（`task/client-v0-observer`）
+状态：`C2 DESIGN COMPLETE ON FEATURE BRANCH`（`task/client-v0-first-street-c2`）
 
-本目录属于镜界客户端 / 世界可视化轨道的第一阶段。当前主线 `origin/main = b774533`，`M3 Life Engine v1 = IN_PROGRESS`，因此 production implementation 不得合入主线。本工作树仅在隔离分支推进 C0 contract + C1 Web Observer。
+本目录属于镜界客户端 / 世界可视化轨道。当前主线 `origin/main = b774533`，`M3 Life Engine v1 = IN_PROGRESS`，因此 production implementation 不得合入主线。
+
+已完成：
+
+- C0 Client Projection v0
+- C1 Web Observer V0
+- C1.1 real-lifecycle verification
+- C2 First Street static 3D design / mapping
+
+C2 设计目录：`docs/client/first-street/`
 
 ## 一句话边界
 
