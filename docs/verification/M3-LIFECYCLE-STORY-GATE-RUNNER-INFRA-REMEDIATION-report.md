@@ -1,7 +1,7 @@
 # M3 Story Gate Runner Infrastructure Remediation
 
 Date: 2026-09-12
-Status: `LOCAL_INFRA_REMEDIATION_PASS / REMOTE_CI_NOT_EXECUTED`
+Status: `LOCAL_INFRA_REMEDIATION_PASS / REMOTE_CI_PASS`
 Milestone: `M3 = IN_PROGRESS`
 
 ## Outcome and boundary
@@ -29,10 +29,13 @@ task remains a new immutable `M3-LIFECYCLE-STORY-GATE` run with a new run ID.
 | Story Sanity contract  | `m3-story-sanity-v2`                                                                     |
 | Node                   | 24.x; local run used Node `v24.11.1`                                                     |
 
-`git fetch origin` was run before the audit. `origin/main` was unchanged.
-The branch was pushed, but the repository workflow runs only on `main` pushes
-and Pull Requests; this branch has no Pull Request, and the available GitHub
-session is not authenticated. No remote CI result is therefore claimed.
+`git fetch origin` was run before the audit. PR #4 was opened from the
+remediation branch with head `a376b1c1e232aa7571d01e676965a6689a3baa47`.
+Its `foundation-ci` pull-request run `34668684492` completed with `Success`.
+The PR was then merged into `main` as `0878c1a112c8d71824a727d6dbd0b5e23ca2cd95`.
+The post-merge `foundation-ci` push run `34669795310` also completed with
+`Success` in 3m27s. GitHub reported one Node.js 20 deprecation warning for
+actions forced to Node.js 24; no check failed.
 
 ## Root-cause analysis: run-14
 
@@ -195,7 +198,7 @@ required.
 failure. `M3-T05` remains `DEFINED / NOT_STARTED`. No new full Story Gate,
 M3-T05, Final Status Review #2, or M4+ work was started.
 
-Remote CI execution remains the only unverified acceptance item for this
-remediation. After it closes, the next allowed formal task is a new immutable
+Remote CI is now verified for both the pull request and the merged `main`
+commit. The next allowed formal task is a new immutable
 `M3-LIFECYCLE-STORY-GATE` rerun with a new run ID. This report does not
 authorize that rerun.
