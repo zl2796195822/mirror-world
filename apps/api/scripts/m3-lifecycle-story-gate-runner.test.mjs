@@ -106,7 +106,7 @@ test("serial orchestration flushes each role before starting the next", async ()
   const root = mkdtempSync(join(tmpdir(), "mirror-gate-runner-"));
   const order = [];
   const result = await runSerialStoryGate({
-    runId: "20260912-run-16",
+    runId: "20260913-run-90",
     root,
     databaseUrls: ["baseline", "repeat", "different"],
     spawnChild: async (input) => {
