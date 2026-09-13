@@ -9,10 +9,10 @@ Date: 2026-09-12
 No formal Story Gate judgment was produced. Two new immutable run attempts
 were made in this worktree. Both aborted before the summary finalizer:
 
-| Run ID           | Lifecycle                         | Root cause                                                                 |
-| ---------------- | --------------------------------- | -------------------------------------------------------------------------- |
-| `20260912-run-15` | `ABORTED_BEFORE_GATE_FINALIZE`    | Main runner lineage mismatch vs Coverage Contract v2; baseline SIGTERM     |
-| `20260912-run-16` | `ABORTED_BEFORE_GATE_FINALIZE`    | `coverage-funnel-v2.json` 17.99 GB failed post-write JSON.parse validation |
+| Run ID            | Lifecycle                      | Root cause                                                                 |
+| ----------------- | ------------------------------ | -------------------------------------------------------------------------- |
+| `20260912-run-15` | `ABORTED_BEFORE_GATE_FINALIZE` | Main runner lineage mismatch vs Coverage Contract v2; baseline SIGTERM     |
+| `20260912-run-16` | `ABORTED_BEFORE_GATE_FINALIZE` | `coverage-funnel-v2.json` 17.99 GB failed post-write JSON.parse validation |
 
 Neither run reached the summary finalizer. Neither produced 15 Hard Gate
 results. `20260910-run-08` remains immutable `FAIL`. `20260911-run-14`
@@ -77,76 +77,76 @@ Baseline child completed World simulation and flushed scenario artifacts, then
 failed artifact validation. Parent wrote an abort record and skipped the
 finalizer. Repeat and different-seed never started.
 
-| Field                         | Result                                                                                                 |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Aborted record                | [`aborted-run.json`](./artifacts/M3-LIFECYCLE-STORY-GATE/20260912-run-16/aborted-run.json)             |
-| Aborted record SHA-256        | `fc28d6d56e3c30f296bf132ffd27b22dfe11ca431f84df404bcf6928129a1dd9`                                     |
-| Failed role                   | `baseline` (post-write `validateJsonArtifacts`)                                                        |
-| Completed roles               | `[]` (baseline simulation finished, but role not accepted as complete)                                 |
-| Finalizer                     | not run                                                                                                |
-| Error                         | `JSON.parse` of `coverage-funnel-v2.json` failed in forked validator child                             |
-| coverage-funnel-v2.json size  | `17,988,089,482` bytes (17.99 GB)                                                                      |
-| Manifest                      | emitted; SHA-256 `78d6f673bd0639af6146a0b9caba7b0ef04f1f92054676ee0821c8dea73f4167`                   |
-| Manifest hash field           | `7d959cf3d5b9b9647f72242bb7f4e2d4012c52a8cc30ea46ac4c89569ca8ecad`                                     |
-| Scenario summary SHA-256      | `103b00e0d0fade57b7f15d639b60e52e7e98c09e073ac2d02ac92e0a55a12b5c`                                     |
-| World Time reached            | `2026-10-07T00:00:00.000Z` (target)                                                                    |
-| Final `worldSeq`              | `11000`                                                                                                |
-| Ledger events                 | 10,901 typed events + `WORLD_TIME_ADVANCED` 6,814; event summary total 10,901 action-related rows      |
-| Action attempts / committed   | 2,093 / 2,093                                                                                        |
-| Rejected / conflicts          | 0 / 0                                                                                                |
-| Deferred                      | 828,025                                                                                              |
-| Causal evidence count         | 2,093                                                                                                |
-| Live / full / suffix / genesis hashes | all `95422be233b6c2f0348c8e049a9b090c53c3620a7b4c8ed3fdb681b04e1e9006`                      |
-| Story digest                  | `592ffef5d6213462ed8674b68125401ccaf04f23a615cda1f408314467984430`                                     |
-| `acceptedActionCoverage`      | `false` (diagnostic only; not a finalizer Hard Gate judgment)                                          |
-| `commuteCoverage`             | `true`                                                                                                 |
-| LLM path count                | 0                                                                                                      |
-| Peak child memory             | not measured; configured child heap `12288` MB                                                         |
+| Field                                 | Result                                                                                            |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Aborted record                        | [`aborted-run.json`](./artifacts/M3-LIFECYCLE-STORY-GATE/20260912-run-16/aborted-run.json)        |
+| Aborted record SHA-256                | `fc28d6d56e3c30f296bf132ffd27b22dfe11ca431f84df404bcf6928129a1dd9`                                |
+| Failed role                           | `baseline` (post-write `validateJsonArtifacts`)                                                   |
+| Completed roles                       | `[]` (baseline simulation finished, but role not accepted as complete)                            |
+| Finalizer                             | not run                                                                                           |
+| Error                                 | `JSON.parse` of `coverage-funnel-v2.json` failed in forked validator child                        |
+| coverage-funnel-v2.json size          | `17,988,089,482` bytes (17.99 GB)                                                                 |
+| Manifest                              | emitted; SHA-256 `78d6f673bd0639af6146a0b9caba7b0ef04f1f92054676ee0821c8dea73f4167`               |
+| Manifest hash field                   | `7d959cf3d5b9b9647f72242bb7f4e2d4012c52a8cc30ea46ac4c89569ca8ecad`                                |
+| Scenario summary SHA-256              | `103b00e0d0fade57b7f15d639b60e52e7e98c09e073ac2d02ac92e0a55a12b5c`                                |
+| World Time reached                    | `2026-10-07T00:00:00.000Z` (target)                                                               |
+| Final `worldSeq`                      | `11000`                                                                                           |
+| Ledger events                         | 10,901 typed events + `WORLD_TIME_ADVANCED` 6,814; event summary total 10,901 action-related rows |
+| Action attempts / committed           | 2,093 / 2,093                                                                                     |
+| Rejected / conflicts                  | 0 / 0                                                                                             |
+| Deferred                              | 828,025                                                                                           |
+| Causal evidence count                 | 2,093                                                                                             |
+| Live / full / suffix / genesis hashes | all `95422be233b6c2f0348c8e049a9b090c53c3620a7b4c8ed3fdb681b04e1e9006`                            |
+| Story digest                          | `592ffef5d6213462ed8674b68125401ccaf04f23a615cda1f408314467984430`                                |
+| `acceptedActionCoverage`              | `false` (diagnostic only; not a finalizer Hard Gate judgment)                                     |
+| `commuteCoverage`                     | `true`                                                                                            |
+| LLM path count                        | 0                                                                                                 |
+| Peak child memory                     | not measured; configured child heap `12288` MB                                                    |
 
 ### Baseline action completion (diagnostic only)
 
-| Action | ACTION_COUNT (completed) | Unique completed residents | Notes                                      |
-| ------ | ------------------------ | -------------------------- | ------------------------------------------ |
-| MOVE   | 950                      | 26                         | 4 unemployed `NO_FORMAL_NECESSITY`         |
-| SLEEP  | 704                      | 30                         | 30/30                                      |
-| EAT    | 60                       | 25                         | 5 `UNAVAILABLE_RESOURCE`                   |
-| WORK   | 145                      | 9                          | 17 feasible employed missing completion    |
-| TALK   | 234                      | 24 (contact union)         | 19 initiators, 9 participants, 6 missing   |
+| Action | ACTION_COUNT (completed) | Unique completed residents | Notes                                    |
+| ------ | ------------------------ | -------------------------- | ---------------------------------------- |
+| MOVE   | 950                      | 26                         | 4 unemployed `NO_FORMAL_NECESSITY`       |
+| SLEEP  | 704                      | 30                         | 30/30                                    |
+| EAT    | 60                       | 25                         | 5 `UNAVAILABLE_RESOURCE`                 |
+| WORK   | 145                      | 9                          | 17 feasible employed missing completion  |
+| TALK   | 234                      | 24 (contact union)         | 19 initiators, 9 participants, 6 missing |
 
 ### Baseline Coverage v2 summary (diagnostic only)
 
 Extracted from the flushed `coverage-funnel-v2.json` summary object. This is
 **not** a formal Hard Gate #3 judgment because the finalizer never ran.
 
-| Action | passes | feasibleMissingCompletion | terminal highlights                          |
-| ------ | ------ | ------------------------- | -------------------------------------------- |
-| SLEEP  | true   | 0                         | `NO_CANDIDATE` 829,414                       |
-| EAT    | true   | 0                         | `UNAVAILABLE_RESOURCE` 696,971               |
-| WORK   | false  | 17                        | `CANDIDATE_NOT_SELECTED` 123,171             |
-| TALK   | false  | 6                         | `CANDIDATE_NOT_SELECTED` 4,780               |
-| MOVE   | true   | 0                         | `NO_FORMAL_NECESSITY` 4,246                  |
+| Action | passes | feasibleMissingCompletion | terminal highlights              |
+| ------ | ------ | ------------------------- | -------------------------------- |
+| SLEEP  | true   | 0                         | `NO_CANDIDATE` 829,414           |
+| EAT    | true   | 0                         | `UNAVAILABLE_RESOURCE` 696,971   |
+| WORK   | false  | 17                        | `CANDIDATE_NOT_SELECTED` 123,171 |
+| TALK   | false  | 6                         | `CANDIDATE_NOT_SELECTED` 4,780   |
+| MOVE   | true   | 0                         | `NO_FORMAL_NECESSITY` 4,246      |
 
 Overall coverage evaluator `passes = false`.
 
 ### Baseline diagnostics (diagnostic only)
 
-| Diagnostic                  | Count |
-| --------------------------- | ----- |
-| STARVATION_RISK             | 0     |
-| RESOURCE_DEPLETION          | 30    |
-| SLEEP_RESPONSE_DELAY        | 0     |
-| SOCIAL_STARVATION           | 11    |
-| WORK_ABSENCE                | 17    |
-| WORK_LATE_ATTEMPT           | 0     |
-| PERMANENT_DEFER             | 0     |
-| REPLAN_EXHAUSTION           | 0     |
-| NO_ACTION_PROGRESS          | 0     |
-| INVALID_LOCATION_ACTIVITY   | 0     |
-| REPLAY_MISMATCH             | 0     |
-| DETERMINISM_MISMATCH        | 0     |
-| ISOLATION_VIOLATION         | 0     |
-| UNEXPECTED_BUY_EXECUTION    | 0     |
-| LLM_PATH_USED               | 0     |
+| Diagnostic                | Count |
+| ------------------------- | ----- |
+| STARVATION_RISK           | 0     |
+| RESOURCE_DEPLETION        | 30    |
+| SLEEP_RESPONSE_DELAY      | 0     |
+| SOCIAL_STARVATION         | 11    |
+| WORK_ABSENCE              | 17    |
+| WORK_LATE_ATTEMPT         | 0     |
+| PERMANENT_DEFER           | 0     |
+| REPLAN_EXHAUSTION         | 0     |
+| NO_ACTION_PROGRESS        | 0     |
+| INVALID_LOCATION_ACTIVITY | 0     |
+| REPLAY_MISMATCH           | 0     |
+| DETERMINISM_MISMATCH      | 0     |
+| ISOLATION_VIOLATION       | 0     |
+| UNEXPECTED_BUY_EXECUTION  | 0     |
+| LLM_PATH_USED             | 0     |
 
 WORK funnel breakpoint appears between `CANDIDATE_GENERATED` (26) and
 `SELECTED` (9). TALK funnel retains candidate-not-selected and
@@ -177,14 +177,14 @@ to hide the defect, and no 15-gate judgment was emitted.
 
 ## Environment and cleanup
 
-| Field                                      | Result                                                      |
-| ------------------------------------------ | ----------------------------------------------------------- |
-| Node                                       | `v24.11.1`                                                  |
-| pnpm                                       | `9.15.4`                                                    |
-| Child heap profile                         | `12,288` MB, one scenario child                             |
-| PostgreSQL                                 | disposable isolated instances for aborted attempts          |
-| Existing project databases / Compose       | untouched                                                   |
-| Full post-Gate regression                  | not run; Gate aborted before finalization                   |
+| Field                                | Result                                             |
+| ------------------------------------ | -------------------------------------------------- |
+| Node                                 | `v24.11.1`                                         |
+| pnpm                                 | `9.15.4`                                           |
+| Child heap profile                   | `12,288` MB, one scenario child                    |
+| PostgreSQL                           | disposable isolated instances for aborted attempts |
+| Existing project databases / Compose | untouched                                          |
+| Full post-Gate regression            | not run; Gate aborted before finalization          |
 
 Disposable PostgreSQL containers from the aborted attempts were torn down.
 The run-16 aborted evidence directory remains in this worktree, including the
@@ -193,18 +193,18 @@ failure. It is not a completed Gate bundle and must not be promoted.
 
 ## Formal state boundary
 
-| Field                    | Result                                                                 |
-| ------------------------ | ---------------------------------------------------------------------- |
-| Historical run-08        | preserved as immutable `FAIL`                                          |
-| Historical run-14        | preserved as immutable `INFRA_FAILURE`                                 |
-| This attempt run-15      | `INFRA_FAILURE / ABORTED_BEFORE_GATE_FINALIZE`                         |
-| This attempt run-16      | `INFRA_FAILURE / ABORTED_BEFORE_GATE_FINALIZE`                         |
-| Current Story Gate       | `RERUN_REQUIRED`; no new formal judgment                               |
-| M3                       | `IN_PROGRESS`                                                          |
-| M3-T05                   | `DEFINED / NOT_STARTED`                                                |
-| M3-T05 executed          | no                                                                     |
-| Final Status Review #2   | not executed                                                           |
-| M4+                      | not entered                                                            |
+| Field                  | Result                                         |
+| ---------------------- | ---------------------------------------------- |
+| Historical run-08      | preserved as immutable `FAIL`                  |
+| Historical run-14      | preserved as immutable `INFRA_FAILURE`         |
+| This attempt run-15    | `INFRA_FAILURE / ABORTED_BEFORE_GATE_FINALIZE` |
+| This attempt run-16    | `INFRA_FAILURE / ABORTED_BEFORE_GATE_FINALIZE` |
+| Current Story Gate     | `RERUN_REQUIRED`; no new formal judgment       |
+| M3                     | `IN_PROGRESS`                                  |
+| M3-T05                 | `DEFINED / NOT_STARTED`                        |
+| M3-T05 executed        | no                                             |
+| Final Status Review #2 | not executed                                   |
+| M4+                    | not entered                                    |
 
 ## Required remediation before the next Gate rerun
 

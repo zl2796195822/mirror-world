@@ -776,8 +776,7 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
       assert.ok(typeStats, `unknown action actor ${request.actorId}`);
       // Formal horizon settle: do not start an action that cannot complete
       // before TARGET_TIME, or the endpoint check cannot reach IDLE.
-      const durationMinutes =
-        ACTION_DURATION_MINUTES[request.actionType] ?? 15;
+      const durationMinutes = ACTION_DURATION_MINUTES[request.actionType] ?? 15;
       const remainingMs =
         TARGET_TIME.getTime() - new Date(worldWorldTime).getTime();
       if (durationMinutes * 60_000 > remainingMs) {
@@ -902,12 +901,16 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
           ).length,
           candidates: result.decision.candidates.map(
             (c) =>
-              `${c.actionType}:${c.feasible ? "F" : "X"}:${(c.hardConstraints ?? [])
-                .filter((h) => !h.passed)
-                .map((h) => h.code)
-                .join("+") || "ok"}`,
+              `${c.actionType}:${c.feasible ? "F" : "X"}:${
+                (c.hardConstraints ?? [])
+                  .filter((h) => !h.passed)
+                  .map((h) => h.code)
+                  .join("+") || "ok"
+              }`,
           ),
-          locKinds: locationsFor(worldId).map((l) => l.kind).join(","),
+          locKinds: locationsFor(worldId)
+            .map((l) => l.kind)
+            .join(","),
           outcome: result.submission?.outcome?.status,
         }),
       );

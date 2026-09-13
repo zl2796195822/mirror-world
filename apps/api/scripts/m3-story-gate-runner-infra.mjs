@@ -197,7 +197,8 @@ export function validateJsonWellFormedStreamSync(file) {
       }
     }
     if (inString) throw new Error(`unterminated JSON string in ${file}`);
-    if (depth !== 0) throw new Error(`unbalanced JSON depth in ${file}: ${depth}`);
+    if (depth !== 0)
+      throw new Error(`unbalanced JSON depth in ${file}: ${depth}`);
     if (!started) throw new Error(`empty JSON artifact: ${file}`);
     if (lastNonWs !== "}" && lastNonWs !== "]") {
       throw new Error(`invalid JSON end in ${file}: ${lastNonWs}`);

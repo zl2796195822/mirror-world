@@ -1347,9 +1347,17 @@ function generateV2Candidates(
             ...common,
             v2Constraint("PARTICIPANT_KNOWN", true),
             v2Constraint("PARTICIPANT_ACTIVE", participant.active),
-            v2Constraint("PARTICIPANT_SAME_WORLD", true, participant.worldId ?? input.worldId),
+            v2Constraint(
+              "PARTICIPANT_SAME_WORLD",
+              true,
+              participant.worldId ?? input.worldId,
+            ),
             v2Constraint("PARTICIPANT_DIFFERENT", true),
-            v2Constraint("PARTICIPANT_SAME_LOCATION", true, participant.locationId),
+            v2Constraint(
+              "PARTICIPANT_SAME_LOCATION",
+              true,
+              participant.locationId,
+            ),
             v2Constraint("PARTICIPANT_IDLE", true, participant.activityKind),
           ],
         });
@@ -1359,10 +1367,7 @@ function generateV2Candidates(
         const socialPlace =
           input.locations.find(({ kind }) => kind === "CAFE") ??
           input.locations.find(({ kind }) => kind === "PARK");
-        if (
-          socialPlace &&
-          socialPlace.id !== input.observation.locationId
-        ) {
+        if (socialPlace && socialPlace.id !== input.observation.locationId) {
           push({
             goalType: goal.type,
             actionType: "MOVE",

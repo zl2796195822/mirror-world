@@ -451,10 +451,8 @@ function addNeedCandidates(
         reasonCode: "SOCIAL_HIGH",
         priority: policy.priorities.social,
         urgency:
-          needUrgency(
-            input.needs.socialPressure,
-            thresholds.socialActivation,
-          ) + criticalSocialBonus,
+          needUrgency(input.needs.socialPressure, thresholds.socialActivation) +
+          criticalSocialBonus,
       }),
     );
   }

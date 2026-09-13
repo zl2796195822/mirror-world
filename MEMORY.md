@@ -319,7 +319,6 @@
 - workCapable CAFE/STORE、SOCIAL_OPPORTUNITY、MOVE-to-cafe、critical social、horizon settle 守卫均已进入 worktree runner/life-engine；**M3 仍 IN_PROGRESS**，M3-T05 未执行。正式报告：`docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-run-29-report.md`。
 - 下一正式任务：在 5 天合同下修 EAT/TALK coverage，再开新 immutable run；禁止把 run-29 标成 PASS。
 
-
 ## 2026-09-13 M3 Story Gate run-42 PASS (5-day contract)
 
 - `20260913-run-42`：**15/15 Hard Gates PASS**。Endpoint settle；baseline==repeat；四路 replay hash 一致；acceptedActionCoverage=true；Zero-LLM。
