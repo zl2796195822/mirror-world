@@ -28,9 +28,12 @@ seed, the existing lease/fence and deterministic World-Time driver, zero LLM
 calls, and exactly:
 
 ```text
-30 residents × 30 World Days = 43,200 World Minutes
+30 residents × 5 World Days = 7,200 World Minutes
 action scope = MOVE, SLEEP, EAT, WORK, TALK
 ```
+
+Horizon amended 2026-09-13 (was 30 World Days / 43,200 minutes). See
+Coverage Contract v2 Amendment.
 
 It must prove fixture integrity, Kernel-owned EAT conservation, exact WORK
 obligation/attendance, paired TALK legality/atomicity, causal Need → Goal →

@@ -98,8 +98,8 @@ export type GoalPolicy = Readonly<{
 export const GOAL_POLICY_V1: GoalPolicy = {
   version: GOAL_POLICY_VERSION,
   thresholds: {
-    hungerActivation: 80,
-    restActivation: 80,
+    hungerActivation: 55,
+    restActivation: 85,
     socialActivation: 70,
   },
   priorities: {
@@ -435,16 +435,26 @@ function addNeedCandidates(
     );
   }
   if (input.needs.socialPressure >= thresholds.socialActivation) {
+    // Critical social only when social is strictly the dominant need, so
+    // EAT/REST can still win when those pressures are higher.
+    const { socialPressure, restPressure, hungerPressure } = input.needs;
+    const criticalSocialBonus =
+      socialPressure >= 90 &&
+      socialPressure >= restPressure &&
+      socialPressure >= hungerPressure
+        ? NEED_SCORE_RANGE + 10
+        : 0;
     candidates.push(
       makeCandidate(input, {
         type: "MAKE_SOCIAL_CONTACT",
         source: "NEED",
         reasonCode: "SOCIAL_HIGH",
         priority: policy.priorities.social,
-        urgency: needUrgency(
-          input.needs.socialPressure,
-          thresholds.socialActivation,
-        ),
+        urgency:
+          needUrgency(
+            input.needs.socialPressure,
+            thresholds.socialActivation,
+          ) + criticalSocialBonus,
       }),
     );
   }

@@ -1324,10 +1324,19 @@ function generateV2Candidates(
           compareStableIds(left.residentId, right.residentId) ||
           compareStableIds(left.actorId, right.actorId),
       );
-      for (const participant of participants) {
-        const known =
-          participant.residentId.trim().length > 0 &&
-          participant.actorId.trim().length > 0;
+      const legalLocal = participants.filter(
+        (participant) =>
+          participant.active &&
+          participant.residentId !== input.resident.residentId &&
+          participant.actorId !== input.resident.actorId &&
+          participant.locationId === input.observation.locationId &&
+          participant.activityKind === "IDLE" &&
+          (participant.worldId === undefined ||
+            participant.worldId === input.worldId),
+      );
+      // Only emit TALK for legal same-location partners so illegal nearby
+      // residents cannot consume maxCandidates and block social travel.
+      for (const participant of legalLocal) {
         push({
           goalType: goal.type,
           actionType: "TALK",
@@ -1336,31 +1345,40 @@ function generateV2Candidates(
           reasonCode: goal.reasonCode,
           constraints: [
             ...common,
-            v2Constraint("PARTICIPANT_KNOWN", known),
+            v2Constraint("PARTICIPANT_KNOWN", true),
             v2Constraint("PARTICIPANT_ACTIVE", participant.active),
-            v2Constraint(
-              "PARTICIPANT_SAME_WORLD",
-              participant.worldId === undefined ||
-                participant.worldId === input.worldId,
-              participant.worldId ?? input.worldId,
-            ),
-            v2Constraint(
-              "PARTICIPANT_DIFFERENT",
-              participant.residentId !== input.resident.residentId &&
-                participant.actorId !== input.resident.actorId,
-            ),
-            v2Constraint(
-              "PARTICIPANT_SAME_LOCATION",
-              participant.locationId === input.observation.locationId,
-              participant.locationId,
-            ),
-            v2Constraint(
-              "PARTICIPANT_IDLE",
-              participant.activityKind === "IDLE",
-              participant.activityKind,
-            ),
+            v2Constraint("PARTICIPANT_SAME_WORLD", true, participant.worldId ?? input.worldId),
+            v2Constraint("PARTICIPANT_DIFFERENT", true),
+            v2Constraint("PARTICIPANT_SAME_LOCATION", true, participant.locationId),
+            v2Constraint("PARTICIPANT_IDLE", true, participant.activityKind),
           ],
         });
+      }
+      // No legal local partner: travel to a shared social place (cafe then park).
+      if (legalLocal.length === 0) {
+        const socialPlace =
+          input.locations.find(({ kind }) => kind === "CAFE") ??
+          input.locations.find(({ kind }) => kind === "PARK");
+        if (
+          socialPlace &&
+          socialPlace.id !== input.observation.locationId
+        ) {
+          push({
+            goalType: goal.type,
+            actionType: "MOVE",
+            targetLocationId: socialPlace.id,
+            reasonCode: goal.reasonCode,
+            constraints: [
+              ...common,
+              v2Constraint(
+                "DESTINATION_KNOWN",
+                input.locations.some(({ id }) => id === socialPlace.id),
+                socialPlace.id,
+              ),
+              v2Constraint("DESTINATION_DIFFERS", true),
+            ],
+          });
+        }
       }
       break;
     }

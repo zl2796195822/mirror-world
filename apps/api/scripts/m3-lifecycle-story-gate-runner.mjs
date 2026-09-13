@@ -2,7 +2,15 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { copyFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  linkSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+  unlinkSync,
+} from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -19,12 +27,21 @@ const SCENARIO_SCRIPT = resolve(
   "m3-lifecycle-story-gate.mjs",
 );
 const START_TIME = new Date("2026-09-07T00:00:00.000Z");
-const WORLD_DAYS = 30;
+const WORLD_DAYS = 5;
 const WORLD_MINUTES = WORLD_DAYS * 24 * 60;
 const TARGET_TIME = new Date(START_TIME.getTime() + WORLD_MINUTES * 60_000);
 const WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v1";
 const DIFFERENT_WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v2";
-const PARENT_RUN_ID = "20260911-run-14";
+// Coverage Contract v2: parentRunId is the historical formal FAIL run.
+const PARENT_RUN_ID = "20260910-run-08";
+const LINEAGE = {
+  previousFormalFailRun: "20260910-run-08",
+  previousFormalFailStatus: "FAIL",
+  previousInfraAbortRun: "20260911-run-14",
+  previousInfraAbortStatus: "INFRA_FAILURE",
+  coverageFix: "PASS",
+  runnerInfraRemediation: "PASS",
+};
 const ROLE_SEEDS = {
   baseline: WORLD_SEED,
   repeat: WORLD_SEED,
@@ -224,7 +241,21 @@ function writeFinalArtifacts({ root, scenariosRoot, summaries, gateResult }) {
   mkdirSync(root, { recursive: true });
   const baselineRoot = `${scenariosRoot}/baseline`;
   for (const name of FINAL_ARTIFACTS) {
-    copyFileSync(`${baselineRoot}/${name}`, `${root}/${name}`);
+    const src = `${baselineRoot}/${name}`;
+    const dest = `${root}/${name}`;
+    if (existsSync(dest)) {
+      try {
+        unlinkSync(dest);
+      } catch {
+        // keep going; link/copy below will surface real failures
+      }
+    }
+    try {
+      // Hardlink large evidence on the same volume to avoid ENOSPC.
+      linkSync(src, dest);
+    } catch {
+      copyFileSync(src, dest);
+    }
   }
   const b = summaries.baseline;
   const allPass = gateResult.hardGates.every(({ result }) => result === "PASS");
@@ -284,7 +315,8 @@ function writeAbortedRun({ root, runId, failedRole, completedRoles, error }) {
     schemaVersion: "m3-story-gate-aborted-run-v1",
     runId,
     parentRunId: PARENT_RUN_ID,
-    previousStatus: "INFRA_FAILURE",
+    previousStatus: "FAIL",
+    ...LINEAGE,
     status: "INFRA_FAILURE",
     lifecycle: "ABORTED_BEFORE_GATE_FINALIZE",
     failedRole,

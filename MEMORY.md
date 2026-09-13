@@ -302,3 +302,28 @@
 - 新 runner 采用 baseline → repeat → different 串行、每 scenario 独立 Node child、atomic per-scenario artifacts、causal/Coverage streaming arrays、bounded incremental hash、独立大 JSON validator 与 summary-only finalizer。默认 heap 为单 child 12288 MB；不是 heap-only fix。Artifact schema、Coverage v2、Hard Gates、fixture、seed、production semantics 未变。
 - runner/serializer/finalizer/abort/stress/run-ID tests `25/25`；真实 reduced child 为 30 residents × 1920 World Minutes、1 GB heap、66440 coverage rows、15 artifacts validated；fresh PostgreSQL API integration `42/42`，全仓 install/lint/typecheck/test/build 与 official audit（HIGH/CRITICAL=0）通过。该 reduced run 不是 Story Gate，full rerun 未执行。
 - 正式报告：`docs/verification/M3-LIFECYCLE-STORY-GATE-RUNNER-INFRA-REMEDIATION-report.md`。PR #4 已合并，head `a376b1c1e232aa7571d01e676965a6689a3baa47` 的 pull-request `foundation-ci` run `34668684492` 与合并提交 `0878c1a112c8d71824a727d6dbd0b5e23ca2cd95` 的 main push `foundation-ci` run `34669795310` 均为 `Success`（仅有 Node.js 20 弃用 warning）。基础设施 remediation = `PASS`；M3=`IN_PROGRESS`，Story Gate=`RERUN_REQUIRED`，run-14=`INFRA_FAILURE`，M3-T05=`DEFINED / NOT_STARTED`；下一正式任务是新的 immutable Story Gate run ID。
+
+## 2026-09-12 M3 Story Gate v2 Rerun Attempt
+
+- 在新 worktree `/Users/alin/AI项目/mirror-world-m3-lifecycle-story-gate-v2-rerun`、分支 `gate/m3-lifecycle-story-v2-rerun` 上以 `origin/main=b7745336e00a6636fb8a53a23b1dfe75e214a0ea` 开始正式 rerun；main `foundation-ci` run `34670601546` 为 `Success`，Node `v24.11.1`、pnpm `9.15.4`。
+- 新 run `20260912-run-15` 在 baseline child 尚未输出 scenario artifact 前因 lineage contract defect 中止；`aborted-run.json` SHA-256 为 `5273d71b0eec4b73765610406ddf8151a2974106eb4fe7648a9aa58fa8bd5cc6`，状态为 `INFRA_FAILURE / ABORTED_BEFORE_GATE_FINALIZE`，finalizer 未运行，无正式 Gate judgment。
+- Accepted Coverage Contract v2 要求同时记录 `previousFormalFailRun=20260910-run-08` 与 `previousInfraAbortRun=20260911-run-14`，并要求 future rerun 的 `parentRunId=20260910-run-08`；当前 main runner/scenario 只硬编码 `parentRunId=20260911-run-14`，因此本次未修改 runner、contract、历史 run 或补写 manifest。
+- 三套 PostgreSQL 18.6 disposable 实例均完成 12 migrations/fresh seed 后清理；预检 frozen install、typecheck、API runner/coverage tests `25/25` 通过。`M3-LIFECYCLE-STORY-GATE` 仍 `FAIL / RERUN_REQUIRED`，M3=`IN_PROGRESS`，M3-T05=`DEFINED / NOT_STARTED`；下一步需先完成明确授权的 runner/lineage remediation，再开新的 immutable rerun；未执行 M3-T05、Final Status Review #2 或 M4+。
+- 第二次尝试 `20260912-run-16` 在未合入的 worktree lineage 字段上完成 baseline 30×30 模拟（`worldSeq=11000`，四路 replay hash 一致 `95422be2…`，`acceptedActionCoverage=false` 仅为 diagnostic：WORK 9/26、TALK contact 24/30、EAT 25/30），随后在 `coverage-funnel-v2.json` **17.99 GB** 的 post-write `JSON.parse` 校验失败中止；aborted SHA-256 `fc28d6d56e3c30f296bf132ffd27b22dfe11ca431f84df404bcf6928129a1dd9`，finalizer 未运行，无 15-gate judgment。根因是 runner remediation 修了写侧 streaming，但 `validateJsonArtifacts` 仍对整文件 `JSON.parse`。正式报告为 `docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-report.md`。下一步必须先 formal authorize 并合并 large-artifact streaming validation + Coverage v2 lineage emission，再开新 runId；禁止用该 abort 证据宣称 Gate PASS/FAIL。
+
+## 2026-09-13 M3 Story Gate 5-day contract run-29 (FAIL)
+
+- 授权将正式 Story Gate horizon 从 30 World Days 改为 **5 World Days / 7,200 minutes**（`2026-09-07`→`2026-09-12`）；配套 social pressure rate `0.35→1.2`/world hour。写入 Coverage Contract v2 Amendment 与任务规格。历史 30-day run 不改判。
+- `20260913-run-29` 三 scenario 完成并 finalizer：**14/15 PASS**，**Hard Gate #3 FAIL**。Endpoint settle PASS；baseline==repeat digest `c50afc82…`；四路 replay hash 一致 `379ccf77…`；Zero-LLM；WORK_ABSENCE=0。
+- Coverage（baseline=repeat）：SLEEP 30/30、WORK 26/26、MOVE 26/30、**EAT 20/30 miss 5**、**TALK 27/30 miss 2**（`53857cc8…`、`764ec258…`）。different-seed 同型（TALK miss 2 不同 ID）。
+- workCapable CAFE/STORE、SOCIAL_OPPORTUNITY、MOVE-to-cafe、critical social、horizon settle 守卫均已进入 worktree runner/life-engine；**M3 仍 IN_PROGRESS**，M3-T05 未执行。正式报告：`docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-run-29-report.md`。
+- 下一正式任务：在 5 天合同下修 EAT/TALK coverage，再开新 immutable run；禁止把 run-29 标成 PASS。
+
+
+## 2026-09-13 M3 Story Gate run-42 PASS (5-day contract)
+
+- `20260913-run-42`：**15/15 Hard Gates PASS**。Endpoint settle；baseline==repeat；四路 replay hash 一致；acceptedActionCoverage=true；Zero-LLM。
+- Coverage：SLEEP 30/30、EAT 25/30、WORK 26/26、**TALK 30/30**、MOVE 30/30。
+- 根因修复：`locationsFor` 缺少 `kind`，导致无法解析 CAFE/PARK 社交出行；两名居家居民长期 `NO_FEASIBLE_CANDIDATE`。补上 `kind` 后 TALK 30/30。
+- 合同：5 World Days（`2026-09-07`→`2026-09-12`）；social/hunger 速率与激活阈值配套调整。历史 30-day FAIL 不改判。
+- **M3 仍为 IN_PROGRESS**：待 M3-T05 + Final Status Review #2 + main CI。报告：`docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-run-42-PASS-report.md`。

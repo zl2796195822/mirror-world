@@ -1,0 +1,13 @@
+{
+  "attempts": 574,
+  "committed": 574,
+  "rejected": 0,
+  "conflicts": 0,
+  "replans": 0,
+  "deferred": 33905,
+  "stop": 0,
+  "permanentDefer": 0,
+  "replanExhaustion": 0,
+  "idempotencyConflicts": 0,
+  "failures": []
+}

@@ -92,6 +92,22 @@ describe("M3-T03 goal engine", () => {
     expect(result.selectedGoal?.targetLocationId).toBe("work-1");
   });
 
+  it("lets critical social pressure beat high rest hunger", () => {
+    const result = evaluateGoals(
+      input({
+        needs: {
+          residentId: calmNeeds.residentId,
+          hungerPressure: 70,
+          restPressure: 85,
+          socialPressure: 100,
+        },
+      }),
+    );
+
+    expect(result.selectedGoal?.type).toBe("MAKE_SOCIAL_CONTACT");
+    expect(result.selectedGoal?.reasonCode).toBe("SOCIAL_HIGH");
+  });
+
   it("reroutes to a context Goal when an event interrupts routine", () => {
     const result = evaluateGoals(
       input({
@@ -140,7 +156,7 @@ describe("M3-T03 goal engine", () => {
     const result = evaluateGoals(
       input({
         currentWorldTime: new Date("2026-09-08T12:00:00.000Z"),
-        needs: { ...calmNeeds, hungerPressure: 90, restPressure: 90 },
+        needs: { ...calmNeeds, hungerPressure: 55, restPressure: 85 },
         policy: {
           ...GOAL_POLICY_V1,
           priorities: {

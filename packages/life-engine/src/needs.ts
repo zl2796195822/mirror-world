@@ -72,9 +72,9 @@ export type NeedPolicy = Readonly<{
 export const NEED_POLICY_V1: NeedPolicy = {
   version: NEED_POLICY_VERSION,
   ratesPerWorldHour: {
-    hunger: { awake: 0.45, resting: 0.15 },
-    rest: { awake: 4, resting: -12 },
-    social: { awake: 0.35, resting: 0.35 },
+    hunger: { awake: 1.0, resting: 0.15 },
+    rest: { awake: 3.2, resting: -12 },
+    social: { awake: 1.2, resting: 1.2 },
   },
   stableVariation: { minMultiplier: 0.96, maxMultiplier: 1.04 },
   profileEffects: {

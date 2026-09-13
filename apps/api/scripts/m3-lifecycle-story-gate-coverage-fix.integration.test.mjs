@@ -193,7 +193,9 @@ function loopObservation(snapshot) {
         }
       : {}),
     eatCapable: location.kind === "HOME" || location.kind === "CAFE",
-    workCapable: location.kind === "OFFICE",
+    workCapable:
+      location.locationId === snapshot.self.employment.workplaceId ||
+      ["OFFICE", "CAFE", "STORE"].includes(location.kind),
     resources: snapshot.resources.snapshot,
     foodItems: [
       {

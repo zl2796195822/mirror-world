@@ -541,6 +541,72 @@ function toGoalWorkObligation(
   };
 }
 
+const SOCIAL_SHARED_LOCATION_KINDS = new Set([
+  "CAFE",
+  "PARK",
+  "OFFICE",
+  "STORE",
+  "TRANSIT",
+]);
+
+function deriveSocialOpportunityContext(input: {
+  worldId: string;
+  needState: NeedState;
+  observation: ActionLoopObservationV2;
+  obligation: DecisionWorkObligationV2 | undefined;
+}):
+  | Readonly<{ event: "SOCIAL_OPPORTUNITY"; currentLocationId: string }>
+  | undefined {
+  const { worldId, needState, observation, obligation } = input;
+  if (needState.socialPressure < 70) return undefined;
+  // LATE means the shift window closed; WORK cannot start, so social may proceed.
+  if (obligation?.status === "DUE") {
+    return undefined;
+  }
+  const nearby =
+    observation.nearbyResidents ??
+    (observation.localContext?.status === "AVAILABLE"
+      ? observation.localContext.nearbyResidents
+      : []);
+  const legalParticipant = nearby.some(
+    (participant) =>
+      participant.active &&
+      participant.residentId !== observation.residentId &&
+      participant.actorId !== observation.actorId &&
+      participant.locationId === observation.locationId &&
+      participant.activityKind === "IDLE" &&
+      (participant.worldId === undefined || participant.worldId === worldId),
+  );
+  const socialDominant =
+    needState.socialPressure >= needState.restPressure &&
+    needState.socialPressure >= needState.hungerPressure;
+  // Shared place + partner: talk in place (dominant or not).
+  if (
+    SOCIAL_SHARED_LOCATION_KINDS.has(observation.locationKind) &&
+    legalParticipant
+  ) {
+    return {
+      event: "SOCIAL_OPPORTUNITY",
+      currentLocationId: observation.locationId,
+    };
+  }
+  // No local partner: always offer social travel when social is above
+  // activation, so homebodies can reach a shared place within the horizon.
+  if (!legalParticipant && needState.socialPressure >= 70) {
+    return {
+      event: "SOCIAL_OPPORTUNITY",
+      currentLocationId: observation.locationId,
+    };
+  }
+  if (socialDominant && !legalParticipant) {
+    return {
+      event: "SOCIAL_OPPORTUNITY",
+      currentLocationId: observation.locationId,
+    };
+  }
+  return undefined;
+}
+
 export async function runResidentActionLoopStepV2(
   input: ActionLoopStepInputV2,
 ): Promise<ActionLoopStepResultV2> {
@@ -581,6 +647,12 @@ export async function runResidentActionLoopStepV2(
     anchor,
   });
   const goalObligation = toGoalWorkObligation(observation.obligation);
+  const goalContext = deriveSocialOpportunityContext({
+    worldId: world.id,
+    needState,
+    observation,
+    obligation: observation.obligation,
+  });
   const goalEvaluation = evaluateGoals({
     worldId: world.id,
     seed,
@@ -611,6 +683,7 @@ export async function runResidentActionLoopStepV2(
     ...(observation.workPreparation
       ? { workPreparation: observation.workPreparation }
       : {}),
+    ...(goalContext ? { context: goalContext } : {}),
     ...(input.activeGoal ? { activeGoal: input.activeGoal } : {}),
   });
   const decision = evaluateRuleDecisionV2({

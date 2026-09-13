@@ -1,0 +1,10 @@
+{
+  "hashes": {
+    "live": "e13c339f3ab21cd8a7e4bb3d9b06058ec6bd1050e3e78d6c096499bd8d719fe3",
+    "full": "e13c339f3ab21cd8a7e4bb3d9b06058ec6bd1050e3e78d6c096499bd8d719fe3",
+    "suffix": "e13c339f3ab21cd8a7e4bb3d9b06058ec6bd1050e3e78d6c096499bd8d719fe3",
+    "genesis": "e13c339f3ab21cd8a7e4bb3d9b06058ec6bd1050e3e78d6c096499bd8d719fe3"
+  },
+  "checkpointDeleted": true,
+  "fullEventCount": 2304
+}

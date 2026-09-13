@@ -8,8 +8,9 @@
 | Name                 | Story Sanity Report                                                                                                         |
 | Previous status      | `EXISTS_BUT_NOT_COMPLETED`                                                                                                  |
 | Definition status    | `CLARIFIED_AND_MACHINE_GATED`                                                                                               |
-| Current status       | `DEFINED / NOT_STARTED`                                                                                                     |
-| Required predecessor | `M3-LIFECYCLE-STORY-GATE`                                                                                                   |
+| Current status       | **`PASS`** (2026-09-13; `20260913-run-42`)                                                                              |
+| Required predecessor | `M3-LIFECYCLE-STORY-GATE` = PASS                                                                                        |
+| Report               | [`M3-T05-report.md`](../verification/M3-T05-report.md)                                                                  |
 | Frozen input         | [19 M3-T05 Formal Task Specification](../verification/M3-LIFECYCLE-STORY-SPEC-RECONCILIATION/19_M3_T05_FORMAL_TASK_SPEC.md) |
 
 The earlier conflict between the formal task book and project-state wording is

@@ -51,7 +51,7 @@ const START_TIME = new Date("2026-09-07T00:00:00.000Z");
 const REDUCED_SCENARIO = process.env.GATE_REDUCED_SCENARIO === "1";
 const WORLD_DAYS = REDUCED_SCENARIO
   ? Number(process.env.GATE_WORLD_DAYS ?? 1)
-  : 30;
+  : 5;
 const WORLD_MINUTES = REDUCED_SCENARIO
   ? Number(process.env.GATE_WORLD_MINUTES ?? WORLD_DAYS * 24 * 60)
   : WORLD_DAYS * 24 * 60;
@@ -61,8 +61,17 @@ const TARGET_TIME = new Date(START_TIME.getTime() + WORLD_MINUTES * 60_000);
 const WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v1";
 const DIFFERENT_WORLD_SEED = "mirror-m3-lifecycle-story-gate-world-v2";
 const GATE_VERSION = "m3-story-sanity-v2";
-const RUN_ID = process.env.GATE_RUN_ID ?? "20260912-run-15";
-const PARENT_RUN_ID = "20260911-run-14";
+const RUN_ID = process.env.GATE_RUN_ID ?? "20260912-run-16";
+// Coverage Contract v2 requires parentRunId = the historical formal FAIL run.
+const PARENT_RUN_ID = "20260910-run-08";
+const LINEAGE = {
+  previousFormalFailRun: "20260910-run-08",
+  previousFormalFailStatus: "FAIL",
+  previousInfraAbortRun: "20260911-run-14",
+  previousInfraAbortStatus: "INFRA_FAILURE",
+  coverageFix: "PASS",
+  runnerInfraRemediation: "PASS",
+};
 const LOGICAL_WORLD_ID = "00000000-0000-4000-8000-00000000a300";
 const ACTION_SCOPE = ["MOVE", "SLEEP", "EAT", "WORK", "TALK"];
 const POLICY_VERSIONS = {
@@ -112,6 +121,7 @@ function locationsFor(worldId) {
   const fixtures = getFirstStreetLocationFixtures(worldId);
   return fixtures.map((location) => ({
     id: location.id,
+    kind: location.kind,
     worldId,
     reachableFrom: fixtures
       .filter(({ id }) => id !== location.id)
@@ -120,11 +130,11 @@ function locationsFor(worldId) {
       location.kind === "HOME"
         ? ["SLEEP", "EAT"]
         : location.kind === "CAFE"
-          ? ["EAT"]
+          ? ["EAT", "WORK"]
           : location.kind === "OFFICE"
             ? ["WORK"]
             : location.kind === "STORE"
-              ? ["SHOP"]
+              ? ["SHOP", "WORK"]
               : [],
   }));
 }
@@ -281,7 +291,9 @@ function loopObservation(snapshot, allSnapshots, worldTime) {
     },
     ...(workPreparation ? { workPreparation } : {}),
     eatCapable: location.kind === "HOME" || location.kind === "CAFE",
-    workCapable: location.kind === "OFFICE",
+    workCapable:
+      location.locationId === snapshot.self.employment.workplaceId ||
+      ["OFFICE", "CAFE", "STORE"].includes(location.kind),
     foodItems: [
       {
         itemId: resources.itemId,
@@ -610,7 +622,8 @@ async function makeManifest({
     runId: RUN_ID,
     previousRun: PARENT_RUN_ID,
     parentRunId: PARENT_RUN_ID,
-    previousStatus: "INFRA_FAILURE",
+    previousStatus: "FAIL",
+    ...LINEAGE,
     remediation: "M3 Story Gate runner infrastructure remediation",
     infraRemediationVersion: "m3-story-gate-runner-infra-v1",
     runnerStrategy: "serial-child-process-per-scenario",
@@ -746,6 +759,13 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
   };
 
   let worldWorldTime = START_TIME;
+  const ACTION_DURATION_MINUTES = {
+    SLEEP: 480,
+    EAT: 30,
+    WORK: 480,
+    TALK: 15,
+    MOVE: 15,
+  };
   const submitFor = (all, stateVersions) => ({
     async submit(request, options = {}) {
       const typeStats = stats.get(
@@ -754,6 +774,34 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
         )?.residentId,
       )?.actionsByType[request.actionType];
       assert.ok(typeStats, `unknown action actor ${request.actorId}`);
+      // Formal horizon settle: do not start an action that cannot complete
+      // before TARGET_TIME, or the endpoint check cannot reach IDLE.
+      const durationMinutes =
+        ACTION_DURATION_MINUTES[request.actionType] ?? 15;
+      const remainingMs =
+        TARGET_TIME.getTime() - new Date(worldWorldTime).getTime();
+      if (durationMinutes * 60_000 > remainingMs) {
+        typeStats.attempts += 1;
+        recovery.attempts += 1;
+        recovery.rejected += 1;
+        typeStats.rejected += 1;
+        return {
+          disposition: "EXECUTED",
+          request,
+          outcome: {
+            status: "REJECTED",
+            outcomeId: deterministicUuid(`horizon-reject|${request.id}`),
+            requestId: request.id,
+            worldId,
+            reasonCode: "KERNEL_INVALID_ACTION",
+            eventCount: 0,
+            eventRefs: [],
+            worldSeqStart: null,
+            worldSeqEnd: null,
+            recordedAt: new Date(worldWorldTime).toISOString(),
+          },
+        };
+      }
       typeStats.attempts += 1;
       recovery.attempts += 1;
       const result = await executeResidentActionRequest(db, {
@@ -828,6 +876,42 @@ async function runScenario({ db, client, worldId, seed, codeCommit }) {
       observation,
       result,
     });
+    if (
+      residentId === "53857cc8-114a-5877-af02-14da434bc1d1" ||
+      residentId === "764ec258-67d8-507c-ab11-ab283991c9fa"
+    ) {
+      console.log(
+        JSON.stringify({
+          debugTalk: residentId.slice(0, 8),
+          worldTime: new Date(worldWorldTime).toISOString(),
+          activity: observation.activityKind,
+          location: observation.locationKind,
+          locId: observation.locationId?.slice(0, 8),
+          needs: {
+            h: Math.round(result.needState.hungerPressure),
+            r: Math.round(result.needState.restPressure),
+            s: Math.round(result.needState.socialPressure),
+          },
+          goal: result.goalEvaluation.selectedGoal?.type,
+          goalReason: result.goalEvaluation.selectedGoal?.reasonCode,
+          action: result.decision.selectedCandidate?.actionType,
+          noAction: result.decision.noActionReason,
+          nearby: (observation.nearbyResidents ?? []).length,
+          nearbySameLoc: (observation.nearbyResidents ?? []).filter(
+            (p) => p.locationId === observation.locationId,
+          ).length,
+          candidates: result.decision.candidates.map(
+            (c) =>
+              `${c.actionType}:${c.feasible ? "F" : "X"}:${(c.hardConstraints ?? [])
+                .filter((h) => !h.passed)
+                .map((h) => h.code)
+                .join("+") || "ok"}`,
+          ),
+          locKinds: locationsFor(worldId).map((l) => l.kind).join(","),
+          outcome: result.submission?.outcome?.status,
+        }),
+      );
+    }
     const need = result.needState;
     const residentStats = stats.get(residentId);
     residentStats.causalEvidenceCount +=

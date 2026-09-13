@@ -106,7 +106,7 @@ test("serial orchestration flushes each role before starting the next", async ()
   const root = mkdtempSync(join(tmpdir(), "mirror-gate-runner-"));
   const order = [];
   const result = await runSerialStoryGate({
-    runId: "20260912-run-15",
+    runId: "20260912-run-16",
     root,
     databaseUrls: ["baseline", "repeat", "different"],
     spawnChild: async (input) => {
@@ -158,7 +158,7 @@ test("reduced verification mode is forwarded to every child only when enabled", 
   const root = mkdtempSync(join(tmpdir(), "mirror-gate-reduced-"));
   const seen = [];
   await runSerialStoryGate({
-    runId: "20260912-run-17",
+    runId: "20260912-run-18",
     root,
     databaseUrls: ["baseline", "repeat", "different"],
     reducedScenario: true,
@@ -196,7 +196,7 @@ test("partial scenario failure writes abort record and never finalizes gates", a
   const root = mkdtempSync(join(tmpdir(), "mirror-gate-abort-"));
   await assert.rejects(
     runSerialStoryGate({
-      runId: "20260912-run-16",
+      runId: "20260912-run-19",
       root,
       databaseUrls: ["baseline", "repeat", "different"],
       spawnChild: async (input) => {

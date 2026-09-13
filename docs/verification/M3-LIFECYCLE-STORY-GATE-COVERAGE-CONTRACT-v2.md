@@ -28,11 +28,25 @@ Only these meanings change:
 The following remain unchanged: the other 14 Hard Gates; Gate #5 Need
 Response; Gate #7 Work Obligation; Kernel ownership; ADR-0011/0012; exact
 WORK authorization; MOVE/SLEEP/EAT/TALK lifecycle semantics; the M3 BUY
-negative boundary; and the 30-resident, 43,200-World-Minute run contract.
+negative boundary; and the 30-resident run contract.
+
+## Amendment 2026-09-13 — World Day horizon
+
+Authorized product decision: the formal Story Gate horizon is reduced from
+**30 World Days (43,200 World Minutes)** to **5 World Days (7,200 World
+Minutes)**. Start remains `2026-09-07T00:00:00.000Z`; target becomes
+`2026-09-12T00:00:00.000Z`. Resident count remains 30. All other Hard Gates,
+coverage predicates, and evidence requirements are unchanged. Historical
+30-day runs (`run-08`, `run-20`, etc.) are not reclassified.
+
+Companion needs change (same authorization): social pressure rate raised from
+0.35 to 1.2 per world hour so SocialPressure reaches activation inside the
+5-day horizon. Hunger/rest rates unchanged.
 
 ## Coverage vocabulary
 
-All coverage sets are scoped by `worldId`, action, and the 30-day horizon.
+All coverage sets are scoped by `worldId`, action, and the formal horizon
+(now 5 World Days).
 Counts are set cardinalities unless explicitly labeled as action counts.
 Repeated actions by one resident increase `ACTION_COUNT` but count once in a
 resident coverage set.

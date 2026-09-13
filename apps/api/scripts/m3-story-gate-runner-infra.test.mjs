@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -11,6 +17,7 @@ import {
   hashJsonArray,
   readJson,
   validateJsonArtifacts,
+  validateJsonWellFormedStreamSync,
   writeJsonArrayObjectAtomic,
   writeJsonAtomic,
 } from "./m3-story-gate-runner-infra.mjs";
@@ -142,7 +149,28 @@ test("scenario artifact validation checks every required file", () => {
   assert.equal(validateJsonArtifacts(directory), true);
 });
 
-test("immutable run-14 cannot be reused", () => {
+test("immutable historical runs cannot be reused", () => {
   assert.throws(() => assertNewRunId("20260911-run-14"), /cannot be reused/);
-  assert.doesNotThrow(() => assertNewRunId("20260912-run-15"));
+  assert.throws(() => assertNewRunId("20260910-run-08"), /cannot be reused/);
+  assert.throws(() => assertNewRunId("20260912-run-15"), /cannot be reused/);
+  assert.throws(() => assertNewRunId("20260912-run-20"), /cannot be reused/);
+  assert.doesNotThrow(() => assertNewRunId("20260913-run-21"));
+});
+
+test("streaming JSON well-formedness accepts balanced artifacts and rejects corruption", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "mirror-gate-stream-validate-"));
+  const file = join(directory, "coverage-funnel-v2.json");
+  await writeJsonArrayObjectAtomic(file, {
+    prefix: '{"rows":[',
+    items: (function* entries() {
+      for (let index = 0; index < 2000; index += 1) {
+        yield { index, text: 'quote " and \\ backslash', nested: { ok: true } };
+      }
+    })(),
+    suffix: '],"summary":{"passes":true}}\n',
+  });
+  assert.equal(validateJsonWellFormedStreamSync(file), true);
+  const bad = join(directory, "bad.json");
+  writeFileSync(bad, '{"rows":[{"a":1}');
+  assert.throws(() => validateJsonWellFormedStreamSync(bad), /unbalanced/);
 });

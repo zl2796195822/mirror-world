@@ -550,4 +550,49 @@ describe("evaluateRuleDecisionV2", () => {
     ).not.toContain("BUY");
     expect(decision.actionRequestDraft?.actionType).not.toBe("BUY");
   });
+
+  it("emits MOVE to cafe when social goal has no legal local partner", () => {
+    const cafeId = "66666666-6666-4666-8666-666666666666";
+    const decision = evaluateRuleDecisionV2(
+      baseV2Input({
+        selectedGoal: {
+          type: "MAKE_SOCIAL_CONTACT",
+          score: 90,
+          priority: 70,
+          reasonCode: "SOCIAL_HIGH",
+        },
+        needs: {
+          residentId: RESIDENT_ID,
+          hungerPressure: 10,
+          restPressure: 10,
+          socialPressure: 90,
+        },
+        observation: {
+          ...baseV2Input().observation,
+          locationId: HOME_ID,
+          locationKind: "HOME",
+          nearbyResidents: [
+            {
+              residentId: PARTICIPANT_RESIDENT_ID,
+              actorId: PARTICIPANT_ACTOR_ID,
+              locationId: OFFICE_ID,
+              active: true,
+              activityKind: "IDLE",
+            },
+          ],
+        },
+        locations: [
+          { id: HOME_ID, kind: "HOME", capabilities: ["EAT"] },
+          { id: OFFICE_ID, kind: "OFFICE", capabilities: ["WORK"] },
+          { id: cafeId, kind: "CAFE", capabilities: ["EAT"] },
+        ],
+      }),
+    );
+
+    expect(decision.selectedCandidate?.actionType).toBe("MOVE");
+    expect(decision.selectedCandidate?.parameters).toEqual({
+      actionType: "MOVE",
+      destinationId: cafeId,
+    });
+  });
 });

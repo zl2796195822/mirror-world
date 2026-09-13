@@ -550,4 +550,60 @@ describe("runResidentActionLoopStepV2", () => {
     );
     expect(store.get(RESIDENT_ID)).toEqual(result.nextNeedAnchor);
   });
+
+  it("elevates a dominant social need into SOCIAL_OPPORTUNITY when a legal co-located participant exists", async () => {
+    const { store } = createResidentNeedAnchorStore();
+    const worldTime = new Date("2026-09-10T19:30:00.000Z");
+    store.set(RESIDENT_ID, {
+      worldTime: new Date("2026-09-10T12:00:00.000Z"),
+      activity: "AWAKE",
+      hungerPressure: 10,
+      restPressure: 10,
+      socialPressure: 90,
+    });
+    const submitted: ActionRequest[] = [];
+    const result = await runResidentActionLoopStepV2({
+      world: v2World(worldTime),
+      observation: v2Observation({
+        locationId: CAFE_ID,
+        locationKind: "CAFE",
+        nearbyResidents: [
+          {
+            residentId: PARTICIPANT_RESIDENT_ID,
+            actorId: PARTICIPANT_ACTOR_ID,
+            locationId: CAFE_ID,
+            active: true,
+            activityKind: "IDLE",
+            worldId: WORLD_ID,
+          },
+        ],
+      }),
+      locations: [
+        { id: HOME_ID, kind: "HOME", capabilities: ["EAT"] },
+        { id: OFFICE_ID, kind: "OFFICE", capabilities: ["WORK"] },
+        { id: CAFE_ID, kind: "CAFE", capabilities: ["EAT"] },
+        { id: PARK_ID, kind: "PARK" },
+      ],
+      needAnchors: store,
+      submission: {
+        async submit(request) {
+          submitted.push(request);
+          return {
+            disposition: "EXECUTED",
+            request,
+            outcome: committedOutcome(request),
+          };
+        },
+      },
+    });
+
+    expect(result.goalEvaluation.selectedGoal?.type).toBe(
+      "MAKE_SOCIAL_CONTACT",
+    );
+    expect(result.goalEvaluation.selectedGoal?.reasonCode).toBe(
+      "SOCIAL_OPPORTUNITY",
+    );
+    expect(result.decision.selectedCandidate?.actionType).toBe("TALK");
+    expect(submitted[0]?.actionType).toBe("TALK");
+  });
 });

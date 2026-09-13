@@ -1,0 +1,2191 @@
+{
+  "schemaVersion": "m3-story-gate-scenario-summary-v1",
+  "role": "different",
+  "worldId": "00000000-0000-4000-8000-00000000a300",
+  "seed": "mirror-m3-lifecycle-story-gate-world-v2",
+  "manifest": {
+    "runId": "20260913-run-42",
+    "previousRun": "20260910-run-08",
+    "parentRunId": "20260910-run-08",
+    "previousStatus": "FAIL",
+    "previousFormalFailRun": "20260910-run-08",
+    "previousFormalFailStatus": "FAIL",
+    "previousInfraAbortRun": "20260911-run-14",
+    "previousInfraAbortStatus": "INFRA_FAILURE",
+    "coverageFix": "PASS",
+    "runnerInfraRemediation": "PASS",
+    "remediation": "M3 Story Gate runner infrastructure remediation",
+    "infraRemediationVersion": "m3-story-gate-runner-infra-v1",
+    "runnerStrategy": "serial-child-process-per-scenario",
+    "serializationStrategy": "per-artifact-atomic-json-summary-finalizer",
+    "heapProfile": {
+      "previousMaxOldSpaceSizeMb": 8192,
+      "newMaxOldSpaceSizeMb": 8192,
+      "scope": "one-scenario-child"
+    },
+    "manifestVersion": "m3-simulation-manifest-v1",
+    "scenarioId": "m3-30x30-lifecycle-story",
+    "logicalWorldId": "00000000-0000-4000-8000-00000000a300",
+    "worldId": "00000000-0000-4000-8000-00000000a300",
+    "worldSeed": "mirror-m3-lifecycle-story-gate-world-v2",
+    "startWorldTime": "2026-09-07T00:00:00.000Z",
+    "initialWorldTime": "2026-09-07T00:00:00.000Z",
+    "targetWorldTime": "2026-09-12T00:00:00.000Z",
+    "durationWorldMinutes": 7200,
+    "stepResolutionWorldMinutes": 1,
+    "residentCount": 30,
+    "residentSeedGeneratorVersion": "m3-t01-v1",
+    "residentSeedConfigVersion": "first-street-v1",
+    "residentFixtureHash": "bd70eb85b0a793604742fdffb6f4115a714f93bcff6410c2e93c5f6574de2a40",
+    "resourceFixtureHash": "43d2f41fa6fb68fc15ded34bb4a646f5176d0eb6f338fe81a2a442b78d8c21b4",
+    "initialSnapshotHash": "9418f6dbaaa790e139301886dcbc8971ecdb50dbe04e22913b623d3129b835c1",
+    "policyVersions": {
+      "needs": "m3-needs-v1",
+      "needEffects": "m3-need-effects-v1",
+      "goals": "m3-goals-v1",
+      "decision": "m3-rule-decision-v2",
+      "actionLoop": "m3-action-loop-v2",
+      "actionSemantics": "m3-action-semantics-v1",
+      "replan": "m3-replan-v1",
+      "scheduler": "m3-scheduler-v2",
+      "runtime": "m3-runtime-state-v1",
+      "eventRegistry": "m3-domain-event-registry-v2",
+      "replay": "m3-resident-projection-v2",
+      "storySanity": "m3-story-sanity-v2"
+    },
+    "resourceCapability": "M3_KERNEL_POSTGRES_RESOURCE_CAS",
+    "actionScope": [
+      "MOVE",
+      "SLEEP",
+      "EAT",
+      "WORK",
+      "TALK"
+    ],
+    "coverageContractVersion": "m3-story-gate-coverage-v2",
+    "storySanityVersion": "m3-story-sanity-v2",
+    "schedulerWakeVersion": "m3-scheduler-v2",
+    "actionSemanticsVersion": "m3-action-semantics-v1",
+    "eventRegistryVersion": "m3-domain-event-registry-v2",
+    "migrationVersion": "12",
+    "faultProfile": "baseline",
+    "codeCommit": "b7745336e00a6636fb8a53a23b1dfe75e214a0ea",
+    "dbSchemaVersion": 12,
+    "checkpointSchemaVersion": "m3-resident-projection-v2",
+    "registryVersion": "m3-domain-event-registry-v2",
+    "driverSemantics": "due-driven-world-time-v2",
+    "manifestHash": "978d63e0f13451eb0603e41c40c658c848fe4366e77bfb02113cd62260d75053"
+  },
+  "fixtureResidentCount": 30,
+  "fixtureHashVerified": true,
+  "resourceFixtureHashVerified": true,
+  "unemployedResidentIds": [
+    "28fa438a-79ec-5935-83ea-702c6bdea17d",
+    "337b5d1e-2b0d-5312-8aca-bdcbcfb5cd70",
+    "3772b326-f7b2-598e-b063-222e4e04b45d",
+    "77162c91-d56d-5c19-afef-c1fd9e024f37"
+  ],
+  "finalWorld": {
+    "id": "00000000-0000-4000-8000-00000000a300",
+    "seed": "mirror-m3-lifecycle-story-gate-world-v2",
+    "status": "RUNNING",
+    "world_time": "2026-09-12T00:00:00.000Z",
+    "world_seq": "2400"
+  },
+  "endpoint": {
+    "remainingActiveActivities": 0,
+    "remainingDueWakes": 0
+  },
+  "acceptedActionCoverage": true,
+  "commuteCoverage": true,
+  "hashes": {
+    "live": "ea1cd004595e7abb46cf018c990ec48767cc8f59fa66b67985b2b6af9d3835e0",
+    "full": "ea1cd004595e7abb46cf018c990ec48767cc8f59fa66b67985b2b6af9d3835e0",
+    "suffix": "ea1cd004595e7abb46cf018c990ec48767cc8f59fa66b67985b2b6af9d3835e0",
+    "genesis": "ea1cd004595e7abb46cf018c990ec48767cc8f59fa66b67985b2b6af9d3835e0"
+  },
+  "storyDigest": "a98f94f191e74a8748578ff2e2be2422f8b08bb41a99130264f97b1e3916b276",
+  "recovery": {
+    "attempts": 571,
+    "committed": 571,
+    "rejected": 0,
+    "conflicts": 0,
+    "replans": 0,
+    "deferred": 34174,
+    "stop": 0,
+    "permanentDefer": 0,
+    "replanExhaustion": 0,
+    "idempotencyConflicts": 0,
+    "failures": []
+  },
+  "stats": [
+    {
+      "residentId": "069b622e-8714-53c8-8951-d90d78cc8f07",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        },
+        "TALK": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        }
+      },
+      "causalEvidenceCount": 13,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1233,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 97.166271
+        },
+        "rest": {
+          "min": 1.840009,
+          "max": 100
+        },
+        "social": {
+          "min": 0,
+          "max": 75.853263
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "1151abba-3660-5329-87cc-23f3df9df844",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        }
+      },
+      "causalEvidenceCount": 15,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1246,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 99.944015
+        },
+        "rest": {
+          "min": 1.289291,
+          "max": 100
+        },
+        "social": {
+          "min": 11.016896,
+          "max": 70.294565
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "14658f80-12bf-57cb-9363-af5752dbbf38",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        }
+      },
+      "causalEvidenceCount": 13,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1231,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 97.134941
+        },
+        "rest": {
+          "min": 1.88073,
+          "max": 100
+        },
+        "social": {
+          "min": 0,
+          "max": 68.472675
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "1865705c-2958-54c1-bac5-651d762c6848",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 10,
+          "committed": 10,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 10
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 24,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1338,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 14.952595,
+          "max": 69.793308
+        },
+        "rest": {
+          "min": 0,
+          "max": 78.626684
+        },
+        "social": {
+          "min": 20,
+          "max": 74.137479
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "1c8f82bb-9294-5b0e-ae5e-c2ac4ab76ccb",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 10,
+          "committed": 10,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 10
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 23,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1434,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 15.670072,
+          "max": 70.428095
+        },
+        "rest": {
+          "min": 0,
+          "max": 78.500351
+        },
+        "social": {
+          "min": 20,
+          "max": 76.113549
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "28fa438a-79ec-5935-83ea-702c6bdea17d",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "EAT": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "WORK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "TALK": {
+          "attempts": 15,
+          "committed": 15,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 15
+        }
+      },
+      "causalEvidenceCount": 24,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 167,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 20,
+          "max": 100
+        },
+        "rest": {
+          "min": 0,
+          "max": 89.260708
+        },
+        "social": {
+          "min": 0,
+          "max": 70.499756
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "337b5d1e-2b0d-5312-8aca-bdcbcfb5cd70",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 6,
+          "committed": 6,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 6
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "TALK": {
+          "attempts": 21,
+          "committed": 21,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 21
+        }
+      },
+      "causalEvidenceCount": 34,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 146,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 84.551339
+        },
+        "rest": {
+          "min": 0,
+          "max": 85.263177
+        },
+        "social": {
+          "min": 0,
+          "max": 67.746543
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "3772b326-f7b2-598e-b063-222e4e04b45d",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 6,
+          "committed": 6,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 6
+        },
+        "SLEEP": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "EAT": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        },
+        "WORK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "TALK": {
+          "attempts": 15,
+          "committed": 15,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 15
+        }
+      },
+      "causalEvidenceCount": 28,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 164,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 84.197838
+        },
+        "rest": {
+          "min": 0,
+          "max": 86.093606
+        },
+        "social": {
+          "min": 0,
+          "max": 63.35272
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "3f5f3597-5875-5ac9-b2f3-4ea8df16590c",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        }
+      },
+      "causalEvidenceCount": 12,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1232,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 20,
+          "max": 100
+        },
+        "rest": {
+          "min": 1.248223,
+          "max": 100
+        },
+        "social": {
+          "min": 0,
+          "max": 43.31329
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "4452b85a-ec49-5208-aec4-65f0d8eb24cc",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 7,
+          "committed": 7,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 7
+        },
+        "SLEEP": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 20,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1323,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 92.866791
+        },
+        "rest": {
+          "min": 0,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 71.190987
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "5f48a853-4359-54d4-a9e5-2043733f2e16",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 9,
+          "committed": 9,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 9
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 23,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1336,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 1.703372,
+          "max": 62.812186
+        },
+        "rest": {
+          "min": 0,
+          "max": 75.758726
+        },
+        "social": {
+          "min": 20,
+          "max": 75.54391
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "6bda09e1-caf5-566f-bf98-4bc3eedf4442",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        }
+      },
+      "causalEvidenceCount": 14,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1247,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 94.918934
+        },
+        "rest": {
+          "min": 1.004174,
+          "max": 100
+        },
+        "social": {
+          "min": 0,
+          "max": 79.054899
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "76362b07-b5a2-5595-b9b0-34f16f1c4e41",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 6,
+          "committed": 6,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 6
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        }
+      },
+      "causalEvidenceCount": 16,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1246,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 94.568016
+        },
+        "rest": {
+          "min": 1.706318,
+          "max": 100
+        },
+        "social": {
+          "min": 9.501838,
+          "max": 78.533582
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "77162c91-d56d-5c19-afef-c1fd9e024f37",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 6,
+          "committed": 6,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 6
+        },
+        "SLEEP": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "EAT": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "WORK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "TALK": {
+          "attempts": 8,
+          "committed": 8,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 8
+        }
+      },
+      "causalEvidenceCount": 22,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 166,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 84.603107
+        },
+        "rest": {
+          "min": 0,
+          "max": 85.605017
+        },
+        "social": {
+          "min": 0,
+          "max": 48.432114
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "8a2766e5-2ce4-5e0d-8f6a-8a6e7fc1c26b",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 7,
+          "committed": 7,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 7
+        },
+        "SLEEP": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 20,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1340,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 88.156731
+        },
+        "rest": {
+          "min": 0,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 70.333906
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "8d9ed523-b774-588c-b225-ee47cd8d4f56",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        }
+      },
+      "causalEvidenceCount": 14,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1230,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 96.424471
+        },
+        "rest": {
+          "min": 1.382027,
+          "max": 100
+        },
+        "social": {
+          "min": 0,
+          "max": 41.912965
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "90b202e1-d151-55b4-85b5-97cd0d575e0f",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 15,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1232,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 20,
+          "max": 100
+        },
+        "rest": {
+          "min": 1.236557,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 88.788165
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "99f9c309-2ce3-5071-a028-b4a47ffd7be5",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        }
+      },
+      "causalEvidenceCount": 13,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1231,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 100
+        },
+        "rest": {
+          "min": 2.039764,
+          "max": 100
+        },
+        "social": {
+          "min": 0,
+          "max": 70.266864
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "ae1e2396-f070-597a-bbb0-56ca6ed6c699",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 9,
+          "committed": 9,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 9
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 23,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1339,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 1.030193,
+          "max": 55.858947
+        },
+        "rest": {
+          "min": 0,
+          "max": 78.993858
+        },
+        "social": {
+          "min": 20,
+          "max": 76.787506
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "bb74bf0c-015c-5c89-8112-e99813c8f83b",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 9,
+          "committed": 9,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 9
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 23,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1339,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 1.216821,
+          "max": 62.341724
+        },
+        "rest": {
+          "min": 0,
+          "max": 72.997972
+        },
+        "social": {
+          "min": 20,
+          "max": 79.215045
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "bf480ab2-3b5f-5ba8-9ec0-f5f6ec687a37",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 18,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1243,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 94.937957
+        },
+        "rest": {
+          "min": 1.05474,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 70.172145
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "c6a4c241-cf60-5a64-bdb6-76e7807a6233",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        }
+      },
+      "causalEvidenceCount": 15,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1246,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 82.330291
+        },
+        "rest": {
+          "min": 1.049705,
+          "max": 100
+        },
+        "social": {
+          "min": 0,
+          "max": 71.095728
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "c9ad91da-fc62-5682-ae48-a144dfe3e9ed",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 15,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1232,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 20,
+          "max": 100
+        },
+        "rest": {
+          "min": 0.853266,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 89.33725
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "cb26a4cc-fae8-519d-abb4-ac61dfe0694a",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 9,
+          "committed": 9,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 9
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 24,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1354,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 65.270802
+        },
+        "rest": {
+          "min": 0,
+          "max": 76.23032
+        },
+        "social": {
+          "min": 20,
+          "max": 71.516954
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "ce140eed-d231-5baf-9e4e-315ddb1eaa9c",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        }
+      },
+      "causalEvidenceCount": 16,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1230,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 100
+        },
+        "rest": {
+          "min": 0.826699,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 86.310687
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "ce95bf2c-c146-5e0e-b4b3-3b75c5cb84f2",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 11,
+          "committed": 11,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 11
+        },
+        "SLEEP": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "EAT": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "WORK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 26,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1367,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 48.913332
+        },
+        "rest": {
+          "min": 0,
+          "max": 76.746857
+        },
+        "social": {
+          "min": 20,
+          "max": 71.184207
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "d2e3d249-b5d4-5a28-bfa0-9f306107a72b",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 6,
+          "committed": 6,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 6
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 16,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1324,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 100
+        },
+        "rest": {
+          "min": 1.991861,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 79.944947
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "d9443644-8042-54ee-81c4-b5ccf4f02768",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 7,
+          "committed": 7,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 7
+        },
+        "SLEEP": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        },
+        "EAT": {
+          "attempts": 0,
+          "committed": 0,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 0
+        },
+        "WORK": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 18,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1341,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 20,
+          "max": 100
+        },
+        "rest": {
+          "min": 0,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 70.485121
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "e98d19f5-3f2d-5451-8c14-bf4220dd9d91",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 7,
+          "committed": 7,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 7
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 3,
+          "committed": 3,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 3
+        }
+      },
+      "causalEvidenceCount": 20,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1370,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 57.042614
+        },
+        "rest": {
+          "min": 1.620862,
+          "max": 100
+        },
+        "social": {
+          "min": 20,
+          "max": 70.272164
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    },
+    {
+      "residentId": "f6dda1f4-10bd-5071-aa77-85dfd187a720",
+      "worldId": "00000000-0000-4000-8000-00000000a300",
+      "actionsByType": {
+        "MOVE": {
+          "attempts": 5,
+          "committed": 5,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 5
+        },
+        "SLEEP": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "EAT": {
+          "attempts": 2,
+          "committed": 2,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 2
+        },
+        "WORK": {
+          "attempts": 4,
+          "committed": 4,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 4
+        },
+        "TALK": {
+          "attempts": 1,
+          "committed": 1,
+          "rejected": 0,
+          "conflicts": 0,
+          "completed": 1
+        }
+      },
+      "causalEvidenceCount": 14,
+      "recoveryCounters": {
+        "replans": 0,
+        "deferred": 1247,
+        "stop": 0
+      },
+      "needExtrema": {
+        "hunger": {
+          "min": 0,
+          "max": 99.369166
+        },
+        "rest": {
+          "min": 1.51319,
+          "max": 100
+        },
+        "social": {
+          "min": 2.052361,
+          "max": 70.419347
+        }
+      },
+      "completedWorkShiftKeys": [],
+      "anomalyClasses": []
+    }
+  ],
+  "causalEvidenceCount": 571,
+  "causalEvidenceWithNextObservation": 571,
+  "eventChecks": {
+    "needEffectPolicyValid": true,
+    "workAttendanceValid": true,
+    "talkParticipantsPresent": true,
+    "hasCompletedAction": true
+  },
+  "resourceRows": [
+    {
+      "residentId": "069b622e-8714-53c8-8951-d90d78cc8f07",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    },
+    {
+      "residentId": "1151abba-3660-5329-87cc-23f3df9df844",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    },
+    {
+      "residentId": "14658f80-12bf-57cb-9363-af5752dbbf38",
+      "foodUnits": 0,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "1865705c-2958-54c1-bac5-651d762c6848",
+      "foodUnits": 2,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "1c8f82bb-9294-5b0e-ae5e-c2ac4ab76ccb",
+      "foodUnits": 0,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "28fa438a-79ec-5935-83ea-702c6bdea17d",
+      "foodUnits": 0,
+      "resourceVersion": 0
+    },
+    {
+      "residentId": "337b5d1e-2b0d-5312-8aca-bdcbcfb5cd70",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    },
+    {
+      "residentId": "3772b326-f7b2-598e-b063-222e4e04b45d",
+      "foodUnits": 0,
+      "resourceVersion": 3
+    },
+    {
+      "residentId": "3f5f3597-5875-5ac9-b2f3-4ea8df16590c",
+      "foodUnits": 0,
+      "resourceVersion": 0
+    },
+    {
+      "residentId": "4452b85a-ec49-5208-aec4-65f0d8eb24cc",
+      "foodUnits": 0,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "5f48a853-4359-54d4-a9e5-2043733f2e16",
+      "foodUnits": 3,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "6bda09e1-caf5-566f-bf98-4bc3eedf4442",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    },
+    {
+      "residentId": "76362b07-b5a2-5595-b9b0-34f16f1c4e41",
+      "foodUnits": 0,
+      "resourceVersion": 3
+    },
+    {
+      "residentId": "77162c91-d56d-5c19-afef-c1fd9e024f37",
+      "foodUnits": 0,
+      "resourceVersion": 4
+    },
+    {
+      "residentId": "8a2766e5-2ce4-5e0d-8f6a-8a6e7fc1c26b",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    },
+    {
+      "residentId": "8d9ed523-b774-588c-b225-ee47cd8d4f56",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    },
+    {
+      "residentId": "90b202e1-d151-55b4-85b5-97cd0d575e0f",
+      "foodUnits": 0,
+      "resourceVersion": 0
+    },
+    {
+      "residentId": "99f9c309-2ce3-5071-a028-b4a47ffd7be5",
+      "foodUnits": 0,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "ae1e2396-f070-597a-bbb0-56ca6ed6c699",
+      "foodUnits": 1,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "bb74bf0c-015c-5c89-8112-e99813c8f83b",
+      "foodUnits": 1,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "bf480ab2-3b5f-5ba8-9ec0-f5f6ec687a37",
+      "foodUnits": 0,
+      "resourceVersion": 4
+    },
+    {
+      "residentId": "c6a4c241-cf60-5a64-bdb6-76e7807a6233",
+      "foodUnits": 0,
+      "resourceVersion": 3
+    },
+    {
+      "residentId": "c9ad91da-fc62-5682-ae48-a144dfe3e9ed",
+      "foodUnits": 0,
+      "resourceVersion": 0
+    },
+    {
+      "residentId": "cb26a4cc-fae8-519d-abb4-ac61dfe0694a",
+      "foodUnits": 0,
+      "resourceVersion": 3
+    },
+    {
+      "residentId": "ce140eed-d231-5baf-9e4e-315ddb1eaa9c",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    },
+    {
+      "residentId": "ce95bf2c-c146-5e0e-b4b3-3b75c5cb84f2",
+      "foodUnits": 0,
+      "resourceVersion": 4
+    },
+    {
+      "residentId": "d2e3d249-b5d4-5a28-bfa0-9f306107a72b",
+      "foodUnits": 0,
+      "resourceVersion": 1
+    },
+    {
+      "residentId": "d9443644-8042-54ee-81c4-b5ccf4f02768",
+      "foodUnits": 0,
+      "resourceVersion": 0
+    },
+    {
+      "residentId": "e98d19f5-3f2d-5451-8c14-bf4220dd9d91",
+      "foodUnits": 0,
+      "resourceVersion": 4
+    },
+    {
+      "residentId": "f6dda1f4-10bd-5071-aa77-85dfd187a720",
+      "foodUnits": 0,
+      "resourceVersion": 2
+    }
+  ],
+  "initialFoodUnits": 60,
+  "finalFoodUnits": 7,
+  "diagnostics": {
+    "STARVATION_RISK": 0,
+    "RESOURCE_DEPLETION": 26,
+    "SLEEP_RESPONSE_DELAY": 0,
+    "SOCIAL_STARVATION": 4,
+    "WORK_ABSENCE": 0,
+    "WORK_LATE_ATTEMPT": 0,
+    "PERMANENT_DEFER": 0,
+    "REPLAN_EXHAUSTION": 0,
+    "NO_ACTION_PROGRESS": 0,
+    "INVALID_LOCATION_ACTIVITY": 0,
+    "REPLAY_MISMATCH": 0,
+    "DETERMINISM_MISMATCH": 0,
+    "ISOLATION_VIOLATION": 0,
+    "UNEXPECTED_BUY_EXECUTION": 0,
+    "LLM_PATH_USED": 0
+  }
+}

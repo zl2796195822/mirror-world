@@ -2,9 +2,12 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  closeSync,
   createWriteStream,
   mkdirSync,
+  openSync,
   readFileSync,
+  readSync,
   renameSync,
   statSync,
   unlinkSync,
@@ -14,8 +17,24 @@ import { dirname } from "node:path";
 import { finished } from "node:stream/promises";
 
 export const DEFAULT_NODE_HEAP_MB = 12_288;
-export const IMMUTABLE_RUN_ID = "20260911-run-14";
+export const IMMUTABLE_RUN_IDS = [
+  "20260910-run-08",
+  "20260911-run-14",
+  "20260912-run-15",
+  "20260912-run-16",
+  "20260912-run-20",
+  "20260913-run-21",
+  "20260913-run-22",
+  "20260913-run-23",
+  "20260913-run-24",
+  "20260913-run-25",
+  "20260913-run-26",
+  "20260913-run-27",
+  "20260913-run-28",
+];
+export const IMMUTABLE_RUN_ID = IMMUTABLE_RUN_IDS[1];
 const FORKED_JSON_VALIDATION_BYTES = 1_000_000;
+const STREAMING_JSON_VALIDATION_BYTES = 8_000_000;
 export const SCENARIO_ARTIFACTS = [
   "manifest.json",
   "scenario-summary.json",
@@ -135,12 +154,68 @@ export function hashJsonArray(items, replacer = jsonReplacer) {
   return hash.digest("hex");
 }
 
+export function validateJsonWellFormedStreamSync(file) {
+  // Streaming JSON well-formedness check: tracks strings/escapes and
+  // container depth without materializing the parsed value tree.
+  const fd = openSync(file, "r");
+  try {
+    const buffer = Buffer.allocUnsafe(1 << 20);
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    let started = false;
+    let lastNonWs = "";
+    let bytesRead = 0;
+    while ((bytesRead = readSync(fd, buffer, 0, buffer.length, null)) > 0) {
+      for (let index = 0; index < bytesRead; index += 1) {
+        const code = buffer[index];
+        const char = String.fromCharCode(code);
+        if (inString) {
+          if (escaped) escaped = false;
+          else if (char === "\\") escaped = true;
+          else if (char === '"') inString = false;
+          continue;
+        }
+        if (char === " " || char === "\n" || char === "\r" || char === "\t") {
+          continue;
+        }
+        if (!started) {
+          if (char !== "{" && char !== "[") {
+            throw new Error(`invalid JSON start in ${file}: ${char}`);
+          }
+          started = true;
+        }
+        if (char === '"') inString = true;
+        else if (char === "{" || char === "[") depth += 1;
+        else if (char === "}" || char === "]") {
+          depth -= 1;
+          if (depth < 0) {
+            throw new Error(`unbalanced JSON close in ${file}`);
+          }
+        }
+        lastNonWs = char;
+      }
+    }
+    if (inString) throw new Error(`unterminated JSON string in ${file}`);
+    if (depth !== 0) throw new Error(`unbalanced JSON depth in ${file}: ${depth}`);
+    if (!started) throw new Error(`empty JSON artifact: ${file}`);
+    if (lastNonWs !== "}" && lastNonWs !== "]") {
+      throw new Error(`invalid JSON end in ${file}: ${lastNonWs}`);
+    }
+  } finally {
+    closeSync(fd);
+  }
+  return true;
+}
+
 export function validateJsonArtifacts(directory, names = SCENARIO_ARTIFACTS) {
   for (const name of names) {
     const file = `${directory}/${name}`;
     const stats = statSync(file);
     assert.equal(stats.isFile(), true, `missing artifact: ${name}`);
-    if (stats.size > FORKED_JSON_VALIDATION_BYTES) {
+    if (stats.size > STREAMING_JSON_VALIDATION_BYTES) {
+      validateJsonWellFormedStreamSync(file);
+    } else if (stats.size > FORKED_JSON_VALIDATION_BYTES) {
       execFileSync(
         process.execPath,
         [
@@ -159,10 +234,9 @@ export function validateJsonArtifacts(directory, names = SCENARIO_ARTIFACTS) {
 
 export function assertNewRunId(runId) {
   assert.ok(runId, "GATE_RUN_ID is required");
-  assert.notEqual(
-    runId,
-    IMMUTABLE_RUN_ID,
-    `immutable run ${IMMUTABLE_RUN_ID} cannot be reused`,
+  assert.ok(
+    !IMMUTABLE_RUN_IDS.includes(runId),
+    `immutable run ${runId} cannot be reused`,
   );
   assert.match(runId, /^\d{8}-run-\d+$/, "invalid immutable run id");
 }

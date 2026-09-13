@@ -1,8 +1,8 @@
 # PROJECT_STATE
 
 Current milestone: M3 Life Engine v1
-Current task: M3-LIFECYCLE-STORY-GATE-COVERAGE-FIX (completed; main CI green)
-Status: M3-LIFECYCLE-ADR-FORMALIZATION = PASS; M3-T04 = PASS; PRE-AL-GATE = PASS; M3 Behavioral Lifecycle Extension = PASS; M3-LIFECYCLE-STORY-GATE = FAIL / RERUN_REQUIRED; coverage reconciliation = PASS; coverage fix = PASS; M3 remains IN_PROGRESS
+Current task: M3 = PASS (closed 2026-09-13); next milestone not started
+Status: M3-T01..T04 = PASS; M3 Behavioral Lifecycle Extension = PASS; M3-LIFECYCLE-STORY-GATE = PASS (20260913-run-42); M3-T05 = PASS; Final Status Review #2 = PASS; **M3 = PASS** (5-day Story Gate contract); M4+ not started
 Last verified implementation commit: 780e491c6ee2d14bb7d44eaa8114ee2402721de9
 Last verified main/doc baseline: 66d1863ca2b77f37d535dcf02929d3db617ef13c
 
@@ -214,6 +214,14 @@ Last verified main/doc baseline: 66d1863ca2b77f37d535dcf02929d3db617ef13c
 - `docs/architecture/m3-needs-source-audit.md`：4/6/7 Needs 定义来源逐项审计。
 
 ## Verification report
+
+- `docs/verification/M3-FINAL-STATUS-REVIEW-2.md`（M3 = PASS）
+- `docs/verification/M3-T05-report.md`（T05 = PASS）
+- `docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-run-42-PASS-report.md`
+
+- `docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-run-42-PASS-report.md`（20260913-run-42；5 World Days；15/15 PASS）
+- `docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-run-29-report.md`（20260913-run-29；5 World Days 合同；14/15 PASS；Hard Gate #3 FAIL；EAT 20/30 + TALK 27/30）
+- `docs/verification/M3-LIFECYCLE-STORY-GATE-v2-RERUN-report.md`（20260912-run-15 lineage abort + 20260912-run-16 coverage-funnel 17.99GB validation abort；INFRA_FAILURE；无 Gate judgment）
 
 - `docs/verification/M1-T02-report.md`
 - `docs/verification/M1-T03-report.md`
