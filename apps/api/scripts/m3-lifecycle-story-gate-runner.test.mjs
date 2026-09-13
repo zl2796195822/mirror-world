@@ -15,7 +15,7 @@ import {
   runSerialStoryGate,
 } from "./m3-lifecycle-story-gate-runner.mjs";
 
-const TARGET_TIME = "2026-10-07T00:00:00.000Z";
+const TARGET_TIME = "2026-09-12T00:00:00.000Z";
 const SEEDS = {
   baseline: "mirror-m3-lifecycle-story-gate-world-v1",
   repeat: "mirror-m3-lifecycle-story-gate-world-v1",
@@ -24,7 +24,7 @@ const SEEDS = {
 
 function summary(role) {
   const manifestInput = {
-    runId: "20260912-run-15",
+    runId: "20260913-run-90",
     residentCount: 30,
     residentFixtureHash: `fixture-${role}`,
     resourceFixtureHash: `resource-${role}`,
@@ -158,7 +158,7 @@ test("reduced verification mode is forwarded to every child only when enabled", 
   const root = mkdtempSync(join(tmpdir(), "mirror-gate-reduced-"));
   const seen = [];
   await runSerialStoryGate({
-    runId: "20260912-run-18",
+    runId: "20260913-run-91",
     root,
     databaseUrls: ["baseline", "repeat", "different"],
     reducedScenario: true,
@@ -196,7 +196,7 @@ test("partial scenario failure writes abort record and never finalizes gates", a
   const root = mkdtempSync(join(tmpdir(), "mirror-gate-abort-"));
   await assert.rejects(
     runSerialStoryGate({
-      runId: "20260912-run-19",
+      runId: "20260913-run-92",
       root,
       databaseUrls: ["baseline", "repeat", "different"],
       spawnChild: async (input) => {
