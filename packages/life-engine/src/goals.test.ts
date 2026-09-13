@@ -96,7 +96,7 @@ describe("M3-T03 goal engine", () => {
     const result = evaluateGoals(
       input({
         needs: {
-          residentId: calmNeeds.residentId,
+          ...calmNeeds,
           hungerPressure: 70,
           restPressure: 85,
           socialPressure: 100,
