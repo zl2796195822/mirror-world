@@ -154,7 +154,7 @@ test("immutable historical runs cannot be reused", () => {
   assert.throws(() => assertNewRunId("20260910-run-08"), /cannot be reused/);
   assert.throws(() => assertNewRunId("20260912-run-15"), /cannot be reused/);
   assert.throws(() => assertNewRunId("20260912-run-20"), /cannot be reused/);
-  assert.doesNotThrow(() => assertNewRunId("20260913-run-21"));
+  assert.doesNotThrow(() => assertNewRunId("20260913-run-99"));
 });
 
 test("streaming JSON well-formedness accepts balanced artifacts and rejects corruption", async () => {
