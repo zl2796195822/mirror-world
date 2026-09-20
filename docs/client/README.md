@@ -1,8 +1,8 @@
 # Mirror World Client V0 — 文档索引
 
-状态：`C3 IMPLEMENTED / GREYBOX_VERIFIED`（UE repo separate）
+状态：`MERGED TO MAIN`（C0–C3；C3 greybox 在独立仓库 `mirror-world-client-ue`）
 
-本目录属于镜界客户端 / 世界可视化轨道。当前主线 `origin/main = b774533`，`M3 Life Engine v1 = IN_PROGRESS`，因此 production implementation 不得合入主线。
+本目录属于镜界客户端 / 世界可视化轨道。当前基线 `origin/main = 2d0c8f9`，`M3 Life Engine v1 = PASS`（2026-09-13 关闭）；客户端实现已由用户批准（2026-09-20）并合入主线。
 
 已完成：
 
@@ -43,9 +43,16 @@ C3 指针：`docs/client/CLIENT-C3-UE-REPO-POINTER.md`
 
 ## 当前授权快照
 
-| 项                                          | 值                                                                        |
-| ------------------------------------------- | ------------------------------------------------------------------------- |
-| Client implementation currently authorized? | **NO**                                                                    |
-| 原因                                        | `M3 != PASS`；设计需人工批准                                              |
-| 允许产出                                    | 架构 / 契约草案 / Observer 与 3D 计划                                     |
-| 禁止                                        | 改 DB、改 Kernel、新增 production API、创建 UE project、scaffold 正式前端 |
+| 项                                          | 值                                                                                |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| Client implementation currently authorized? | **YES**                                                                           |
+| 依据                                        | `M3 = PASS`（2026-09-13）+ 用户人工批准（2026-09-20）                             |
+| 已交付                                      | 只读 Client Projection v0 API + Web Observer（apps/api、apps/web、contracts、db） |
+| 永久禁止（不变）                            | 改 Kernel、改世界事实、写入 DB、把客户端当 Truth —— 见 CLIENT-TRUTH-BOUNDARY.md   |
+| UE 侧                                       | 独立仓库 `mirror-world-client-ue`，不在本仓 CI 范围内                             |
+
+## 历史报告口径
+
+本目录下的逐阶段验证报告（`CLIENT-V0-C01-*`、`CLIENT-C1.1-*`、`CLIENT-C2-*`、`CLIENT-C3-*`）记录**当时**的事实。其中 `M3 = IN_PROGRESS`、`Main merge allowed? NO until M3 PASS`、`not authorized` 等表述属于当时状态，已被本节更新取代。
+
+按仓库规则，历史报告不改写、不追溯改判；当前状态以本 README 与 `docs/PROJECT_STATE.md` 为准。
