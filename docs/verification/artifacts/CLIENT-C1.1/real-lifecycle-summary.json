@@ -1,0 +1,733 @@
+{
+  "schemaVersion": "client-c1-1-verification-v0",
+  "worldId": "ae8bd0ce-c3bb-40e7-a60c-17287878804f",
+  "seed": "mirror-client-c1-1-real-lifecycle-v1",
+  "horizonMinutes": 4320,
+  "startWorldTime": "2026-09-07T00:00:00.000Z",
+  "finalWorldTime": "2026-09-10T00:00:00.000Z",
+  "finalWorldSeq": "284",
+  "residentCount": 30,
+  "placeCount": 17,
+  "eventCount": 284,
+  "uniqueEventCount": 284,
+  "eventOrderingStrictlyIncreasing": true,
+  "duplicateEventIds": 0,
+  "snapshots": [
+    {
+      "capturedAtWorldTime": "2026-09-07T00:00:00.000Z",
+      "worldSeq": "0",
+      "worldStatus": "RUNNING",
+      "residentCount": 30,
+      "placeCount": 17,
+      "activityDistribution": {
+        "IDLE": 30
+      }
+    },
+    {
+      "capturedAtWorldTime": "2026-09-07T06:00:00.000Z",
+      "worldSeq": "24",
+      "worldStatus": "RUNNING",
+      "residentCount": 30,
+      "placeCount": 17,
+      "activityDistribution": {
+        "SLEEPING": 12,
+        "IDLE": 18
+      }
+    },
+    {
+      "capturedAtWorldTime": "2026-09-07T14:00:00.000Z",
+      "worldSeq": "125",
+      "worldStatus": "RUNNING",
+      "residentCount": 30,
+      "placeCount": 17,
+      "activityDistribution": {
+        "IDLE": 23,
+        "WORKING": 7
+      }
+    },
+    {
+      "capturedAtWorldTime": "2026-09-08T02:00:00.000Z",
+      "worldSeq": "156",
+      "worldStatus": "RUNNING",
+      "residentCount": 30,
+      "placeCount": 17,
+      "activityDistribution": {
+        "IDLE": 30
+      }
+    }
+  ],
+  "finalSnapshotActivityDistribution": {
+    "IDLE": 30
+  },
+  "eventTypeCounts": {
+    "WORLD_TIME_ADVANCED": 146,
+    "RESIDENT_SLEEP_STARTED": 12,
+    "RESIDENT_SLEEP_COMPLETED": 12,
+    "RESIDENT_EAT_STARTED": 6,
+    "RESIDENT_MOVE_STARTED": 26,
+    "RESIDENT_MOVE_COMPLETED": 26,
+    "RESIDENT_EAT_COMPLETED": 6,
+    "RESIDENT_WORK_STARTED": 25,
+    "RESIDENT_WORK_COMPLETED": 25
+  },
+  "actionCoverage": {
+    "MOVE": {
+      "observed": true,
+      "startedEvents": 26,
+      "completedEvents": 26,
+      "totalEvents": 52,
+      "residentExample": "3370a3bf-c0bb-54b4-82d6-ddb67faf2455",
+      "participantExample": null,
+      "exampleEventTypes": ["RESIDENT_MOVE_STARTED", "RESIDENT_MOVE_COMPLETED"]
+    },
+    "SLEEP": {
+      "observed": true,
+      "startedEvents": 12,
+      "completedEvents": 12,
+      "totalEvents": 24,
+      "residentExample": "0c8e28ed-a7d0-5431-95c6-50d7e511e899",
+      "participantExample": null,
+      "exampleEventTypes": [
+        "RESIDENT_SLEEP_STARTED",
+        "RESIDENT_SLEEP_COMPLETED"
+      ]
+    },
+    "EAT": {
+      "observed": true,
+      "startedEvents": 6,
+      "completedEvents": 6,
+      "totalEvents": 12,
+      "residentExample": "2bbd936d-ef84-51d6-996d-cbe45fd17b2c",
+      "participantExample": null,
+      "exampleEventTypes": ["RESIDENT_EAT_STARTED", "RESIDENT_EAT_COMPLETED"]
+    },
+    "WORK": {
+      "observed": true,
+      "startedEvents": 25,
+      "completedEvents": 25,
+      "totalEvents": 50,
+      "residentExample": "3370a3bf-c0bb-54b4-82d6-ddb67faf2455",
+      "participantExample": null,
+      "exampleEventTypes": ["RESIDENT_WORK_STARTED", "RESIDENT_WORK_COMPLETED"]
+    },
+    "TALK": {
+      "observed": false,
+      "startedEvents": 0,
+      "completedEvents": 0,
+      "totalEvents": 0,
+      "residentExample": null,
+      "participantExample": null,
+      "exampleEventTypes": []
+    }
+  },
+  "residentsWithUnknownPlace": 0,
+  "iterations": 147,
+  "elapsedMs": 4879,
+  "sampleResident": {
+    "residentId": "0c8e28ed-a7d0-5431-95c6-50d7e511e899",
+    "displayName": "Resident 001",
+    "placeId": "3dddc3cc-6381-54ad-a979-d30b3d025f9b",
+    "placeKey": "cafe",
+    "placeKind": "CAFE",
+    "activity": "IDLE",
+    "activityInstanceId": null,
+    "activityStartedAtWorldTime": null,
+    "activityDueAtWorldTime": null,
+    "targetPlaceId": null,
+    "participantId": null,
+    "employmentStatus": "EMPLOYED",
+    "workplaceId": "3dddc3cc-6381-54ad-a979-d30b3d025f9b",
+    "projectionSeq": "72"
+  },
+  "lastEvents": [
+    {
+      "eventId": "c83ff584-d6c6-471c-aff7-891bb844d442",
+      "worldSeq": "265",
+      "eventType": "RESIDENT_WORK_COMPLETED",
+      "occurredAtWorldTime": "2026-09-09T17:00:00.000Z",
+      "residentId": "78d39e0b-67e2-5f12-b53b-91eaac6cf3f5",
+      "participantId": null,
+      "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "payloadSummary": {
+        "actionType": "WORK",
+        "phase": "COMPLETED",
+        "activityInstanceId": "ccdc2279-ab90-4e0f-89b1-a68674bc4b2a",
+        "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "startedAtWorldTime": "2026-09-09T09:00:00.000Z",
+        "dueAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "completedAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "durationWorldMinutes": 480
+      }
+    },
+    {
+      "eventId": "55509656-8fb6-4b02-9864-c7a6489ed3f4",
+      "worldSeq": "266",
+      "eventType": "RESIDENT_WORK_COMPLETED",
+      "occurredAtWorldTime": "2026-09-09T17:00:00.000Z",
+      "residentId": "7b119893-24b0-5641-a079-7fe257bc41a2",
+      "participantId": null,
+      "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "payloadSummary": {
+        "actionType": "WORK",
+        "phase": "COMPLETED",
+        "activityInstanceId": "211dc5da-2497-4fe6-a800-5d17499a4473",
+        "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "startedAtWorldTime": "2026-09-09T09:00:00.000Z",
+        "dueAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "completedAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "durationWorldMinutes": 480
+      }
+    },
+    {
+      "eventId": "bc9510a4-1c6a-448c-9ad4-568be4c15d18",
+      "worldSeq": "267",
+      "eventType": "RESIDENT_WORK_COMPLETED",
+      "occurredAtWorldTime": "2026-09-09T17:00:00.000Z",
+      "residentId": "90e94171-f8df-50aa-a593-485576bd9689",
+      "participantId": null,
+      "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "payloadSummary": {
+        "actionType": "WORK",
+        "phase": "COMPLETED",
+        "activityInstanceId": "6e253a96-5f4a-4741-888f-9add4cc3a755",
+        "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "startedAtWorldTime": "2026-09-09T09:00:00.000Z",
+        "dueAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "completedAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "durationWorldMinutes": 480
+      }
+    },
+    {
+      "eventId": "2080746b-916e-4f42-ad7d-e331b576ec4a",
+      "worldSeq": "268",
+      "eventType": "RESIDENT_WORK_COMPLETED",
+      "occurredAtWorldTime": "2026-09-09T17:00:00.000Z",
+      "residentId": "a995ed44-e154-5366-9659-6839dc7a7e00",
+      "participantId": null,
+      "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "payloadSummary": {
+        "actionType": "WORK",
+        "phase": "COMPLETED",
+        "activityInstanceId": "39d6f858-0fe4-439c-bbe1-7b24ee4115e7",
+        "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "startedAtWorldTime": "2026-09-09T09:00:00.000Z",
+        "dueAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "completedAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "durationWorldMinutes": 480
+      }
+    },
+    {
+      "eventId": "2dab67dc-d8de-4466-8c5d-c699bcff7178",
+      "worldSeq": "269",
+      "eventType": "RESIDENT_WORK_COMPLETED",
+      "occurredAtWorldTime": "2026-09-09T17:00:00.000Z",
+      "residentId": "b3f7ddf2-e413-5611-bfd6-98dfa1974b69",
+      "participantId": null,
+      "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "payloadSummary": {
+        "actionType": "WORK",
+        "phase": "COMPLETED",
+        "activityInstanceId": "35cff8a3-406c-41b7-a8bc-09dd65b4eaa8",
+        "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "startedAtWorldTime": "2026-09-09T09:00:00.000Z",
+        "dueAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "completedAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "durationWorldMinutes": 480
+      }
+    },
+    {
+      "eventId": "951539a4-2a1a-480d-b191-852c753cfada",
+      "worldSeq": "270",
+      "eventType": "RESIDENT_WORK_COMPLETED",
+      "occurredAtWorldTime": "2026-09-09T17:00:00.000Z",
+      "residentId": "ebeb1e99-fbe7-5022-bcfe-ec15d4a0cd7e",
+      "participantId": null,
+      "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+      "payloadSummary": {
+        "actionType": "WORK",
+        "phase": "COMPLETED",
+        "activityInstanceId": "9c306552-f992-45e3-9e87-63afe0e931b5",
+        "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "startedAtWorldTime": "2026-09-09T09:00:00.000Z",
+        "dueAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "completedAtWorldTime": "2026-09-09T17:00:00.000Z",
+        "durationWorldMinutes": 480
+      }
+    },
+    {
+      "eventId": "7fec9519-3a94-46cd-b969-0b9aabc60f40",
+      "worldSeq": "271",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T17:30:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "0a2a6ed1-2ab5-4f75-ac87-e8ef1cbb62dc",
+      "worldSeq": "272",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T18:00:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "3ed58ce7-142a-44a4-bbd4-6cab7437f9df",
+      "worldSeq": "273",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T18:30:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "6eceaa61-c595-410a-8403-372c8235dad1",
+      "worldSeq": "274",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T19:00:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "92ccee5a-b2c7-4168-81ac-2fa71f0e268e",
+      "worldSeq": "275",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T19:30:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "e2ebf2c6-9c56-44a2-b6e8-adc29db6fd40",
+      "worldSeq": "276",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T20:00:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "e8268d9b-49d9-4ac6-b66f-63bea7854478",
+      "worldSeq": "277",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T20:30:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "9d7d1378-dcdf-4ec4-a937-31e6cb686239",
+      "worldSeq": "278",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T21:00:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "f3583e78-90e2-444e-ad49-37c7d27e27bd",
+      "worldSeq": "279",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T21:30:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "0ab9f6c3-66a5-412f-a37d-42339b71295b",
+      "worldSeq": "280",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T22:00:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "cfafadac-999c-4f84-9603-7102c5b0b94a",
+      "worldSeq": "281",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T22:30:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "2b2da4eb-44a0-4e0e-ab69-db526b4c5b49",
+      "worldSeq": "282",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T23:00:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "9d814598-0636-4118-8f31-a344aee697e2",
+      "worldSeq": "283",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-09T23:30:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    },
+    {
+      "eventId": "d485f257-6fe0-43f3-9773-e30ed32a060e",
+      "worldSeq": "284",
+      "eventType": "WORLD_TIME_ADVANCED",
+      "occurredAtWorldTime": "2026-09-10T00:00:00.000Z",
+      "residentId": null,
+      "participantId": null,
+      "placeId": null,
+      "targetPlaceId": null
+    }
+  ],
+  "eventExamples": {
+    "MOVE": [
+      {
+        "eventId": "7962b8c9-1bef-48e3-b590-48fb51a412cb",
+        "worldSeq": "48",
+        "eventType": "RESIDENT_MOVE_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:45:00.000Z",
+        "residentId": "3370a3bf-c0bb-54b4-82d6-ddb67faf2455",
+        "participantId": null,
+        "placeId": "32644b6f-5764-5ac1-b8b3-6b85c4e5229d",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "MOVE",
+          "phase": "STARTED",
+          "activityInstanceId": "7b185bd4-ff0f-44b7-a5ec-eb646a5e1f78",
+          "sourceLocationId": "32644b6f-5764-5ac1-b8b3-6b85c4e5229d",
+          "destinationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T08:45:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 15
+        }
+      },
+      {
+        "eventId": "e70172af-30a1-472a-a2fe-92ed7d69a82d",
+        "worldSeq": "49",
+        "eventType": "RESIDENT_MOVE_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:45:00.000Z",
+        "residentId": "65a68221-1415-59fc-9990-90de6f2df60c",
+        "participantId": null,
+        "placeId": "e29ee0e6-75a4-5bd3-ae05-9805dbed0fe2",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "MOVE",
+          "phase": "STARTED",
+          "activityInstanceId": "899ce4aa-0c82-465b-8c81-25efb663b1c9",
+          "sourceLocationId": "e29ee0e6-75a4-5bd3-ae05-9805dbed0fe2",
+          "destinationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T08:45:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 15
+        }
+      },
+      {
+        "eventId": "582771e2-5d06-43fd-9c82-7c88ef440897",
+        "worldSeq": "50",
+        "eventType": "RESIDENT_MOVE_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:45:00.000Z",
+        "residentId": "78d39e0b-67e2-5f12-b53b-91eaac6cf3f5",
+        "participantId": null,
+        "placeId": "a15608d8-42a4-5fc9-adcc-a7a2b306282a",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "MOVE",
+          "phase": "STARTED",
+          "activityInstanceId": "c38fff8e-18e4-42f2-b320-7dcf6d551f09",
+          "sourceLocationId": "a15608d8-42a4-5fc9-adcc-a7a2b306282a",
+          "destinationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T08:45:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 15
+        }
+      },
+      {
+        "eventId": "07560d39-5b9f-47c9-b9fe-3dcbf677a6fc",
+        "worldSeq": "51",
+        "eventType": "RESIDENT_MOVE_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:45:00.000Z",
+        "residentId": "7b119893-24b0-5641-a079-7fe257bc41a2",
+        "participantId": null,
+        "placeId": "9cedfe94-9698-5082-9907-1b7bc8dcf90b",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "MOVE",
+          "phase": "STARTED",
+          "activityInstanceId": "a61df6ac-4d01-40e6-a821-69e29e936300",
+          "sourceLocationId": "9cedfe94-9698-5082-9907-1b7bc8dcf90b",
+          "destinationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T08:45:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 15
+        }
+      }
+    ],
+    "SLEEP": [
+      {
+        "eventId": "7e5f9d7a-e5b4-4497-a0a4-c2660627cf2e",
+        "worldSeq": "2",
+        "eventType": "RESIDENT_SLEEP_STARTED",
+        "occurredAtWorldTime": "2026-09-07T00:30:00.000Z",
+        "residentId": "0c8e28ed-a7d0-5431-95c6-50d7e511e899",
+        "participantId": null,
+        "placeId": "125993fb-b7d7-5678-9834-f185429c2e5c",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "SLEEP",
+          "phase": "STARTED",
+          "activityInstanceId": "fa3d48f3-9cf3-4ec7-b995-31d4f5690c10",
+          "sourceLocationId": "125993fb-b7d7-5678-9834-f185429c2e5c",
+          "startedAtWorldTime": "2026-09-07T00:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      },
+      {
+        "eventId": "e05712c7-e8fc-4f42-a6b1-f540f7a8b91d",
+        "worldSeq": "3",
+        "eventType": "RESIDENT_SLEEP_STARTED",
+        "occurredAtWorldTime": "2026-09-07T00:30:00.000Z",
+        "residentId": "0e73c9fb-c5c9-541e-b245-b9c4e77d86eb",
+        "participantId": null,
+        "placeId": "94419879-8c23-520f-8d3b-e790c17532b1",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "SLEEP",
+          "phase": "STARTED",
+          "activityInstanceId": "7509621a-3116-4159-a55d-e981b37fe99e",
+          "sourceLocationId": "94419879-8c23-520f-8d3b-e790c17532b1",
+          "startedAtWorldTime": "2026-09-07T00:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      },
+      {
+        "eventId": "5d7b91cd-7732-43fc-ba38-faaedf39a4bf",
+        "worldSeq": "4",
+        "eventType": "RESIDENT_SLEEP_STARTED",
+        "occurredAtWorldTime": "2026-09-07T00:30:00.000Z",
+        "residentId": "1a394107-fdcb-554e-9a86-e59eff42ed36",
+        "participantId": null,
+        "placeId": "cf309d46-d246-537f-9510-991c9b237bcb",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "SLEEP",
+          "phase": "STARTED",
+          "activityInstanceId": "c119f087-d45b-4d1f-a397-5c04268771ea",
+          "sourceLocationId": "cf309d46-d246-537f-9510-991c9b237bcb",
+          "startedAtWorldTime": "2026-09-07T00:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      },
+      {
+        "eventId": "4e5cf8a4-7f20-4428-a1df-f601cf626ccf",
+        "worldSeq": "5",
+        "eventType": "RESIDENT_SLEEP_STARTED",
+        "occurredAtWorldTime": "2026-09-07T00:30:00.000Z",
+        "residentId": "2bbd936d-ef84-51d6-996d-cbe45fd17b2c",
+        "participantId": null,
+        "placeId": "e29ee0e6-75a4-5bd3-ae05-9805dbed0fe2",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "SLEEP",
+          "phase": "STARTED",
+          "activityInstanceId": "7325c634-b3ef-4d45-8ab9-b490d41fa9f0",
+          "sourceLocationId": "e29ee0e6-75a4-5bd3-ae05-9805dbed0fe2",
+          "startedAtWorldTime": "2026-09-07T00:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      }
+    ],
+    "EAT": [
+      {
+        "eventId": "1faec059-1a43-4fa3-b360-27e7a20e1dc4",
+        "worldSeq": "42",
+        "eventType": "RESIDENT_EAT_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:30:00.000Z",
+        "residentId": "2bbd936d-ef84-51d6-996d-cbe45fd17b2c",
+        "participantId": null,
+        "placeId": "e29ee0e6-75a4-5bd3-ae05-9805dbed0fe2",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "EAT",
+          "phase": "STARTED",
+          "activityInstanceId": "9df8574a-bf8d-41e0-9b9a-9cc88f10744b",
+          "sourceLocationId": "e29ee0e6-75a4-5bd3-ae05-9805dbed0fe2",
+          "startedAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 30
+        }
+      },
+      {
+        "eventId": "14a9bf13-3a8d-4c1c-9f9d-42a7923c5268",
+        "worldSeq": "43",
+        "eventType": "RESIDENT_EAT_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:30:00.000Z",
+        "residentId": "58751ab4-186c-5300-9869-337676439a82",
+        "participantId": null,
+        "placeId": "cd074b98-56ba-51cb-aa72-43ad2ff9678c",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "EAT",
+          "phase": "STARTED",
+          "activityInstanceId": "5bbd6ae3-2e22-4eed-8d25-26fb22c83df0",
+          "sourceLocationId": "cd074b98-56ba-51cb-aa72-43ad2ff9678c",
+          "startedAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 30
+        }
+      },
+      {
+        "eventId": "9b8a26e4-67ef-435f-91d5-9dbc31965ede",
+        "worldSeq": "44",
+        "eventType": "RESIDENT_EAT_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:30:00.000Z",
+        "residentId": "782590ea-17bd-5ea5-84b0-f979dc438f47",
+        "participantId": null,
+        "placeId": "e69330e9-fdd5-59f9-b272-041449ef88ae",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "EAT",
+          "phase": "STARTED",
+          "activityInstanceId": "f9798fda-54ef-4b25-9e5f-8886a889ef0c",
+          "sourceLocationId": "e69330e9-fdd5-59f9-b272-041449ef88ae",
+          "startedAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 30
+        }
+      },
+      {
+        "eventId": "71c552e2-22ee-4f84-86f3-26316538ff04",
+        "worldSeq": "45",
+        "eventType": "RESIDENT_EAT_STARTED",
+        "occurredAtWorldTime": "2026-09-07T08:30:00.000Z",
+        "residentId": "90e94171-f8df-50aa-a593-485576bd9689",
+        "participantId": null,
+        "placeId": "9cedfe94-9698-5082-9907-1b7bc8dcf90b",
+        "targetPlaceId": null,
+        "payloadSummary": {
+          "actionType": "EAT",
+          "phase": "STARTED",
+          "activityInstanceId": "e01ee1cf-41bb-4c6c-a50b-5841aecc836d",
+          "sourceLocationId": "9cedfe94-9698-5082-9907-1b7bc8dcf90b",
+          "startedAtWorldTime": "2026-09-07T08:30:00.000Z",
+          "dueAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "durationWorldMinutes": 30
+        }
+      }
+    ],
+    "WORK": [
+      {
+        "eventId": "e6206c86-1c61-4aed-a3c2-feadab885568",
+        "worldSeq": "100",
+        "eventType": "RESIDENT_WORK_STARTED",
+        "occurredAtWorldTime": "2026-09-07T09:00:00.000Z",
+        "residentId": "3370a3bf-c0bb-54b4-82d6-ddb67faf2455",
+        "participantId": null,
+        "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "WORK",
+          "phase": "STARTED",
+          "activityInstanceId": "238f785a-a6d9-4011-ace3-195100b3652a",
+          "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "dueAtWorldTime": "2026-09-07T17:00:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      },
+      {
+        "eventId": "05df0192-2bc2-4177-b877-e0a08002757f",
+        "worldSeq": "102",
+        "eventType": "RESIDENT_WORK_STARTED",
+        "occurredAtWorldTime": "2026-09-07T09:00:00.000Z",
+        "residentId": "65a68221-1415-59fc-9990-90de6f2df60c",
+        "participantId": null,
+        "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "WORK",
+          "phase": "STARTED",
+          "activityInstanceId": "69d6c901-c59b-4924-a0cd-9283ab84a95f",
+          "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "dueAtWorldTime": "2026-09-07T17:00:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      },
+      {
+        "eventId": "2717abf3-6b48-4071-9914-797f5ac6d59f",
+        "worldSeq": "104",
+        "eventType": "RESIDENT_WORK_STARTED",
+        "occurredAtWorldTime": "2026-09-07T09:00:00.000Z",
+        "residentId": "78d39e0b-67e2-5f12-b53b-91eaac6cf3f5",
+        "participantId": null,
+        "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "WORK",
+          "phase": "STARTED",
+          "activityInstanceId": "e3713557-9965-4d77-92fa-137084ade92f",
+          "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "dueAtWorldTime": "2026-09-07T17:00:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      },
+      {
+        "eventId": "12b25f7c-957b-4834-adbd-f002497cc50e",
+        "worldSeq": "105",
+        "eventType": "RESIDENT_WORK_STARTED",
+        "occurredAtWorldTime": "2026-09-07T09:00:00.000Z",
+        "residentId": "7b119893-24b0-5641-a079-7fe257bc41a2",
+        "participantId": null,
+        "placeId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "targetPlaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+        "payloadSummary": {
+          "actionType": "WORK",
+          "phase": "STARTED",
+          "activityInstanceId": "794b3c0e-a72b-4f79-b4c0-1f40b6229c56",
+          "sourceLocationId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "workplaceId": "6eed59ab-6db7-5aa6-9429-d7ee973e1ad3",
+          "startedAtWorldTime": "2026-09-07T09:00:00.000Z",
+          "dueAtWorldTime": "2026-09-07T17:00:00.000Z",
+          "durationWorldMinutes": 480
+        }
+      }
+    ],
+    "TALK": []
+  }
+}
